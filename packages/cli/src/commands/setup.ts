@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { recordActivityEvent } from "@aoagents/ao-core";
+import { recordActivityEvent } from "@made-by-moonlight/athene-core";
 import {
   DesktopSetupError,
   runDesktopSetupAction,
@@ -337,7 +337,7 @@ export function registerSetup(program: Command): void {
           source: "cli",
           kind: "cli.setup_failed",
           level: "error",
-          summary: "ao setup openclaw failed",
+          summary: "athene setup openclaw failed",
           data: {
             aborted: err instanceof OpenClawSetupError && err.exitCode === 0,
             errorMessage: err instanceof Error ? err.message : String(err),

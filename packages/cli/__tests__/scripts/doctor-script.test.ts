@@ -17,7 +17,7 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const scriptPath = join(packageRoot, "src", "assets", "scripts", "ao-doctor.sh");
+const scriptPath = join(packageRoot, "src", "assets", "scripts", "athene-doctor.sh");
 
 function writeExecutable(path: string, content: string): void {
   writeFileSync(path, content);
@@ -45,10 +45,10 @@ function createHealthyRepo(tempRoot: string): string {
   );
   writeFileSync(join(fakeRepo, "packages", "cli", "dist", "index.js"), "export {};\n");
   writeFileSync(
-    join(fakeRepo, "packages", "ao", "bin", "ao.js"),
+    join(fakeRepo, "packages", "ao", "bin", "athene.js"),
     '#!/usr/bin/env node\nconsole.log("0.1.0");\n',
   );
-  chmodSync(join(fakeRepo, "packages", "ao", "bin", "ao.js"), 0o755);
+  chmodSync(join(fakeRepo, "packages", "ao", "bin", "athene.js"), 0o755);
   return fakeRepo;
 }
 
@@ -57,11 +57,11 @@ function createHealthyPackageInstall(tempRoot: string): string {
   mkdirSync(join(fakeInstall, "dist", "assets", "scripts"), { recursive: true });
   writeFileSync(
     join(fakeInstall, "package.json"),
-    JSON.stringify({ name: "@aoagents/ao-cli", version: "0.2.5" }, null, 2),
+    JSON.stringify({ name: "@made-by-moonlight/athene-cli", version: "0.2.5" }, null, 2),
   );
   writeFileSync(join(fakeInstall, "dist", "index.js"), 'console.log("0.2.5");\n');
-  writeFileSync(join(fakeInstall, "dist", "assets", "scripts", "ao-doctor.sh"), "#!/bin/bash\n");
-  writeFileSync(join(fakeInstall, "dist", "assets", "scripts", "ao-update.sh"), "#!/bin/bash\n");
+  writeFileSync(join(fakeInstall, "dist", "assets", "scripts", "athene-doctor.sh"), "#!/bin/bash\n");
+  writeFileSync(join(fakeInstall, "dist", "assets", "scripts", "athene-update.sh"), "#!/bin/bash\n");
   return fakeInstall;
 }
 
@@ -102,7 +102,7 @@ function createHealthyPath(binDir: string): void {
 // Skipped on Windows: bash is required to execute the doctor script and is not
 // guaranteed to be available without Git for Windows. The Windows code path
 // (Git Bash auto-detection in runRepoScript) is exercised at runtime, not here.
-describe.skipIf(process.platform === "win32")("ao-doctor.sh", () => {
+describe.skipIf(process.platform === "win32")("athene-doctor.sh", () => {
   it("reports a healthy install as PASS", () => {
     const tempRoot = mkdtempSync(join(tmpdir(), "ao-doctor-script-"));
     const fakeRepo = createHealthyRepo(tempRoot);

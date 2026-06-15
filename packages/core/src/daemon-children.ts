@@ -293,7 +293,7 @@ function installManagedSignalHandlers(): void {
     // Installing a signal listener disables Node's default "exit on signal"
     // behaviour. If no application-level shutdown handler is present, preserve
     // that default after giving managed children the same graceful
-    // SIGTERM→wait→SIGKILL lifecycle used by `ao stop`.
+    // SIGTERM→wait→SIGKILL lifecycle used by `athene stop`.
     if (!daemonShutdownHandlerInstalled && !fallbackShutdownStarted) {
       fallbackShutdownStarted = true;
       void exitAfterManagedChildren(signal);
@@ -411,14 +411,14 @@ export function classifyAoOrphanCommand(command: string): string | null {
   const normalized = normalizeCommand(command);
 
   if (
-    normalized.includes("@aoagents/ao-web") &&
+    normalized.includes("@made-by-moonlight/athene-web") &&
     (normalized.includes("/dist-server/") || normalized.includes(" dist-server/"))
   ) {
     return "ao-web";
   }
   if (
-    normalized.includes("/ao lifecycle-worker ") ||
-    normalized.includes(" ao lifecycle-worker ")
+    normalized.includes("/athene lifecycle-worker ") ||
+    normalized.includes(" athene lifecycle-worker ")
   ) {
     return "lifecycle-worker";
   }

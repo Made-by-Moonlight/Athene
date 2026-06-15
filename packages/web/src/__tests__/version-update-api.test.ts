@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { EventEmitter } from "node:events";
-import type * as AoCoreType from "@aoagents/ao-core";
+import type * as AoCoreType from "@made-by-moonlight/athene-core";
 import type * as ChildProcessType from "node:child_process";
 
 // Use a real on-disk cache file in a per-test temp dir rather than mocking
@@ -17,8 +17,8 @@ const { mockGlobalConfig } = vi.hoisted(() => ({
   },
 }));
 
-vi.mock("@aoagents/ao-core", async () => {
-  const actual = (await vi.importActual("@aoagents/ao-core")) as typeof AoCoreType;
+vi.mock("@made-by-moonlight/athene-core", async () => {
+  const actual = (await vi.importActual("@made-by-moonlight/athene-core")) as typeof AoCoreType;
   return {
     ...actual,
     loadGlobalConfig: () => mockGlobalConfig.value,
@@ -225,7 +225,7 @@ describe("POST /api/update", () => {
     const body = (await res.json()) as { ok: boolean; activeSessions?: number; message: string };
     expect(body.ok).toBe(false);
     expect(body.activeSessions).toBe(2);
-    expect(body.message).toMatch(/ao stop/);
+    expect(body.message).toMatch(/athene stop/);
     expect(mockSpawn).not.toHaveBeenCalled();
   });
 
@@ -246,7 +246,7 @@ describe("POST /api/update", () => {
     const res = await updatePOST(makeReq());
     expect(res.status).toBe(202);
     expect(mockSpawn).toHaveBeenCalledWith(
-      "ao",
+      "athene",
       ["update"],
       expect.objectContaining({
         detached: true,
@@ -264,7 +264,7 @@ describe("POST /api/update", () => {
     const body = (await res.json()) as { ok: boolean };
     expect(body.ok).toBe(true);
     expect(mockSpawn).toHaveBeenCalledWith(
-      "ao",
+      "athene",
       ["update"],
       expect.objectContaining({
         detached: true,

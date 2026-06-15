@@ -35,7 +35,7 @@ From the repository you want AO to manage:
 
 ```bash
 cd ~/code/my-repo
-ao start
+athene start
 ```
 
 On the first run, AO creates `agent-orchestrator.yaml`, starts the dashboard, and starts an orchestrator session for the project. The dashboard URL is printed in the terminal, usually `http://localhost:3000`.
@@ -52,14 +52,14 @@ Open a second terminal in the same repository.
 <Tabs items={["GitHub issue", "Freeform prompt"]}>
   <Tab value="GitHub issue">
   ```bash
-  ao spawn 42
+  athene spawn 42
   ```
 
   Replace `42` with the issue number. AO fetches the issue through `gh`, creates a worktree, starts the configured worker agent, and gives it the issue context.
   </Tab>
   <Tab value="Freeform prompt">
   ```bash
-  ao spawn --prompt "Update the README install section to mention Node 20"
+  athene spawn --prompt "Update the README install section to mention Node 20"
   ```
 
   Use this when the task is not tracked in GitHub, GitLab, or Linear yet. Keep the prompt specific and reviewable.
@@ -81,10 +81,10 @@ Open the session card. You should see:
 - The PR link after the agent creates one.
 - CI and review state after a PR exists.
 
-Use `ao status` when you want the same high-level view in a terminal:
+Use `athene status` when you want the same high-level view in a terminal:
 
 ```bash
-ao status
+athene status
 ```
 
 </Step>
@@ -99,13 +99,13 @@ AO routes routine feedback back to the worker:
 - Merge conflicts: AO can ask the worker to rebase or resolve the conflict.
 - Agent stuck or waiting for input: AO notifies you.
 
-If you need to give the worker a direct instruction, use `ao send`:
+If you need to give the worker a direct instruction, use `athene send`:
 
 ```bash
-ao send myrepo-1 "Keep the fix smaller. Do not refactor the API layer."
+athene send myrepo-1 "Keep the fix smaller. Do not refactor the API layer."
 ```
 
-Use `ao send` instead of raw terminal input. It preserves AO's busy detection, retry handling, and message formatting.
+Use `athene send` instead of raw terminal input. It preserves AO's busy detection, retry handling, and message formatting.
 
 </Step>
 <Step>
@@ -117,8 +117,8 @@ When the PR is green and ready, review it like any other pull request. AO does n
 After the PR is merged or the issue is closed, clean up completed sessions:
 
 ```bash
-ao session cleanup --dry-run
-ao session cleanup
+athene session cleanup --dry-run
+athene session cleanup
 ```
 
 </Step>
@@ -129,7 +129,7 @@ ao session cleanup
 | Item | What it means |
 | --- | --- |
 | `agent-orchestrator.yaml` | Project config: plugins, projects, reactions, runtime, and notifier choices. |
-| Orchestrator session | A coordinating session started by `ao start`; it supervises worker sessions. |
+| Orchestrator session | A coordinating session started by `athene start`; it supervises worker sessions. |
 | Worker session | The agent process that works on one issue or prompt. |
 | Worktree | An isolated checkout for the worker's branch. |
 | Session metadata | Files under `~/.agent-orchestrator/...` that let AO track branch, PR, status, and runtime state. |
@@ -138,10 +138,10 @@ ao session cleanup
 
 | Symptom | First check |
 | --- | --- |
-| Dashboard is not updating | Make sure the `ao start` terminal is still running. |
-| `ao spawn` warns that AO is not running | Start AO with `ao start` before spawning. |
+| Dashboard is not updating | Make sure the `athene start` terminal is still running. |
+| `athene spawn` warns that AO is not running | Start AO with `athene start` before spawning. |
 | GitHub issue or PR data is missing | Run `gh auth status` and check the `repo` field in `agent-orchestrator.yaml`. |
-| Agent started but does nothing | Open the session terminal and send a clear instruction with `ao send`. |
+| Agent started but does nothing | Open the session terminal and send a clear instruction with `athene send`. |
 | Windows spawn fails with tmux errors | Set `defaults.runtime: process` in `agent-orchestrator.yaml`. |
 
 ## Next

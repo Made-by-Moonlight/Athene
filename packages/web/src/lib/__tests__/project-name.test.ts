@@ -16,7 +16,7 @@ const { mockLoadConfig, mockGetGlobalConfigPath, MockConfigNotFoundError } = vi.
   return { mockLoadConfig, mockGetGlobalConfigPath, MockConfigNotFoundError };
 });
 
-vi.mock("@aoagents/ao-core", () => ({
+vi.mock("@made-by-moonlight/athene-core", () => ({
   loadConfig: mockLoadConfig,
   getGlobalConfigPath: mockGetGlobalConfigPath,
   ConfigNotFoundError: MockConfigNotFoundError,
@@ -68,7 +68,7 @@ describe("project-name fallback discovery", () => {
           sessionPrefix: "vw",
         },
         "agent-orchestrator": {
-          name: "Agent Orchestrator",
+          name: "Athene",
           path: "/Users/ashishhuddar/agent-orchestrator",
           sessionPrefix: "ao",
         },
@@ -82,7 +82,7 @@ describe("project-name fallback discovery", () => {
     const { getPrimaryProjectId, getProjectName } = await import("../project-name");
 
     expect(getPrimaryProjectId()).toBe("agent-orchestrator");
-    expect(getProjectName()).toBe("Agent Orchestrator");
+    expect(getProjectName()).toBe("Athene");
   });
 
   it("does not infer the current project from an ambiguous path basename", async () => {
@@ -129,7 +129,7 @@ describe("project-name fallback discovery", () => {
           sessionPrefix: "vw",
         },
         "agent-orchestrator": {
-          name: "Agent Orchestrator",
+          name: "Athene",
           path: repoRoot,
           sessionPrefix: "ao",
         },
@@ -140,7 +140,7 @@ describe("project-name fallback discovery", () => {
       configPath: localConfigPath,
       projects: {
         "agent-orchestrator": {
-          name: "Agent Orchestrator",
+          name: "Athene",
           path: repoRoot,
           sessionPrefix: "ao",
         },
@@ -162,7 +162,7 @@ describe("project-name fallback discovery", () => {
     const { getPrimaryProjectId, getProjectName } = await import("../project-name");
 
     expect(getPrimaryProjectId()).toBe("agent-orchestrator");
-    expect(getProjectName()).toBe("Agent Orchestrator");
+    expect(getProjectName()).toBe("Athene");
   });
 
   it("ignores ambient AO_CONFIG_PATH when discovering the local repo project", async () => {

@@ -19,7 +19,7 @@ const {
   mockLoadLocalProjectConfig: vi.fn(),
 }));
 
-vi.mock("@aoagents/ao-core", () => ({
+vi.mock("@made-by-moonlight/athene-core", () => ({
   isPortfolioEnabled: () => true,
   getPortfolio: mockGetPortfolio,
   getPortfolioSessionCounts: mockGetPortfolioSessionCounts,
@@ -61,7 +61,7 @@ beforeEach(() => {
   }) as typeof process.exit);
 });
 
-describe("ao project ls", () => {
+describe("athene project ls", () => {
   it("prints message when portfolio is empty", async () => {
     mockGetPortfolio.mockReturnValue([]);
 
@@ -100,7 +100,7 @@ describe("ao project ls", () => {
   });
 });
 
-describe("ao project add", () => {
+describe("athene project add", () => {
   it("registers a valid project path", async () => {
     mockLoadLocalProjectConfig.mockReturnValue({ projects: {} });
 
@@ -179,7 +179,7 @@ describe("ao project add", () => {
   });
 });
 
-describe("ao project rm", () => {
+describe("athene project rm", () => {
   it("removes an existing project", async () => {
     mockGetPortfolio.mockReturnValue([{ id: "app-1", name: "App One", source: "/tmp/app-1" }]);
 
@@ -200,7 +200,7 @@ describe("ao project rm", () => {
   });
 });
 
-describe("ao project set-default", () => {
+describe("athene project set-default", () => {
   it("sets default project", async () => {
     mockGetPortfolio.mockReturnValue([{ id: "app-1", name: "App One", source: "/tmp/app-1" }]);
     mockLoadPreferences.mockReturnValue({ defaultProjectId: null });

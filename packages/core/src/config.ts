@@ -332,7 +332,7 @@ const LifecycleConfigSchema = z
     /**
      * When a session's PR is detected as merged, automatically tear down the
      * tmux runtime, remove the worktree, and archive the session metadata.
-     * Defaults to true so `ao status` does not retain stale merged entries.
+     * Defaults to true so `athene status` does not retain stale merged entries.
      */
     autoCleanupOnMerge: z.boolean().default(true),
     /**
@@ -422,9 +422,11 @@ function generateTempPluginName(pkg?: string, path?: string): string {
     const slashParts = pkg.split("/");
     const packageName = slashParts[slashParts.length - 1] ?? pkg;
 
-    // Extract plugin name after ao-plugin-{slot}- prefix, preserving multi-word names like "jira-cloud"
+    // Extract plugin name after [ao-]plugin-{slot}- prefix, preserving multi-word names like "jira-cloud".
+    // The optional `ao-` prefix keeps backward-compat with legacy `ao-plugin-*` external packages
+    // while supporting the current `plugin-*` naming (e.g. @made-by-moonlight/athene-plugin-tracker-foo).
     const prefixMatch = packageName.match(
-      /^ao-plugin-(?:runtime|agent|workspace|tracker|scm|notifier|terminal)-(.+)$/,
+      /^(?:ao-)?plugin-(?:runtime|agent|workspace|tracker|scm|notifier|terminal)-(.+)$/,
     );
     if (prefixMatch?.[1]) {
       return prefixMatch[1];

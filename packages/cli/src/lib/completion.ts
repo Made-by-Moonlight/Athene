@@ -7,7 +7,7 @@ import {
   getGlobalConfigPath,
   type OrchestratorConfig,
   type Session,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 import { getSessionManager } from "./create-session-manager.js";
 import { isOrchestratorSessionName } from "./session-utils.js";
 
@@ -232,7 +232,7 @@ function renderArgumentsInvocation(node: CompletionCommandNode): string[] {
 function renderSubcommandCase(node: CompletionCommandNode): string[] {
   if (node.children.length === 0) return [];
 
-  const describeLabel = node.path.length === 0 ? "ao command" : `${commandKey(node)} command`;
+  const describeLabel = node.path.length === 0 ? "athene command" : `${commandKey(node)} command`;
   const lines = [
     "  case $state in",
     "    subcommand)",

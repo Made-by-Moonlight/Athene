@@ -1,0 +1,8 @@
+#compdef athene
+
+# For development repos, this dynamically loads completion scripts from `athene`.
+# Prefer a static install for daily use:
+#   athene completion zsh > "$fpath[1]/_athene"
+(( $+commands[athene] )) || return 1
+
+eval "$(command athene completion zsh 2>/dev/null)"

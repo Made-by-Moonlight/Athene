@@ -1,5 +1,5 @@
 {
-  "name": "@aoagents/ao-plugin-notifier-composio",
+  "name": "@made-by-moonlight/athene-plugin-notifier-composio",
   "version": "0.9.1",
   "description": "Notifier plugin: Composio unified notifications (Slack, Discord, email)",
   "license": "MIT",
@@ -17,12 +17,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ComposioHQ/agent-orchestrator.git",
+    "url": "https://github.com/slievr/Athene.git",
     "directory": "packages/plugins/notifier-composio"
   },
-  "homepage": "https://github.com/ComposioHQ/agent-orchestrator",
+  "homepage": "https://github.com/slievr/Athene",
   "bugs": {
-    "url": "https://github.com/ComposioHQ/agent-orchestrator/issues"
+    "url": "https://github.com/slievr/Athene/issues"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -34,7 +34,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@aoagents/ao-core": "workspace:*",
+    "@made-by-moonlight/athene-core": "workspace:*",
     "@composio/core": "^0.9.0",
     "zod": "^3.25.76"
   },
@@ -44,7 +44,6 @@
     "vitest": "^3.0.0"
   },
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   }
 }

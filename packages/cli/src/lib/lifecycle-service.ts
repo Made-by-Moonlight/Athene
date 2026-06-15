@@ -3,7 +3,7 @@ import {
   createProjectObserver,
   type LifecycleManager,
   type OrchestratorConfig,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 import { getLifecycleManager } from "./create-session-manager.js";
 
 const DEFAULT_INTERVAL_MS = 30_000;
@@ -17,7 +17,7 @@ const active = new Map<string, ActiveLoop>();
 
 // Note: no SIGINT/SIGTERM listeners are installed here. Adding a listener for
 // those signals removes Node.js's default "exit on signal" behavior, which
-// would leave `ao start` hanging when `ao stop` sends SIGTERM (the setInterval
+// would leave `athene start` hanging when `athene stop` sends SIGTERM (the setInterval
 // keeps the event loop alive forever). Default signal handling terminates the
 // process cleanly; the OS reclaims the interval timer. Callers that need to
 // flush state explicitly before exit can call `stopAllLifecycleWorkers()`.

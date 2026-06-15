@@ -26,13 +26,13 @@ import {
   type ReviewSummary,
   type ReviewThreadsResult,
   type MergeReadiness,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 import {
   getWebhookHeader,
   parseWebhookBranchRef,
   parseWebhookJsonObject,
   parseWebhookTimestamp,
-} from "@aoagents/ao-core/scm-webhook-utils";
+} from "@made-by-moonlight/athene-core/scm-webhook-utils";
 
 import { glab, parseJSON, stripHost } from "./glab-utils.js";
 

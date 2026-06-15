@@ -11,7 +11,7 @@ while [ $# -gt 0 ]; do
       ;;
     -h|--help)
       cat <<'EOF'
-Usage: ao doctor [--fix]
+Usage: athene doctor [--fix]
 
 Checks install, PATH, binaries, service health, web terminal support, stale temp files, and runtime sanity.
 
@@ -213,7 +213,7 @@ check_pnpm() {
 
 check_launcher() {
   local ao_path
-  ao_path="$(command -v ao 2>/dev/null || true)"
+  ao_path="$(command -v athene 2>/dev/null || true)"
   if [ -n "$ao_path" ]; then
     if [ -x "$ao_path" ]; then
       pass "ao launcher resolves to $ao_path"
@@ -222,25 +222,25 @@ check_launcher() {
     warn "ao launcher resolves to $ao_path, but its target is missing or not executable"
   fi
 
-  if [ "$SCRIPT_LAYOUT" = "source-checkout" ] && [ "$FIX_MODE" = true ] && command -v npm >/dev/null 2>&1 && [ -d "$REPO_ROOT/packages/ao" ]; then
-    if (cd "$REPO_ROOT/packages/ao" && npm link --force >/dev/null 2>&1) && command -v ao >/dev/null 2>&1; then
+  if [ "$SCRIPT_LAYOUT" = "source-checkout" ] && [ "$FIX_MODE" = true ] && command -v npm >/dev/null 2>&1 && [ -d "$REPO_ROOT/packages/athene" ]; then
+    if (cd "$REPO_ROOT/packages/athene" && npm link --force >/dev/null 2>&1) && command -v athene >/dev/null 2>&1; then
       fixed "ao launcher refreshed with npm link --force"
       return
     fi
     if [ -t 0 ]; then
       printf '  Launcher refresh failed. Retrying with sudo...\n'
-      if (cd "$REPO_ROOT/packages/ao" && sudo npm link --force >/dev/null 2>&1) && command -v ao >/dev/null 2>&1; then
+      if (cd "$REPO_ROOT/packages/athene" && sudo npm link --force >/dev/null 2>&1) && command -v athene >/dev/null 2>&1; then
         fixed "ao launcher refreshed with sudo npm link --force"
         return
       fi
       printf 'ERROR: sudo npm link --force failed. Inspect npm output above.\n' >&2
     fi
-    warn "ao launcher refresh failed. Fix: cd $REPO_ROOT/packages/ao && sudo npm link --force"
+    warn "ao launcher refresh failed. Fix: cd $REPO_ROOT/packages/athene && sudo npm link --force"
     return
   fi
 
   if [ "$SCRIPT_LAYOUT" = "package-install" ]; then
-    warn "ao launcher is not in PATH. Fix: reinstall with npm install -g @aoagents/ao@latest or run via pnpx @aoagents/ao@latest"
+    warn "ao launcher is not in PATH. Fix: reinstall with npm install -g @made-by-moonlight/athene@latest or run via pnpx @made-by-moonlight/athene@latest"
     return
   fi
 
@@ -276,25 +276,25 @@ check_install_layout() {
     if [ -f "$REPO_ROOT/package.json" ]; then
       pass "CLI package metadata is present at $REPO_ROOT/package.json"
     else
-      fail "CLI package metadata is missing at $REPO_ROOT/package.json. Fix: reinstall @aoagents/ao"
+      fail "CLI package metadata is missing at $REPO_ROOT/package.json. Fix: reinstall @made-by-moonlight/athene"
     fi
 
     if [ -f "$REPO_ROOT/dist/index.js" ]; then
       pass "packaged CLI entrypoint exists"
     else
-      fail "packaged CLI entrypoint is missing. Fix: reinstall @aoagents/ao"
+      fail "packaged CLI entrypoint is missing. Fix: reinstall @made-by-moonlight/athene"
     fi
 
-    if [ -f "$REPO_ROOT/dist/assets/scripts/ao-doctor.sh" ]; then
+    if [ -f "$REPO_ROOT/dist/assets/scripts/athene-doctor.sh" ]; then
       pass "bundled doctor script is available"
     else
-      fail "bundled doctor script is missing. Fix: reinstall @aoagents/ao"
+      fail "bundled doctor script is missing. Fix: reinstall @made-by-moonlight/athene"
     fi
 
-    if [ -f "$REPO_ROOT/dist/assets/scripts/ao-update.sh" ]; then
+    if [ -f "$REPO_ROOT/dist/assets/scripts/athene-update.sh" ]; then
       pass "bundled update script is available"
     else
-      fail "bundled update script is missing. Fix: reinstall @aoagents/ao"
+      fail "bundled update script is missing. Fix: reinstall @made-by-moonlight/athene"
     fi
     return
   fi
@@ -308,38 +308,38 @@ check_install_layout() {
   if [ -f "$REPO_ROOT/packages/core/dist/index.js" ]; then
     pass "core package is built"
   else
-    fail "core package is not built. Fix: run pnpm --filter @aoagents/ao-core build"
+    fail "core package is not built. Fix: run pnpm --filter @made-by-moonlight/athene-core build"
   fi
 
   if [ -f "$REPO_ROOT/packages/cli/dist/index.js" ]; then
     pass "CLI package is built"
   else
-    fail "CLI package is not built. Fix: run pnpm --filter @aoagents/ao-cli build"
+    fail "CLI package is not built. Fix: run pnpm --filter @made-by-moonlight/athene-cli build"
   fi
 }
 
 check_runtime_sanity() {
   if [ "$SCRIPT_LAYOUT" = "package-install" ]; then
     if [ ! -f "$REPO_ROOT/dist/index.js" ]; then
-      fail "packaged CLI entrypoint is missing. Fix: reinstall @aoagents/ao"
+      fail "packaged CLI entrypoint is missing. Fix: reinstall @made-by-moonlight/athene"
       return
     fi
 
     if node "$REPO_ROOT/dist/index.js" --version >/dev/null 2>&1; then
-      pass "packaged CLI runtime sanity check passed (ao --version)"
+      pass "packaged CLI runtime sanity check passed (athene --version)"
     else
-      fail "packaged CLI runtime sanity check failed. Fix: reinstall @aoagents/ao"
+      fail "packaged CLI runtime sanity check failed. Fix: reinstall @made-by-moonlight/athene"
     fi
     return
   fi
 
-  if [ ! -f "$REPO_ROOT/packages/ao/bin/ao.js" ]; then
+  if [ ! -f "$REPO_ROOT/packages/athene/bin/athene.js" ]; then
     fail "launcher entrypoint is missing. Fix: reinstall from a clean checkout"
     return
   fi
 
-  if node "$REPO_ROOT/packages/ao/bin/ao.js" --version >/dev/null 2>&1; then
-    pass "launcher runtime sanity check passed (ao --version)"
+  if node "$REPO_ROOT/packages/athene/bin/athene.js" --version >/dev/null 2>&1; then
+    pass "launcher runtime sanity check passed (athene --version)"
   else
     fail "launcher runtime sanity check failed. Fix: run pnpm build and refresh the launcher"
   fi
@@ -349,7 +349,7 @@ check_config_dirs() {
   local config_path data_dir worktree_dir
   config_path="$(find_config || true)"
   if [ -z "$config_path" ]; then
-    warn "No agent-orchestrator config was found. Fix: run ao start in a target repo"
+    warn "No agent-orchestrator config was found. Fix: run athene start in a target repo"
     return
   fi
 
@@ -395,7 +395,7 @@ check_stale_temp_files() {
     return
   fi
 
-  warn "$stale_count stale temp files older than 60 minutes found under $temp_root. Fix: rerun ao doctor --fix"
+  warn "$stale_count stale temp files older than 60 minutes found under $temp_root. Fix: rerun athene doctor --fix"
 }
 
 file_mode_octal() {
@@ -420,7 +420,7 @@ const repoRoot = process.argv[2];
 
 function resolvePackageJson(fromDir) {
   try {
-    return createRequire(path.join(fromDir, "ao-doctor.js")).resolve("node-pty/package.json");
+    return createRequire(path.join(fromDir, "athene-doctor.js")).resolve("node-pty/package.json");
   } catch {
     return null;
   }
@@ -447,8 +447,8 @@ function resolveCoreEntrypoint() {
   const sourceCoreDir = path.resolve(repoRoot, "packages", "core");
   const coreDir =
     (fs.existsSync(path.join(sourceCoreDir, "package.json")) ? sourceCoreDir : null) ??
-    findPackageUp(repoRoot, "@aoagents", "ao-core") ??
-    resolveNodeModulesPackage(repoRoot, "@aoagents", "ao-core");
+    findPackageUp(repoRoot, "@made-by-moonlight", "core") ??
+    resolveNodeModulesPackage(repoRoot, "@made-by-moonlight", "core");
   if (!coreDir) return null;
 
   try {
@@ -480,8 +480,8 @@ async function getNodePtyPrebuildsSubdir() {
       const sourceWebDir = path.resolve(repoRoot, "packages", "web");
       const webDir =
         (fs.existsSync(path.join(sourceWebDir, "package.json")) ? sourceWebDir : null) ??
-        findPackageUp(repoRoot, "@aoagents", "ao-web") ??
-        resolveNodeModulesPackage(repoRoot, "@aoagents", "ao-web");
+        findPackageUp(repoRoot, "@made-by-moonlight", "web") ??
+        resolveNodeModulesPackage(repoRoot, "@made-by-moonlight", "web");
       if (!webDir) return null;
 
       const webNodePtyDir =
@@ -525,10 +525,10 @@ check_node_pty_spawn_helper() {
     return
   fi
 
-  warn "node-pty spawn-helper is not executable at $helper_path (mode 0o$mode). Web dashboard terminals can fail with posix_spawnp failed. Fix: run ao doctor --fix or chmod +x $helper_path. See ao#1770."
+  warn "node-pty spawn-helper is not executable at $helper_path (mode 0o$mode). Web dashboard terminals can fail with posix_spawnp failed. Fix: run athene doctor --fix or chmod +x $helper_path. See ao#1770."
 }
 
-printf 'Agent Orchestrator Doctor\n\n'
+printf 'Athene Doctor\n\n'
 
 check_node
 check_git
@@ -549,4 +549,4 @@ if [ "$FAIL_COUNT" -gt 0 ]; then
   exit 1
 fi
 
-printf 'Environment looks healthy enough to run Agent Orchestrator.\n'
+printf 'Environment looks healthy enough to run Athene.\n'

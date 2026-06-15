@@ -44,20 +44,20 @@ If the agent has tried three times and CI is still red, the session transitions 
 Tell AO to re-check a specific PR right now:
 
 ```bash
-ao review-check         # check every project
-ao review-check myproject
-ao review-check --dry-run   # show what would happen, don't nudge
+athene review-check         # check every project
+athene review-check myproject
+athene review-check --dry-run   # show what would happen, don't nudge
 ```
 
 ## When it doesn't kick in
 
-- **PR not linked to a session.** If you created the PR manually and didn't run `ao session claim-pr`, AO doesn't know about it.
+- **PR not linked to a session.** If you created the PR manually and didn't run `athene session claim-pr`, AO doesn't know about it.
 - **Check status is `neutral` or `skipped`.** AO only reacts to `failure` and `error`.
 - **PR is in draft.** AO waits for ready-for-review before treating CI as binding.
 - **`reactions.ciFailed.enabled: false`** in your config.
 
 <Callout type="info">
-  Claiming a PR retroactively: `ao session claim-pr 123 <sessionId>` — AO now tracks its CI.
+  Claiming a PR retroactively: `athene session claim-pr 123 <sessionId>` — AO now tracks its CI.
 </Callout>
 
 ## Linking a manually-opened PR
@@ -65,7 +65,7 @@ ao review-check --dry-run   # show what would happen, don't nudge
 Sometimes you want the agent to work on an existing PR instead of an issue:
 
 ```bash
-ao spawn --claim-pr 123 --assign-on-github
+athene spawn --claim-pr 123 --assign-on-github
 ```
 
 This creates a session, points it at PR #123, and (with `--assign-on-github`) assigns the PR to you so it shows up in your GitHub filters. Subsequent CI failures flow into the normal recovery loop.
@@ -74,7 +74,7 @@ This creates a session, points it at PR #123, and (with `--assign-on-github`) as
 
 When CI goes red, AO sends two distinct messages to the agent in sequence:
 
-1. **Reaction message (poll cycle N).** The lifecycle manager detects that CI transitioned to `ci_failed` and fires the `ci-failed` reaction. This sends the configured `message` (or the default: *"CI failed on PR #42…"*) to the agent via `ao send`.
+1. **Reaction message (poll cycle N).** The lifecycle manager detects that CI transitioned to `ci_failed` and fires the `ci-failed` reaction. This sends the configured `message` (or the default: *"CI failed on PR #42…"*) to the agent via `athene send`.
 
 2. **Detailed follow-up (poll cycle N+1, ~30 s later).** On the next poll cycle, AO calls `formatCIFailureMessage()` with the actual failing checks and sends a second message with each check's name, conclusion status, and a direct link to the run log. This is delivered via `sessionManager.send()` directly — it does **not** go through `executeReaction()`, so it does not consume the `ci-failed` reaction's retry budget.
 

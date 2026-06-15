@@ -12,11 +12,11 @@ import {
   type OrchestratorConfig,
   type PluginRegistry,
   type SCM,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 
 // Partial mock so we replace recordActivityEvent but keep types/helpers
-vi.mock("@aoagents/ao-core", async () => {
-  const actual = await vi.importActual("@aoagents/ao-core");
+vi.mock("@made-by-moonlight/athene-core", async () => {
+  const actual = await vi.importActual("@made-by-moonlight/athene-core");
   return {
     ...(actual as Record<string, unknown>),
     recordActivityEvent: vi.fn(),

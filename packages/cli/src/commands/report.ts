@@ -1,5 +1,5 @@
 /**
- * `ao acknowledge` and `ao report` — explicit agent reporting commands (Stage 3).
+ * `athene acknowledge` and `athene report` — explicit agent reporting commands (Stage 3).
  *
  * These commands are invoked by the worker agent from inside its managed
  * session to declare workflow transitions (started / waiting / needs-input /
@@ -23,7 +23,7 @@ import {
   loadConfig,
   normalizeAgentReportedState,
   type AgentReportedState,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 import { getSessionManager } from "../lib/create-session-manager.js";
 
 function resolveSessionId(explicit: string | undefined): string {

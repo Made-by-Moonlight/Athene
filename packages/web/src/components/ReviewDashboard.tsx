@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { CodeReviewFinding } from "@aoagents/ao-core";
+import type { CodeReviewFinding } from "@made-by-moonlight/athene-core";
 import { MOBILE_BREAKPOINT, useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ProjectInfo } from "@/lib/project-name";
 import {
@@ -543,7 +543,7 @@ function ReviewDashboardInner({
           </button>
           <div className="dashboard-app-header__brand">
             <span className="dashboard-app-header__brand-dot" aria-hidden="true" />
-            <span>Agent Orchestrator</span>
+            <span>Athene</span>
           </div>
           <span className="dashboard-app-header__sep" aria-hidden="true" />
           <span className="dashboard-app-header__project">{headerProjectLabel}</span>

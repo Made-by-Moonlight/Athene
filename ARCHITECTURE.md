@@ -67,7 +67,7 @@ const worktreesDir = `${projectBaseDir}/worktrees`;
 
 projects:
   - path: ~/repos/integrator # Required: where is the repo?
-    repo: ComposioHQ/integrator # Required: GitHub repo
+    repo: slievr/integrator # Required: GitHub repo
     defaultBranch: next # Required: base branch
 
     # Optional overrides:
@@ -164,7 +164,7 @@ status=working
 tmuxName=a3b4c5d6e7f8-int-1            # Unix; on Windows the runtime handle is `pipePath=\\.\pipe\ao-pty-<sessionId>` plus `ptyHostPid`
 worktree=/Users/alice/.agent-orchestrator/a3b4c5d6e7f8-integrator/worktrees/int-1
 createdAt=2026-02-17T10:30:00Z
-pr=https://github.com/ComposioHQ/integrator/pull/123
+pr=https://github.com/slievr/integrator/pull/123
 ```
 
 **Key fields:**
@@ -187,7 +187,7 @@ ao list
 ao list integrator
 
 # Spawn new session
-ao spawn integrator INT-100
+athene spawn integrator INT-100
 
 # Attach to session (orchestrator finds the runtime handle: tmux name on Unix, named pipe on Windows)
 ao attach int-1
@@ -254,11 +254,11 @@ f1e2d3c4b5a6-int-1    (v2 checkout)
 # ~/code/my-orchestrator/agent-orchestrator.yaml
 projects:
   - path: ~/repos/integrator
-    repo: ComposioHQ/integrator
+    repo: slievr/integrator
     defaultBranch: next
 
   - path: ~/repos/backend
-    repo: ComposioHQ/backend
+    repo: slievr/backend
     defaultBranch: main
     sessionPrefix: be # Override auto-generated "bac"
 ```
@@ -289,7 +289,7 @@ Session names:
   Tmux: a3b4c5d6e7f8-int-1, a3b4c5d6e7f8-be-1
 
 Commands:
-  ao spawn integrator INT-100
+  athene spawn integrator INT-100
   ao attach int-1
 ```
 

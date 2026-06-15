@@ -21,7 +21,7 @@ VM_USER="azureuser"
 VM_KEY="$HOME/.ssh/qakeypair.pem"
 VM_REPO_PATH="/srv/ao-preview/manual-qa/$REPO_NAME"
 VM_AO_PATH="/srv/ao-preview/manual-qa/agent-orchestrator"
-AO_BIN="$VM_AO_PATH/packages/ao/node_modules/.bin/ao"
+AO_BIN="$VM_AO_PATH/packages/athene/node_modules/.bin/ao"
 
 # ── 1. Create GitHub repo (idempotent) ───────────────────────────────────────
 
@@ -65,7 +65,7 @@ seed_issue \
   "Add README.md with project description" \
   "Create a \`README.md\` at the repo root with:
 - A project title: **AO QA Test Repo**
-- One-line description: *Throwaway repo for Agent Orchestrator QA testing*
+- One-line description: *Throwaway repo for Athene QA testing*
 
 Open a single pull request."
 
@@ -136,7 +136,7 @@ fi
 
 echo "==> Updating agent-orchestrator.yaml..."
 cat > "$VM_AO_PATH/agent-orchestrator.yaml" << YAML
-\$schema: https://raw.githubusercontent.com/ComposioHQ/agent-orchestrator/main/schema/config.schema.json
+\$schema: https://raw.githubusercontent.com/slievr/Athene/main/schema/config.schema.json
 
 port: 3000
 terminalPort: 14800

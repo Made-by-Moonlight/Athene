@@ -6,7 +6,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { isWindows, loadConfig } from "@aoagents/ao-core";
+import { isWindows, loadConfig } from "@made-by-moonlight/athene-core";
 import { isTmuxAvailable } from "./helpers/tmux.js";
 
 const execFileAsync = promisify(execFile);
@@ -44,7 +44,7 @@ describe.skipIf(!canRun)("CLI first-run config generation (integration)", () => 
     await execFileAsync("git", ["branch", "-M", "main"], { cwd: repoPath });
     await execFileAsync(
       "git",
-      ["remote", "add", "origin", "https://github.com/ComposioHQ/ao-first-run-fixture.git"],
+      ["remote", "add", "origin", "https://github.com/slievr/ao-first-run-fixture.git"],
       { cwd: repoPath },
     );
     writeFileSync(join(repoPath, "README.md"), "# first-run integration\n");

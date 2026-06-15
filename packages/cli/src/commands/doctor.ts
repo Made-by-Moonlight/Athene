@@ -11,7 +11,7 @@ import {
   type OrchestratorConfig,
   type PluginRegistry,
   type PluginSlot,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 import { runNotifyTest } from "../lib/notify-test.js";
 import { runRepoScript } from "../lib/script-runner.js";
 import { detectOpenClawInstallation, validateToken } from "../lib/openclaw-probe.js";
@@ -25,7 +25,7 @@ import {
 } from "../lib/update-check.js";
 
 // ---------------------------------------------------------------------------
-// Helpers — match the PASS / WARN / FAIL style of ao-doctor.sh
+// Helpers — match the PASS / WARN / FAIL style of athene-doctor.sh
 // ---------------------------------------------------------------------------
 
 function pass(msg: string): void {
@@ -234,14 +234,14 @@ async function checkOpenClawNotifier(
 ): Promise<void> {
   const openclawConfig = config.notifiers?.["openclaw"];
   if (!openclawConfig || openclawConfig.plugin !== "openclaw") {
-    warn("OpenClaw notifier is not configured. Fix: run ao setup openclaw");
+    warn("OpenClaw notifier is not configured. Fix: run athene setup openclaw");
     return;
   }
 
   const url =
     (typeof openclawConfig["url"] === "string" ? openclawConfig["url"] : undefined) ??
     "http://127.0.0.1:18789";
-  // Resolve ${ENV_VAR} placeholders written by `ao setup openclaw` — the config
+  // Resolve ${ENV_VAR} placeholders written by `athene setup openclaw` — the config
   // stores the literal string "${OPENCLAW_HOOKS_TOKEN}" which is truthy but wrong.
   const rawToken =
     typeof openclawConfig["token"] === "string" ? openclawConfig["token"] : undefined;
@@ -341,10 +341,10 @@ async function sendTestNotifications(
   const result = await runNotifyTest(config, registry, {
     templateName: "basic",
     all: true,
-    message: "Test notification from ao doctor --test-notify",
+    message: "Test notification from athene doctor --test-notify",
     sessionId: "doctor-test",
     projectId: "doctor",
-    data: { source: "ao-doctor" },
+    data: { source: "athene-doctor" },
   });
 
   if (result.targets.length === 0) {
@@ -382,7 +382,7 @@ function checkVersionFreshness(): void {
   const cached = readCachedUpdateInfo(installMethod);
 
   if (!cached) {
-    pass(`ao v${current} installed (run any ao command to check for updates)`);
+    pass(`athene v${current} installed (run any athene command to check for updates)`);
     return;
   }
 
@@ -393,9 +393,9 @@ function checkVersionFreshness(): void {
 
   if (isOutdated) {
     const latest = installMethod === "git" ? cached.latestVersion : `v${cached.latestVersion}`;
-    warn(`ao v${current} is outdated (latest: ${latest}). Run: ${getUpdateCommand(installMethod)}`);
+    warn(`athene v${current} is outdated (latest: ${latest}). Run: ${getUpdateCommand(installMethod)}`);
   } else {
-    pass(`ao v${current} is the latest version`);
+    pass(`athene v${current} is the latest version`);
   }
 }
 
@@ -420,7 +420,7 @@ export function registerDoctor(program: Command): void {
 
       let shellExitCode: number;
       try {
-        shellExitCode = await runRepoScript("ao-doctor.sh", scriptArgs);
+        shellExitCode = await runRepoScript("athene-doctor.sh", scriptArgs);
       } catch (err) {
         console.error(err instanceof Error ? err.message : String(err));
         shellExitCode = 1;

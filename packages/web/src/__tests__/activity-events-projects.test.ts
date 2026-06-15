@@ -4,10 +4,10 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { execSync } from "node:child_process";
 import { NextRequest } from "next/server";
-import { recordActivityEvent, registerProjectInGlobalConfig } from "@aoagents/ao-core";
+import { recordActivityEvent, registerProjectInGlobalConfig } from "@made-by-moonlight/athene-core";
 
-vi.mock("@aoagents/ao-core", async () => {
-  const actual = await vi.importActual("@aoagents/ao-core");
+vi.mock("@made-by-moonlight/athene-core", async () => {
+  const actual = await vi.importActual("@made-by-moonlight/athene-core");
   return {
     ...(actual as Record<string, unknown>),
     recordActivityEvent: vi.fn(),

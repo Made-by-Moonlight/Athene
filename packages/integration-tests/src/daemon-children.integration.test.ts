@@ -7,7 +7,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { isWindows, killProcessTree } from "@aoagents/ao-core";
+import { isWindows, killProcessTree } from "@made-by-moonlight/athene-core";
 import { sleep } from "./helpers/polling.js";
 
 const execFileAsync = promisify(execFile);
@@ -107,7 +107,7 @@ describe.skipIf(!canRun)("daemon child reaping (integration)", () => {
     await rm(tmpHome, { recursive: true, force: true }).catch(() => {});
   }, 30_000);
 
-  it("ao stop terminates children spawned by ao start", async () => {
+  it("athene stop terminates children spawned by athene start", async () => {
     const env = {
       ...process.env,
       HOME: tmpHome,

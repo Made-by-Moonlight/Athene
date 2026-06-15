@@ -54,7 +54,7 @@ npx node-gyp rebuild
 
 **Symptom**: API returns 500 with "No agent-orchestrator.yaml found"
 
-**Fix**: Ensure config exists in the directory where you run `ao start`, or symlink it:
+**Fix**: Ensure config exists in the directory where you run `athene start`, or symlink it:
 
 ```bash
 ln -s /path/to/agent-orchestrator.yaml packages/web/agent-orchestrator.yaml

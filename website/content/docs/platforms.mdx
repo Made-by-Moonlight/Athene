@@ -108,8 +108,8 @@ What works:
 
 | Capability | Status |
 | --- | --- |
-| `ao start`, `ao stop`, `ao dashboard` | Supported |
-| `ao spawn` and `ao spawn --prompt` | Supported through the process runtime |
+| `athene start`, `athene stop`, `athene dashboard` | Supported |
+| `athene spawn` and `athene spawn --prompt` | Supported through the process runtime |
 | GitHub, GitLab, and Linear tracker/SCM integrations | Supported when their CLIs or credentials are configured |
 | Browser dashboard terminal | Supported through the direct PTY server |
 | Slack, Discord, webhook, Composio, and OpenClaw notifiers | Supported |
@@ -123,7 +123,7 @@ What is limited:
 | Desktop notifier | No-op on Windows | Slack, Discord, webhook, Composio, or OpenClaw |
 | tmux attach commands | Not available | Dashboard terminal and AO session commands |
 
-Use PowerShell or Git Bash for normal CLI commands. If a command behaves differently because of shell quoting, put longer instructions in a file and send them with `ao send --file`.
+Use PowerShell or Git Bash for normal CLI commands. If a command behaves differently because of shell quoting, put longer instructions in a file and send them with `athene send --file`.
 
 ## Containers And Remote Hosts
 

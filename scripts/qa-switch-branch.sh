@@ -15,7 +15,7 @@ VM_KEY="$HOME/.ssh/qakeypair.pem"
 REPO_PATH="/srv/ao-preview/manual-qa/agent-orchestrator"
 TMUX_SESSION="ao-qa"
 
-UPSTREAM_REMOTE="https://github.com/ComposioHQ/agent-orchestrator.git"
+UPSTREAM_REMOTE="https://github.com/slievr/Athene.git"
 
 BRANCH_CORE="feat/multi-pr-per-session"
 BRANCH_UI="feat/multi-pr-card-ui"
@@ -25,7 +25,7 @@ BRANCH_UI="feat/multi-pr-card-ui"
 echo ""
 echo "Which repository?"
 echo ""
-echo "  1) Upstream — ComposioHQ/agent-orchestrator (default)"
+echo "  1) Upstream — slievr/Athene (default)"
 echo "  2) Fork     — enter your GitHub fork URL"
 echo ""
 read -rp "Enter 1 or 2 [default: 1]: " repo_choice
@@ -94,7 +94,7 @@ REMOTE_URL="$5"
 echo ""
 echo "==> Stopping AO..."
 cd "$REPO_PATH"
-ao stop 2>/dev/null || true
+athene stop 2>/dev/null || true
 
 echo "==> Waiting for AO to fully stop..."
 sleep 3
@@ -117,7 +117,7 @@ echo "==> Building..."
 pnpm build
 
 echo "==> Restarting AO in tmux session '$TMUX_SESSION'..."
-AO_BIN="$REPO_PATH/packages/ao/node_modules/.bin/ao"
+AO_BIN="$REPO_PATH/packages/athene/node_modules/.bin/ao"
 tmux send-keys -t "$TMUX_SESSION:0" "" Enter
 tmux send-keys -t "$TMUX_SESSION:0" "cd $REPO_PATH && $AO_BIN start" Enter
 

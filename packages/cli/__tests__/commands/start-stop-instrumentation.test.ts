@@ -3,13 +3,13 @@
  *
  * Covers MUST emits in registerStop and the start action that don't
  * require running the full startup pipeline:
- *   - cli.stop_invoked         (start of ao stop action)
- *   - cli.stop_failed          (outer catch of ao stop action)
- *   - cli.stop_session_failed  (per-session kill failure during ao stop)
- *   - cli.last_stop_write_failed (last-stop persistence failure during ao stop)
- *   - cli.daemon_killed        (SIGTERM sent to parent ao start)
+ *   - cli.stop_invoked         (start of athene stop action)
+ *   - cli.stop_failed          (outer catch of athene stop action)
+ *   - cli.stop_session_failed  (per-session kill failure during athene stop)
+ *   - cli.last_stop_write_failed (last-stop persistence failure during athene stop)
+ *   - cli.daemon_killed        (SIGTERM sent to parent athene start)
  *   - cli.start_invoked        (true start action entry)
- *   - cli.start_failed (outer) (outer catch of ao start action)
+ *   - cli.start_failed (outer) (outer catch of athene start action)
  *   - cli.restore_session_failed (per-session restore failure)
  *
  * cli.start_failed (orchestrator_setup / supervisor_start) is exercised by
@@ -56,9 +56,9 @@ const {
   mockIsWindows: vi.fn(),
 }));
 
-vi.mock("@aoagents/ao-core", async (importOriginal) => {
+vi.mock("@made-by-moonlight/athene-core", async (importOriginal) => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  const actual = await importOriginal<typeof import("@aoagents/ao-core")>();
+  const actual = await importOriginal<typeof import("@made-by-moonlight/athene-core")>();
   return {
     ...actual,
     findPidByPort: (...args: unknown[]) => mockFindPidByPort(...args),
@@ -194,7 +194,7 @@ vi.mock("../../src/lib/cli-errors.js", () => ({
   formatCommandError: vi.fn((err: unknown) => String(err)),
 }));
 
-import { recordActivityEvent } from "@aoagents/ao-core";
+import { recordActivityEvent } from "@made-by-moonlight/athene-core";
 import { registerStart, registerStop } from "../../src/commands/start.js";
 
 const recordedEvents = (): Array<Record<string, unknown>> =>
@@ -208,7 +208,7 @@ function buildProgram(): Command {
   return program;
 }
 
-describe("ao stop — activity events", () => {
+describe("athene stop — activity events", () => {
   let exitSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
@@ -243,9 +243,9 @@ describe("ao stop — activity events", () => {
     // Force a fast failure so the action exits quickly after emitting stop_invoked.
     mockGetRunning.mockResolvedValue(null);
     // Make loadConfig throw so we hit the outer catch
-    vi.doMock("@aoagents/ao-core", async (importOriginal) => {
+    vi.doMock("@made-by-moonlight/athene-core", async (importOriginal) => {
       // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-      const actual = await importOriginal<typeof import("@aoagents/ao-core")>();
+      const actual = await importOriginal<typeof import("@made-by-moonlight/athene-core")>();
       return {
         ...actual,
         findPidByPort: (...args: unknown[]) => mockFindPidByPort(...args),
@@ -271,20 +271,20 @@ describe("ao stop — activity events", () => {
       expect.objectContaining({
         kind: "cli.stop_invoked",
         source: "cli",
-        summary: "ao stop invoked",
+        summary: "athene stop invoked",
         data: expect.objectContaining({
           projectArg,
         }),
       }),
     );
 
-    vi.doUnmock("@aoagents/ao-core");
+    vi.doUnmock("@made-by-moonlight/athene-core");
   });
 
   it("emits cli.stop_failed when loadConfig throws", async () => {
-    vi.doMock("@aoagents/ao-core", async (importOriginal) => {
+    vi.doMock("@made-by-moonlight/athene-core", async (importOriginal) => {
       // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-      const actual = await importOriginal<typeof import("@aoagents/ao-core")>();
+      const actual = await importOriginal<typeof import("@made-by-moonlight/athene-core")>();
       return {
         ...actual,
         findPidByPort: (...args: unknown[]) => mockFindPidByPort(...args),
@@ -315,7 +315,7 @@ describe("ao stop — activity events", () => {
       }),
     );
 
-    vi.doUnmock("@aoagents/ao-core");
+    vi.doUnmock("@made-by-moonlight/athene-core");
   });
 
   it("emits cli.daemon_killed when SIGTERM is sent to a running daemon", async () => {
@@ -328,9 +328,9 @@ describe("ao stop — activity events", () => {
     });
     mockSessionManager.list.mockResolvedValue([]);
 
-    vi.doMock("@aoagents/ao-core", async (importOriginal) => {
+    vi.doMock("@made-by-moonlight/athene-core", async (importOriginal) => {
       // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-      const actual = await importOriginal<typeof import("@aoagents/ao-core")>();
+      const actual = await importOriginal<typeof import("@made-by-moonlight/athene-core")>();
       return {
         ...actual,
         findPidByPort: (...args: unknown[]) => mockFindPidByPort(...args),
@@ -355,7 +355,7 @@ describe("ao stop — activity events", () => {
     try {
       await program.parseAsync(["node", "ao", "stop"]);
     } catch {
-      // ao stop may exit; we just want the events
+      // athene stop may exit; we just want the events
     }
 
     const events = recordedEvents();
@@ -368,10 +368,10 @@ describe("ao stop — activity events", () => {
     );
     expect(mockKillProcessTree).toHaveBeenCalledWith(99999, "SIGTERM");
 
-    vi.doUnmock("@aoagents/ao-core");
+    vi.doUnmock("@made-by-moonlight/athene-core");
   });
 
-  it("emits cli.stop_session_failed when sm.kill throws during ao stop", async () => {
+  it("emits cli.stop_session_failed when sm.kill throws during athene stop", async () => {
     mockGetRunning.mockResolvedValue({
       pid: 99999,
       configPath: "/tmp/x.yaml",
@@ -389,9 +389,9 @@ describe("ao stop — activity events", () => {
     mockSessionManager.kill.mockRejectedValue(new Error("kill timeout"));
     vi.spyOn(process, "kill").mockImplementation(() => true);
 
-    vi.doMock("@aoagents/ao-core", async (importOriginal) => {
+    vi.doMock("@made-by-moonlight/athene-core", async (importOriginal) => {
       // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-      const actual = await importOriginal<typeof import("@aoagents/ao-core")>();
+      const actual = await importOriginal<typeof import("@made-by-moonlight/athene-core")>();
       return {
         ...actual,
         findPidByPort: (...args: unknown[]) => mockFindPidByPort(...args),
@@ -432,10 +432,10 @@ describe("ao stop — activity events", () => {
       }),
     );
 
-    vi.doUnmock("@aoagents/ao-core");
+    vi.doUnmock("@made-by-moonlight/athene-core");
   });
 
-  it("emits cli.last_stop_write_failed when ao stop cannot persist restore state", async () => {
+  it("emits cli.last_stop_write_failed when athene stop cannot persist restore state", async () => {
     mockGetRunning.mockResolvedValue(null);
     mockSessionManager.list.mockResolvedValue([
       {
@@ -447,9 +447,9 @@ describe("ao stop — activity events", () => {
     mockSessionManager.kill.mockResolvedValue({ cleaned: true, alreadyTerminated: false });
     mockWriteLastStop.mockRejectedValue(new Error("last-stop lock busy"));
 
-    vi.doMock("@aoagents/ao-core", async (importOriginal) => {
+    vi.doMock("@made-by-moonlight/athene-core", async (importOriginal) => {
       // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-      const actual = await importOriginal<typeof import("@aoagents/ao-core")>();
+      const actual = await importOriginal<typeof import("@made-by-moonlight/athene-core")>();
       return {
         ...actual,
         findPidByPort: (...args: unknown[]) => mockFindPidByPort(...args),
@@ -503,11 +503,11 @@ describe("ao stop — activity events", () => {
     expect(logs.some((line) => line.includes("Could not list sessions"))).toBe(false);
     expect(logs.some((line) => line.includes("Could not write last-stop state"))).toBe(true);
 
-    vi.doUnmock("@aoagents/ao-core");
+    vi.doUnmock("@made-by-moonlight/athene-core");
   });
 });
 
-describe("ao start — activity events (failure paths)", () => {
+describe("athene start — activity events (failure paths)", () => {
   let exitSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
@@ -550,7 +550,7 @@ describe("ao start — activity events (failure paths)", () => {
         kind: "cli.start_invoked",
         source: "cli",
         level: "info",
-        summary: "ao start invoked",
+        summary: "athene start invoked",
         data: expect.objectContaining({
           projectArg,
         }),

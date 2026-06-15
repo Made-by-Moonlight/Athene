@@ -5,8 +5,8 @@
  * Everything else runs for real: config parsing, Block Kit construction, channel routing.
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import type { NotifyAction, EventPriority } from "@aoagents/ao-core";
-import slackPlugin from "@aoagents/ao-plugin-notifier-slack";
+import type { NotifyAction, EventPriority } from "@made-by-moonlight/athene-core";
+import slackPlugin from "@made-by-moonlight/athene-plugin-notifier-slack";
 import { makeEvent } from "./helpers/event-factory.js";
 
 function mockFetchOk() {
@@ -322,7 +322,7 @@ describe("notifier-slack integration", () => {
       const contextBlock = getBlocks(body).find(
         (block) =>
           block.type === "context" &&
-          block.elements?.[0]?.text?.includes("Sent by Agent Orchestrator"),
+          block.elements?.[0]?.text?.includes("Sent by Athene"),
       );
       const contextText = contextBlock!.elements[0].text;
       const unixTs = Math.floor(ts.getTime() / 1000);

@@ -16,10 +16,10 @@ while [ $# -gt 0 ]; do
       ;;
     -h|--help)
       cat <<'EOF'
-Usage: ao update [--skip-smoke] [--smoke-only]
+Usage: athene update [--skip-smoke] [--smoke-only]
 
-Fast-forwards the local Agent Orchestrator install repo to main, installs deps,
-clean-rebuilds all workspace packages, refreshes the ao launcher, and runs smoke tests.
+Fast-forwards the local Athene install repo to main, installs deps,
+clean-rebuilds all workspace packages, refreshes the athene launcher, and runs smoke tests.
 
 Options:
   --skip-smoke  Skip smoke tests after rebuild
@@ -42,7 +42,7 @@ fi
 
 is_repo_root() {
   local candidate="$1"
-  [ -f "$candidate/packages/ao/bin/ao.js" ] && [ -d "$candidate/packages/cli" ]
+  [ -f "$candidate/packages/athene/bin/athene.js" ] && [ -d "$candidate/packages/cli" ]
 }
 
 find_repo_root_from() {
@@ -69,7 +69,7 @@ resolve_repo_root() {
 }
 
 if ! REPO_ROOT="$(resolve_repo_root)"; then
-  printf 'Unable to find Agent Orchestrator repo root. Fix: run via ao update or set AO_REPO_ROOT.\n' >&2
+  printf 'Unable to find Athene repo root. Fix: run via athene update or set AO_REPO_ROOT.\n' >&2
   exit 1
 fi
 
@@ -159,9 +159,9 @@ maybe_sync_origin_with_upstream() {
 
 run_smoke_tests() {
   printf '\nRunning smoke tests...\n'
-  run_cmd node "$REPO_ROOT/packages/ao/bin/ao.js" --version
-  run_cmd node "$REPO_ROOT/packages/ao/bin/ao.js" doctor --help
-  run_cmd node "$REPO_ROOT/packages/ao/bin/ao.js" update --help
+  run_cmd node "$REPO_ROOT/packages/athene/bin/athene.js" --version
+  run_cmd node "$REPO_ROOT/packages/athene/bin/athene.js" doctor --help
+  run_cmd node "$REPO_ROOT/packages/athene/bin/athene.js" update --help
 }
 
 ensure_repo_clean() {
@@ -178,13 +178,13 @@ ensure_on_target_branch() {
   local current_branch
   current_branch="$(git branch --show-current)"
   if [ "$current_branch" != "$TARGET_BRANCH" ]; then
-    printf 'Current branch is %s, expected %s. Fix: git switch %s && rerun ao update.\n' \
+    printf 'Current branch is %s, expected %s. Fix: git switch %s && rerun athene update.\n' \
       "$current_branch" "$TARGET_BRANCH" "$TARGET_BRANCH" >&2
     exit 1
   fi
 }
 
-printf 'Agent Orchestrator Update\n\n'
+printf 'Athene Update\n\n'
 
 require_command node "install Node.js 20+"
 
@@ -198,11 +198,11 @@ if [ "$SMOKE_ONLY" = false ]; then
   require_command npm "install npm with Node.js"
 
   if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    printf 'The update command must run inside the Agent Orchestrator git checkout.\n' >&2
+    printf 'The update command must run inside the Athene git checkout.\n' >&2
     exit 1
   fi
 
-  ensure_repo_clean "Working tree is dirty. Fix: commit or stash local changes before running ao update."
+  ensure_repo_clean "Working tree is dirty. Fix: commit or stash local changes before running athene update."
   ensure_on_target_branch
 
   maybe_sync_origin_with_upstream
@@ -222,7 +222,7 @@ if [ "$SMOKE_ONLY" = false ]; then
 
     printf '\nRefreshing ao launcher...\n'
     (
-      cd "$REPO_ROOT/packages/ao"
+      cd "$REPO_ROOT/packages/athene"
       npm_link_error="$(mktemp)"
       if npm link --force 2>"$npm_link_error"; then
         rm -f "$npm_link_error"
@@ -236,7 +236,7 @@ if [ "$SMOKE_ONLY" = false ]; then
       else
         cat "$npm_link_error" >&2
         rm -f "$npm_link_error"
-        printf 'ERROR: Launcher refresh failed. Run manually: cd %s/packages/ao && sudo npm link --force\n' "$REPO_ROOT"
+        printf 'ERROR: Launcher refresh failed. Run manually: cd %s/packages/athene && sudo npm link --force\n' "$REPO_ROOT"
         exit 1
       fi
     )

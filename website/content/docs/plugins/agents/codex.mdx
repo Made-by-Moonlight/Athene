@@ -57,6 +57,6 @@ OpenAI API credentials come from wherever `codex` reads them — AO doesn't set 
     AO reads `~/.codex/sessions/`. If the date-sharded path doesn't match your clock (e.g. Docker container with wrong TZ), sessions look stale — align the clocks.
   </Accordion>
   <Accordion title="PR created but dashboard doesn't know">
-    The PATH wrapper writes session metadata on `gh pr create`. If `gh` was invoked with an absolute path (bypassing the wrapper) AO won't see it. `ao session claim-pr <pr> <sessionId>` fixes this retroactively.
+    The PATH wrapper writes session metadata on `gh pr create`. If `gh` was invoked with an absolute path (bypassing the wrapper) AO won't see it. `athene session claim-pr <pr> <sessionId>` fixes this retroactively.
   </Accordion>
 </Accordions>

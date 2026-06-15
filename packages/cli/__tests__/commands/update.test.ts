@@ -26,14 +26,14 @@ const {
     latestVersion: "0.3.0",
     isOutdated: true,
     installMethod: "git" as const,
-    recommendedCommand: "ao update",
+    recommendedCommand: "athene update",
     checkedAt: new Date().toISOString(),
   })),
   mockInvalidateCache: vi.fn(),
   mockGetCurrentVersion: vi.fn(() => "0.2.2"),
   mockGetUpdateCommand: vi.fn((method: string) => {
-    if (method === "git") return "ao update";
-    return "npm install -g @aoagents/ao@latest";
+    if (method === "git") return "athene update";
+    return "npm install -g @made-by-moonlight/athene@latest";
   }),
 }));
 
@@ -65,7 +65,7 @@ vi.mock("../../src/lib/create-session-manager.js", () => ({
   })),
 }));
 
-import type * as AoCoreType from "@aoagents/ao-core";
+import type * as AoCoreType from "@made-by-moonlight/athene-core";
 import type * as FsType from "node:fs";
 
 const { mockIsWindows, mockLoadConfig, mockLoadGlobalConfig, mockExistsSync } = vi.hoisted(() => ({
@@ -75,8 +75,8 @@ const { mockIsWindows, mockLoadConfig, mockLoadGlobalConfig, mockExistsSync } = 
   mockExistsSync: vi.fn(() => false),
 }));
 
-vi.mock("@aoagents/ao-core", async () => {
-  const actual = (await vi.importActual("@aoagents/ao-core")) as typeof AoCoreType;
+vi.mock("@made-by-moonlight/athene-core", async () => {
+  const actual = (await vi.importActual("@made-by-moonlight/athene-core")) as typeof AoCoreType;
   return {
     ...actual,
     loadConfig: (...args: unknown[]) => mockLoadConfig(...args),
@@ -136,7 +136,7 @@ function makeNpmUpdateInfo(overrides = {}) {
     latestVersion: "0.3.0",
     isOutdated: true,
     installMethod: "npm-global" as const,
-    recommendedCommand: "npm install -g @aoagents/ao@latest",
+    recommendedCommand: "npm install -g @made-by-moonlight/athene@latest",
     checkedAt: new Date().toISOString(),
     ...overrides,
   };
@@ -181,7 +181,7 @@ describe("update command", () => {
     mockDetectInstallMethod.mockReturnValue("git");
     mockCheckForUpdate.mockReset();
     mockCheckForUpdate.mockResolvedValue(
-      makeNpmUpdateInfo({ installMethod: "git", recommendedCommand: "ao update" }),
+      makeNpmUpdateInfo({ installMethod: "git", recommendedCommand: "athene update" }),
     );
     mockInvalidateCache.mockReset();
     mockPromptConfirm.mockReset();
@@ -262,7 +262,7 @@ describe("update command", () => {
       mockRunRepoScript.mockResolvedValue(0);
       await program.parseAsync(["node", "test", "update", "--skip-smoke"]);
       expect(mockRunRepoScript).toHaveBeenCalledWith(
-        "ao-update.sh",
+        "athene-update.sh",
         expect.arrayContaining(["--skip-smoke"]),
       );
     });
@@ -314,12 +314,12 @@ describe("update command", () => {
 
     it("runs the update script with default args", async () => {
       await program.parseAsync(["node", "test", "update"]);
-      expect(mockRunRepoScript).toHaveBeenCalledWith("ao-update.sh", []);
+      expect(mockRunRepoScript).toHaveBeenCalledWith("athene-update.sh", []);
     });
 
     it("shows an actionable error when the bundled update script is missing", async () => {
       mockRunRepoScript.mockRejectedValue(
-        new Error("Script not found: ao-update.sh. Expected at: /tmp/ao-update.sh"),
+        new Error("Script not found: athene-update.sh. Expected at: /tmp/athene-update.sh"),
       );
 
       await expect(program.parseAsync(["node", "test", "update"])).rejects.toThrow(
@@ -330,18 +330,18 @@ describe("update command", () => {
       expect(mockCheckForUpdate).not.toHaveBeenCalled();
       expect(mockInvalidateCache).not.toHaveBeenCalled();
       expect(vi.mocked(console.error)).toHaveBeenCalledWith(
-        expect.stringContaining("ao-update.sh is missing from the bundled assets"),
+        expect.stringContaining("athene-update.sh is missing from the bundled assets"),
       );
     });
 
     it("passes through --skip-smoke", async () => {
       await program.parseAsync(["node", "test", "update", "--skip-smoke"]);
-      expect(mockRunRepoScript).toHaveBeenCalledWith("ao-update.sh", ["--skip-smoke"]);
+      expect(mockRunRepoScript).toHaveBeenCalledWith("athene-update.sh", ["--skip-smoke"]);
     });
 
     it("passes through --smoke-only", async () => {
       await program.parseAsync(["node", "test", "update", "--smoke-only"]);
-      expect(mockRunRepoScript).toHaveBeenCalledWith("ao-update.sh", ["--smoke-only"]);
+      expect(mockRunRepoScript).toHaveBeenCalledWith("athene-update.sh", ["--smoke-only"]);
     });
 
     it("invalidates cache after successful update", async () => {
@@ -405,7 +405,7 @@ describe("update command", () => {
 
       expect(mockPromptConfirm).not.toHaveBeenCalled();
       const allOutput = logSpy.mock.calls.map((c) => c[0]).join("\n");
-      expect(allOutput).toContain("npm install -g @aoagents/ao@latest");
+      expect(allOutput).toContain("npm install -g @made-by-moonlight/athene@latest");
     });
 
     it("runs npm install when user confirms", async () => {
@@ -559,13 +559,13 @@ describe("update command", () => {
       mockDetectInstallMethod.mockReturnValue("pnpm-global");
       mockResolveUpdateChannel.mockReturnValue("stable");
       mockGetUpdateCommand.mockImplementation((method: string) => {
-        if (method === "pnpm-global") return "pnpm add -g @aoagents/ao@latest";
-        return "npm install -g @aoagents/ao@latest";
+        if (method === "pnpm-global") return "pnpm add -g @made-by-moonlight/athene@latest";
+        return "npm install -g @made-by-moonlight/athene@latest";
       });
       mockCheckForUpdate.mockResolvedValue(
         makeNpmUpdateInfo({
           installMethod: "pnpm-global",
-          recommendedCommand: "pnpm add -g @aoagents/ao@latest",
+          recommendedCommand: "pnpm add -g @made-by-moonlight/athene@latest",
         }),
       );
       Object.defineProperty(process.stdin, "isTTY", { value: true, configurable: true });
@@ -588,7 +588,7 @@ describe("update command", () => {
 
     it("runs stop → package install → version verification → start/restore when sessions are active", async () => {
       mockSpawn.mockImplementation((cmd: string, args: string[]) => {
-        if (cmd === "ao" && args[0] === "--version") {
+        if (cmd === "athene" && args[0] === "--version") {
           return createMockChild(0, undefined, { stdout: "0.3.0\n" });
         }
         return createMockChild(0, undefined, { stdout: "" });
@@ -598,7 +598,7 @@ describe("update command", () => {
 
       expect(mockSpawn).toHaveBeenCalledTimes(4);
       expect(mockSpawn.mock.calls[0]).toEqual([
-        "ao",
+        "athene",
         ["stop", "--yes"],
         expect.objectContaining({
           stdio: "inherit",
@@ -606,11 +606,11 @@ describe("update command", () => {
         }),
       ]);
       expect(mockSpawn.mock.calls[1][0]).toBe("pnpm");
-      expect(mockSpawn.mock.calls[1][1]).toEqual(["add", "-g", "@aoagents/ao@latest"]);
-      expect(mockSpawn.mock.calls[2][0]).toBe("ao");
+      expect(mockSpawn.mock.calls[1][1]).toEqual(["add", "-g", "@made-by-moonlight/athene@latest"]);
+      expect(mockSpawn.mock.calls[2][0]).toBe("athene");
       expect(mockSpawn.mock.calls[2][1]).toEqual(["--version"]);
       expect(mockSpawn.mock.calls[3]).toEqual([
-        "ao",
+        "athene",
         ["start", "my-app", "--restore"],
         expect.objectContaining({
           stdio: "inherit",
@@ -631,7 +631,7 @@ describe("update command", () => {
       mockExistsSync.mockReturnValue(false);
       mockSessions.value = [];
       mockSpawn.mockImplementation((cmd: string, args: string[]) => {
-        if (cmd === "ao" && args[0] === "--version") {
+        if (cmd === "athene" && args[0] === "--version") {
           return createMockChild(0, undefined, { stdout: "0.3.0\n" });
         }
         return createMockChild(0, undefined, { stdout: "" });
@@ -641,7 +641,7 @@ describe("update command", () => {
 
       expect(mockSpawn).toHaveBeenCalledTimes(2);
       expect(mockSpawn.mock.calls[0][0]).toBe("pnpm");
-      expect(mockSpawn.mock.calls[1][0]).toBe("ao");
+      expect(mockSpawn.mock.calls[1][0]).toBe("athene");
       expect(mockSpawn.mock.calls[1][1]).toEqual(["--version"]);
     });
 
@@ -654,11 +654,11 @@ describe("update command", () => {
       });
       mockSessions.value = [{ id: "orphan-1", status: "working", projectId: "my-app" }];
       mockSpawn.mockImplementation((cmd: string, args: string[]) => {
-        if (cmd === "ao" && args[0] === "stop") {
+        if (cmd === "athene" && args[0] === "stop") {
           mockSessions.value = [];
           return createMockChild(0, undefined, { stdout: "" });
         }
-        if (cmd === "ao" && args[0] === "--version") {
+        if (cmd === "athene" && args[0] === "--version") {
           return createMockChild(0, undefined, { stdout: "0.3.0\n" });
         }
         return createMockChild(0, undefined, { stdout: "" });
@@ -666,7 +666,7 @@ describe("update command", () => {
 
       await program.parseAsync(["node", "test", "update"]);
 
-      expect(mockSpawn.mock.calls[0][0]).toBe("ao");
+      expect(mockSpawn.mock.calls[0][0]).toBe("athene");
       expect(mockSpawn.mock.calls[0][1]).toEqual(["stop", "--yes"]);
       expect(mockSpawn.mock.calls[0][2]).toEqual(
         expect.objectContaining({
@@ -674,16 +674,16 @@ describe("update command", () => {
         }),
       );
       expect(mockSpawn.mock.calls[1][0]).toBe("pnpm");
-      expect(mockSpawn.mock.calls[2][0]).toBe("ao");
+      expect(mockSpawn.mock.calls[2][0]).toBe("athene");
       expect(mockSpawn.mock.calls[2][1]).toEqual(["--version"]);
-      expect(mockSpawn.mock.calls.some((call) => call[0] === "ao" && call[1][0] === "start")).toBe(
+      expect(mockSpawn.mock.calls.some((call) => call[0] === "athene" && call[1][0] === "start")).toBe(
         false,
       );
     });
 
     it("honors --no-restore when restarting after update", async () => {
       mockSpawn.mockImplementation((cmd: string, args: string[]) => {
-        if (cmd === "ao" && args[0] === "--version") {
+        if (cmd === "athene" && args[0] === "--version") {
           return createMockChild(0, undefined, { stdout: "0.3.0\n" });
         }
         return createMockChild(0, undefined, { stdout: "" });
@@ -692,7 +692,7 @@ describe("update command", () => {
       await program.parseAsync(["node", "test", "update", "--no-restore"]);
 
       expect(mockSpawn.mock.calls.at(-1)).toEqual([
-        "ao",
+        "athene",
         ["start", "my-app", "--no-restore"],
         expect.objectContaining({
           stdio: "inherit",
@@ -701,7 +701,7 @@ describe("update command", () => {
       ]);
     });
 
-    it("aborts before install if ao stop exits 0 but AO still appears active", async () => {
+    it("aborts before install if athene stop exits 0 but AO still appears active", async () => {
       mockGetRunning.mockResolvedValue({
         pid: 12345,
         configPath: "/tmp/test-global-config.yaml",
@@ -716,14 +716,14 @@ describe("update command", () => {
       );
 
       expect(mockSpawn).toHaveBeenCalledTimes(1);
-      expect(mockSpawn.mock.calls[0][0]).toBe("ao");
+      expect(mockSpawn.mock.calls[0][0]).toBe("athene");
       expect(mockSpawn.mock.calls[0][1]).toEqual(["stop", "--yes"]);
       expect(mockSpawn.mock.calls.some((call) => call[0] === "pnpm")).toBe(false);
       const stderr = vi
         .mocked(console.error)
         .mock.calls.map((c) => String(c[0]))
         .join("\n");
-      expect(stderr).toContain("AO still appears to be running after `ao stop --yes`");
+      expect(stderr).toContain("AO still appears to be running after `athene stop --yes`");
     });
 
     it("prints a friendly pnpm diagnostic and npm fallback when pnpm fails", async () => {
@@ -746,7 +746,7 @@ describe("update command", () => {
         .join("\n");
       expect(stderr).toContain("AO was not updated. You are still on version 0.2.2.");
       expect(stderr).toContain("pnpm's global store metadata is inconsistent");
-      expect(stderr).toContain("You can also try: npm install -g @aoagents/ao@latest");
+      expect(stderr).toContain("You can also try: npm install -g @made-by-moonlight/athene@latest");
       expect(stderr).toContain("ERR_PNPM_UNEXPECTED_VIRTUAL_STORE");
       expect(mockInvalidateCache).not.toHaveBeenCalled();
     });
@@ -811,7 +811,7 @@ describe("update command", () => {
           currentVersion: "0.5.0",
           latestVersion: "0.5.0-nightly-abc",
           isOutdated: false,
-          recommendedCommand: "npm install -g @aoagents/ao@nightly",
+          recommendedCommand: "npm install -g @made-by-moonlight/athene@nightly",
         }),
       );
       mockPromptConfirm.mockResolvedValue(true);
@@ -893,8 +893,8 @@ describe("update command", () => {
   });
 
   // -----------------------------------------------------------------------
-  // First-channel opt-in (Ashish P2 — `ao config set updateChannel nightly`
-  // followed by `ao update` with no prior auto-update cache)
+  // First-channel opt-in (Ashish P2 — `athene config set updateChannel nightly`
+  // followed by `athene update` with no prior auto-update cache)
   // -----------------------------------------------------------------------
 
   describe("first-channel opt-in", () => {
@@ -914,8 +914,8 @@ describe("update command", () => {
     });
 
     it("triggers install when stable user opts into nightly and there's no prior cache (Ashish proof)", async () => {
-      // Repro of Ashish P2: stable user on 0.5.0, runs `ao config set
-      // updateChannel nightly`, runs `ao update`. Previously got
+      // Repro of Ashish P2: stable user on 0.5.0, runs `athene config set
+      // updateChannel nightly`, runs `athene update`. Previously got
       // "Already on latest nightly" because semver says prerelease < stable.
       // With the first-opt-in branch, we recognise the version mismatch and
       // prompt; on confirm, install runs.
@@ -927,7 +927,7 @@ describe("update command", () => {
           currentVersion: "0.5.0",
           latestVersion: "0.5.0-nightly-abc",
           isOutdated: false,
-          recommendedCommand: "npm install -g @aoagents/ao@nightly",
+          recommendedCommand: "npm install -g @made-by-moonlight/athene@nightly",
         }),
       );
       mockPromptConfirm.mockResolvedValue(true);
@@ -1027,7 +1027,7 @@ describe("update command", () => {
       const logSpy = vi.mocked(console.log);
       await program.parseAsync(["node", "test", "update"]);
       const all = logSpy.mock.calls.map((c) => String(c[0])).join("\n");
-      expect(all).toMatch(/Run: npm install -g @aoagents\/ao@latest/);
+      expect(all).toMatch(/Run: npm install -g @made-by-moonlight\/athene@latest/);
       expect(mockSpawn).not.toHaveBeenCalled();
     });
 
@@ -1046,9 +1046,9 @@ describe("update command", () => {
 
       await program.parseAsync(["node", "test", "update"]);
 
-      expect(mockSpawn.mock.calls[0][0]).toBe("ao");
+      expect(mockSpawn.mock.calls[0][0]).toBe("athene");
       expect(mockSpawn.mock.calls[0][1]).toEqual(["stop", "--yes"]);
-      expect(mockSpawn.mock.calls.at(-1)?.[0]).toBe("ao");
+      expect(mockSpawn.mock.calls.at(-1)?.[0]).toBe("athene");
       expect(mockSpawn.mock.calls.at(-1)?.[1]).toEqual(["start", "my-app", "--restore"]);
     });
   });
@@ -1102,8 +1102,8 @@ describe("update command", () => {
     });
 
     it.each([
-      ["pnpm-global" as const, "pnpm add -g @aoagents/ao@latest"],
-      ["bun-global" as const, "bun add -g @aoagents/ao@latest"],
+      ["pnpm-global" as const, "pnpm add -g @made-by-moonlight/athene@latest"],
+      ["bun-global" as const, "bun add -g @made-by-moonlight/athene@latest"],
     ])("applies the same shell:true on Windows for %s installs", async (method, command) => {
       mockIsWindows.mockReturnValue(true);
       mockDetectInstallMethod.mockReturnValue(method);

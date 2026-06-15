@@ -13,7 +13,7 @@ import {
   savePreferences,
   loadLocalProjectConfig,
   loadConfig,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 import {
   formatPortfolioDegradedReason,
   formatPortfolioProjectName,
@@ -24,7 +24,7 @@ function assertPortfolioEnabled(): void {
   if (isPortfolioEnabled()) return;
   console.error(
     chalk.red(
-      "Portfolio mode is disabled. Unset AO_ENABLE_PORTFOLIO or set it to 1 to use `ao project`.",
+      "Portfolio mode is disabled. Unset AO_ENABLE_PORTFOLIO or set it to 1 to use `athene project`.",
     ),
   );
   process.exit(1);
@@ -33,7 +33,7 @@ function assertPortfolioEnabled(): void {
 export function registerProjectCommand(program: Command): void {
   const project = program.command("project").description("Manage portfolio projects");
 
-  // ao project ls
+  // athene project ls
   project
     .command("ls")
     .description("List all portfolio projects")
@@ -44,7 +44,7 @@ export function registerProjectCommand(program: Command): void {
       if (portfolio.length === 0) {
         console.log(chalk.dim("No projects in portfolio."));
         console.log(
-          chalk.dim("Run `ao start` in a project or `ao project add <path>` to register one."),
+          chalk.dim("Run `athene start` in a project or `athene project add <path>` to register one."),
         );
         return;
       }
@@ -74,7 +74,7 @@ export function registerProjectCommand(program: Command): void {
       console.log();
     });
 
-  // ao project add <path>
+  // athene project add <path>
   project
     .command("add <path>")
     .description("Register a project path in the portfolio")
@@ -99,7 +99,7 @@ export function registerProjectCommand(program: Command): void {
             source: "cli",
             kind: "cli.project_register_failed",
             level: "warn",
-            summary: `ao project add: no agent-orchestrator config found`,
+            summary: `athene project add: no agent-orchestrator config found`,
             data: { resolvedPath, reason: "no_config_found" },
           });
           console.error(chalk.red(`No agent-orchestrator.yaml found at ${resolvedPath}`));
@@ -112,7 +112,7 @@ export function registerProjectCommand(program: Command): void {
             source: "cli",
             kind: "cli.project_register_failed",
             level: "warn",
-            summary: `ao project add: found old-format config requiring migration`,
+            summary: `athene project add: found old-format config requiring migration`,
             data: {
               resolvedPath,
               configPath: existingConfigPath,
@@ -121,7 +121,7 @@ export function registerProjectCommand(program: Command): void {
           });
           console.error(
             chalk.red(
-              `Found old-format config at ${existingConfigPath}. Run \`ao start\` in that project to migrate it before using \`ao project add\`.`,
+              `Found old-format config at ${existingConfigPath}. Run \`athene start\` in that project to migrate it before using \`athene project add\`.`,
             ),
           );
         } catch (error) {
@@ -129,7 +129,7 @@ export function registerProjectCommand(program: Command): void {
             source: "cli",
             kind: "cli.project_register_failed",
             level: "error",
-            summary: `ao project add: config load failed`,
+            summary: `athene project add: config load failed`,
             data: {
               resolvedPath,
               configPath: existingConfigPath,
@@ -155,7 +155,7 @@ export function registerProjectCommand(program: Command): void {
       console.log(chalk.green(`Registered project "${effectiveId}" at ${resolvedPath}`));
     });
 
-  // ao project rm <id>
+  // athene project rm <id>
   project
     .command("rm <id>")
     .description("Remove a project from the portfolio")
@@ -172,7 +172,7 @@ export function registerProjectCommand(program: Command): void {
       console.log(chalk.green(`Removed project "${id}" from portfolio`));
     });
 
-  // ao project set-default <id>
+  // athene project set-default <id>
   project
     .command("set-default <id>")
     .description("Set the default project for the portfolio")

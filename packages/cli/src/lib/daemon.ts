@@ -20,7 +20,7 @@
  */
 
 import chalk from "chalk";
-import { killProcessTree, sweepDaemonChildren } from "@aoagents/ao-core";
+import { killProcessTree, sweepDaemonChildren } from "@made-by-moonlight/athene-core";
 import { unregister, waitForExit, type RunningState } from "./running-state.js";
 
 /**
@@ -80,7 +80,7 @@ export function attachToDaemon(running: RunningState): AttachedDaemon {
 /**
  * Stop a running daemon synchronously: SIGTERM, wait up to 5s, SIGKILL if
  * still alive, wait another 3s. Throws if the process refuses to die.
- * Always unregisters `running.json` on success so the next `ao start` can
+ * Always unregisters `running.json` on success so the next `athene start` can
  * spawn a fresh daemon without hitting the "already running" gate.
  *
  * Uses {@link killProcessTree} (not raw `process.kill`) so Windows actually

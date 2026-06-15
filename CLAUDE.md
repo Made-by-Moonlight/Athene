@@ -2,10 +2,10 @@
 
 ## What is this project?
 
-Agent Orchestrator (AO) is a platform for spawning and managing parallel AI coding agents across distributed systems. It runs multiple agents (Claude Code, Codex, Aider, OpenCode) simultaneously — each in an isolated git worktree with its own PR — and provides a single dashboard to supervise them all. Agents autonomously fix CI failures, address review comments, and manage PRs.
+Athene (AO) is a platform for spawning and managing parallel AI coding agents across distributed systems. It runs multiple agents (Claude Code, Codex, Aider, OpenCode) simultaneously — each in an isolated git worktree with its own PR — and provides a single dashboard to supervise them all. Agents autonomously fix CI failures, address review comments, and manage PRs.
 
-**Org:** ComposioHQ
-**Repo:** `github.com/ComposioHQ/agent-orchestrator`
+**Org:** slievr
+**Repo:** `github.com/slievr/Athene`
 **License:** MIT
 
 ## Monorepo Structure
@@ -62,12 +62,12 @@ pnpm dev                                    # Web dashboard (Next.js + 2 WS serv
 
 # Type checking
 pnpm typecheck                              # All packages
-pnpm --filter @aoagents/ao-web typecheck    # Web only
+pnpm --filter @made-by-moonlight/athene-web typecheck    # Web only
 
 # Testing
 pnpm test                                   # All packages (excludes web)
-pnpm --filter @aoagents/ao-web test         # Web tests
-pnpm --filter @aoagents/ao-web test:watch   # Web watch mode
+pnpm --filter @made-by-moonlight/athene-web test         # Web tests
+pnpm --filter @made-by-moonlight/athene-web test:watch   # Web watch mode
 pnpm test:integration                       # Integration tests
 
 # Lint & format
@@ -132,12 +132,12 @@ No database. Flat files + memory:
 - **Session metadata:** `~/.agent-orchestrator/{hash}-{projectId}/sessions/{sessionId}` (key-value pairs)
 - **Worktrees:** `~/.agent-orchestrator/{hash}-{projectId}/worktrees/{sessionId}/`
 - **Archives:** `~/.agent-orchestrator/{hash}-{projectId}/archive/{sessionId}_{timestamp}`
-- **Running state:** `~/.agent-orchestrator/running.json` (current ao start PID, port, projects)
-- **Last-stop state:** `~/.agent-orchestrator/last-stop.json` (sessions killed by ao stop / Ctrl+C, includes `otherProjects` for cross-project sessions — used by ao start to offer session restore)
+- **Running state:** `~/.agent-orchestrator/running.json` (current athene start PID, port, projects)
+- **Last-stop state:** `~/.agent-orchestrator/last-stop.json` (sessions killed by athene stop / Ctrl+C, includes `otherProjects` for cross-project sessions — used by athene start to offer session restore)
 
 Hash = SHA-256 of config directory (first 12 chars). Prevents collision across multiple checkouts.
 
-**Config resolution:** `loadConfig()` searches up from cwd and finds the nearest `agent-orchestrator.yaml` (typically 1 project). The global config at `~/.agent-orchestrator/config.yaml` contains all registered projects. CLI commands that need cross-project visibility (ao stop, tab completions) fall back to the global config.
+**Config resolution:** `loadConfig()` searches up from cwd and finds the nearest `agent-orchestrator.yaml` (typically 1 project). The global config at `~/.agent-orchestrator/config.yaml` contains all registered projects. CLI commands that need cross-project visibility (athene stop, tab completions) fall back to the global config.
 
 ### Prompt Assembly (3 Layers)
 
@@ -205,22 +205,22 @@ For multi-step tasks, state a brief plan:
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
-## CLI Behavior (ao start / ao stop)
+## CLI Behavior (athene start / athene stop)
 
-### ao start
+### athene start
 - Registers in `running.json` (PID, port, projects)
 - Offers to restore sessions from `last-stop.json` — includes cross-project sessions via `otherProjects` field
-- `ao start --restore` restores `last-stop.json` without prompting; `ao start --no-restore` skips restore
-- **Ctrl+C performs full graceful shutdown** (same as ao stop): kills all sessions, writes last-stop state, unregisters from running.json. 10s hard timeout guarantees exit.
+- `athene start --restore` restores `last-stop.json` without prompting; `athene start --no-restore` skips restore
+- **Ctrl+C performs full graceful shutdown** (same as athene stop): kills all sessions, writes last-stop state, unregisters from running.json. 10s hard timeout guarantees exit.
 
-### ao stop
-- `ao stop` (no args): kills ALL sessions across ALL projects, sends SIGTERM to parent ao start process, stops dashboard, unregisters
-- `ao stop <project>`: kills only that project's sessions, does NOT kill parent process or dashboard (they serve all projects)
+### athene stop
+- `athene stop` (no args): kills ALL sessions across ALL projects, sends SIGTERM to parent athene start process, stops dashboard, unregisters
+- `athene stop <project>`: kills only that project's sessions, does NOT kill parent process or dashboard (they serve all projects)
 - Always loads global config (`~/.agent-orchestrator/config.yaml`) to see all projects — local config only has the cwd project
 - Records `LastStopState` with `otherProjects` field for cross-project session restore
 
-### ao update
-- For package-manager installs, `ao update` pauses a running AO via `ao stop --yes`, runs the global package update, verifies `ao --version`, then restarts with `ao start --restore` (or `--no-restore` if requested)
+### athene update
+- For package-manager installs, `athene update` pauses a running AO via `athene stop --yes`, runs the global package update, verifies `athene --version`, then restarts with `athene start --restore` (or `--no-restore` if requested)
 - Failed package-manager updates must report that AO was not updated, include actionable remediation, and restart the previous installation if AO was paused
 
 ### Dashboard sidebar
@@ -239,7 +239,7 @@ AO ships on macOS, Linux, **and Windows**. All three are first-class.
 
 ### The Golden Rule
 
-> **Never write `process.platform === "win32"` in new code. Use `isWindows()` from `@aoagents/ao-core`. If you need branching the helpers don't cover, add it to `packages/core/src/platform.ts` (or one of the targeted helper modules below) — never inline at the call site.**
+> **Never write `process.platform === "win32"` in new code. Use `isWindows()` from `@made-by-moonlight/athene-core`. If you need branching the helpers don't cover, add it to `packages/core/src/platform.ts` (or one of the targeted helper modules below) — never inline at the call site.**
 
 The codebase has a deliberate set of cross-platform abstractions. Every platform helper is centrally tested by mocking `process.platform`; inline checks bypass those tests and become silent regressions. Whenever you'd type `process.platform`, stop and check the helper inventory in `docs/CROSS_PLATFORM.md` first.
 
@@ -257,7 +257,7 @@ The codebase has a deliberate set of cross-platform abstractions. Every platform
 
 ### Quick reference: helpers to use instead of raw platform checks
 
-All importable from `@aoagents/ao-core` unless noted:
+All importable from `@made-by-moonlight/athene-core` unless noted:
 
 | Need | Use |
 |------|-----|
@@ -273,9 +273,9 @@ All importable from `@aoagents/ao-core` unless noted:
 | Build env PATH with `~/.ao/bin` prepended | `buildAgentPath(basePath?)` |
 | Tail JSONL | `readLastJsonlEntry` / `readLastActivityEntry` |
 | Activity-state contract helpers | `checkActivityLogState`, `getActivityFallbackState`, `classifyTerminalActivity`, `recordTerminalActivity`, `appendActivityEntry` |
-| Windows pty-host registry (used by `ao stop`) | `registerWindowsPtyHost`, `getWindowsPtyHosts`, `unregisterWindowsPtyHost`, `clearWindowsPtyHostRegistry` |
-| Reap orphan pty-hosts on `ao stop` | `sweepWindowsPtyHosts()` from `@aoagents/ao-plugin-runtime-process` |
-| Talk to a Windows pty-host over its named pipe | `getPipePath`, `connectPtyHost`, `ptyHostSendMessage`, `ptyHostGetOutput`, `ptyHostIsAlive`, `ptyHostKill` from `@aoagents/ao-plugin-runtime-process` |
+| Windows pty-host registry (used by `athene stop`) | `registerWindowsPtyHost`, `getWindowsPtyHosts`, `unregisterWindowsPtyHost`, `clearWindowsPtyHostRegistry` |
+| Reap orphan pty-hosts on `athene stop` | `sweepWindowsPtyHosts()` from `@made-by-moonlight/athene-plugin-runtime-process` |
+| Talk to a Windows pty-host over its named pipe | `getPipePath`, `connectPtyHost`, `ptyHostSendMessage`, `ptyHostGetOutput`, `ptyHostIsAlive`, `ptyHostKill` from `@made-by-moonlight/athene-plugin-runtime-process` |
 | Validate user-supplied session ID before pipe/shell use | `validateSessionId()` from `@/server/tmux-utils` |
 | Resolve a session's Windows pipe path | `resolvePipePath()` from `@/server/tmux-utils` |
 | POSIX-only Ctrl+C signal forwarding | `forwardSignalsToChild()` from `cli/src/lib/shell.ts` (guard with `!isWindows()`) |
@@ -316,7 +316,7 @@ All importable from `@aoagents/ao-core` unless noted:
 ### Imports
 
 - `@/` alias -> `packages/web/src/`
-- `@aoagents/ao-core` for core imports
+- `@made-by-moonlight/athene-core` for core imports
 - `workspace:*` for cross-package
 
 ### Web / Styling
@@ -364,7 +364,7 @@ All importable from `@aoagents/ao-core` unless noted:
 | `agent-orchestrator.yaml` | Project-level config (user-created) |
 | `eslint.config.js` | ESLint flat config |
 | `tsconfig.base.json` | Shared TypeScript base config |
-| `packages/cli/src/commands/start.ts` | ao start/stop commands + Ctrl+C graceful shutdown |
+| `packages/cli/src/commands/start.ts` | athene start/stop commands + Ctrl+C graceful shutdown |
 | `packages/cli/src/lib/running-state.ts` | RunningState + LastStopState management (register/unregister, last-stop read/write) |
 | `packages/web/src/components/ProjectSidebar.tsx` | Sidebar — always shows all projects' sessions |
 
@@ -387,7 +387,7 @@ See [`skills/README.md`](skills/README.md) for how to install skills into other 
 
 ```
 packages/plugins/{slot}-{name}/
-├── package.json          # @aoagents/ao-plugin-{slot}-{name}
+├── package.json          # @made-by-moonlight/athene-plugin-{slot}-{name}
 ├── tsconfig.json         # extends ../../../tsconfig.base.json
 ├── src/
 │   ├── index.ts          # manifest + create + detect (default export)
@@ -396,7 +396,7 @@ packages/plugins/{slot}-{name}/
 
 ### Naming
 
-- Package: `@aoagents/ao-plugin-{slot}-{name}` (lowercase, hyphenated)
+- Package: `@made-by-moonlight/athene-plugin-{slot}-{name}` (lowercase, hyphenated)
 - `manifest.name` must match the `{name}` suffix (e.g. package `...-runtime-tmux` -> name: `"tmux"`)
 - `manifest.slot` must use `as const` to preserve the literal type
 
@@ -405,7 +405,7 @@ packages/plugins/{slot}-{name}/
 Every plugin default-exports a `PluginModule<T>`:
 
 ```typescript
-import type { PluginModule, Runtime } from "@aoagents/ao-core";
+import type { PluginModule, Runtime } from "@made-by-moonlight/athene-core";
 
 export const manifest = {
   name: "tmux",
@@ -469,7 +469,7 @@ import {
   PREFERRED_GH_PATH,            // /usr/local/bin/gh
   CI_STATUS, ACTIVITY_STATE, SESSION_STATUS,  // Constants
   type Session, type ProjectConfig, type RuntimeHandle,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 ```
 
 ### Testing
@@ -517,7 +517,7 @@ All agent plugins (claude-code, codex, aider, opencode, etc.) must implement the
 **Environment requirements:**
 - All agents must set `AO_SESSION_ID` and optionally `AO_ISSUE_ID`
 - All agents using PATH wrappers must prepend `~/.ao/bin` to PATH
-- Use `normalizeAgentPermissionMode` from `@aoagents/ao-core` (not a local duplicate)
+- Use `normalizeAgentPermissionMode` from `@made-by-moonlight/athene-core` (not a local duplicate)
 
 **Activity detection architecture:**
 

@@ -4,7 +4,7 @@ Architecture overview, code conventions, and patterns for contributors and AI ag
 
 ## Architecture Overview
 
-Agent Orchestrator is a monorepo with four main packages:
+Athene is a monorepo with four main packages:
 
 ```
 packages/
@@ -90,7 +90,7 @@ For AI agent-specific guidance (including high-risk files like `types.ts`, `life
 **Prerequisites**: Node.js 20.18.3+, pnpm 9.15+, Git 2.25+
 
 ```bash
-git clone https://github.com/ComposioHQ/agent-orchestrator.git
+git clone https://github.com/slievr/Athene.git
 cd agent-orchestrator
 pnpm install
 pnpm build
@@ -161,15 +161,15 @@ agent-orchestrator/
 
 ## Keeping the local AO install current
 
-When you are developing Agent Orchestrator from a long-lived local checkout, refresh the local `ao` install before debugging launcher or packaging issues:
+When you are developing Athene from a long-lived local checkout, refresh the local `ao` install before debugging launcher or packaging issues:
 
 ```bash
 git switch main
-git status --short --branch   # `ao update` expects a clean working tree on main
-ao update
+git status --short --branch   # `athene update` expects a clean working tree on main
+athene update
 ```
 
-`ao update` is intentionally conservative: it fast-forwards the local install checkout from `origin/main`, runs `pnpm install`, clean-rebuilds `@aoagents/ao-core`, `@aoagents/ao-cli`, and `@aoagents/ao-web`, refreshes the global launcher with `npm link`, and ends with CLI smoke tests. Use `ao update --skip-smoke` to stop after the rebuild, or `ao update --smoke-only` to rerun the smoke checks without fetching or rebuilding.
+`athene update` is intentionally conservative: it fast-forwards the local install checkout from `origin/main`, runs `pnpm install`, clean-rebuilds `@made-by-moonlight/athene-core`, `@made-by-moonlight/athene-cli`, and `@made-by-moonlight/athene-web`, refreshes the global launcher with `npm link`, and ends with CLI smoke tests. Use `athene update --skip-smoke` to stop after the rebuild, or `athene update --smoke-only` to rerun the smoke checks without fetching or rebuilding.
 
 If your branch has drift from `main`, update the install checkout first and then return to your feature worktree. That keeps CLI behavior and generated docs aligned with the version contributors are expected to run.
 
@@ -196,7 +196,7 @@ function processInput(value: unknown): string {
 }
 
 // Type-only imports for type-only usage
-import type { PluginModule, Runtime } from "@aoagents/ao-core";
+import type { PluginModule, Runtime } from "@made-by-moonlight/athene-core";
 ```
 
 Formatting: semicolons, double quotes, 2-space indent, strict mode.
@@ -234,7 +234,7 @@ A plugin exports a `manifest`, a `create()` factory, and a default `PluginModule
 
 ```typescript
 // packages/plugins/runtime-myplugin/src/index.ts
-import type { PluginModule, Runtime } from "@aoagents/ao-core";
+import type { PluginModule, Runtime } from "@made-by-moonlight/athene-core";
 
 export const manifest = {
   name: "myplugin",
@@ -268,7 +268,7 @@ export default { manifest, create } satisfies PluginModule<Runtime>;
 
 ```json
 {
-  "name": "@aoagents/ao-runtime-myplugin",
+  "name": "@made-by-moonlight/athene-runtime-myplugin",
   "version": "0.1.0",
   "type": "module",
   "main": "dist/index.js",
@@ -279,7 +279,7 @@ export default { manifest, create } satisfies PluginModule<Runtime>;
     "test": "vitest"
   },
   "dependencies": {
-    "@aoagents/ao-core": "workspace:*"
+    "@made-by-moonlight/athene-core": "workspace:*"
   }
 }
 ```
@@ -333,10 +333,10 @@ Orchestrator sessions use a separate prompt from `packages/core/src/orchestrator
 pnpm test
 
 # Run tests for a specific package
-pnpm --filter @aoagents/ao-core test
+pnpm --filter @made-by-moonlight/athene-core test
 
 # Watch mode
-pnpm --filter @aoagents/ao-core test -- --watch
+pnpm --filter @made-by-moonlight/athene-core test -- --watch
 
 # Integration tests
 pnpm test:integration
@@ -359,7 +359,7 @@ Use mock plugins in tests — don't call real tmux or external services in unit 
 
 1. Edit `Session` interface in `packages/core/src/types.ts`
 2. Initialize the field in `spawn()` in `session-manager.ts`
-3. Rebuild: `pnpm --filter @aoagents/ao-core build`
+3. Rebuild: `pnpm --filter @made-by-moonlight/athene-core build`
 
 ### Add a new reaction
 
@@ -392,10 +392,10 @@ curl http://localhost:3000/api/sessions/{session-id}
 # Unix:
 tmux attach -t {hash}-{prefix}-{num}
 # Windows: there's no tmux. Use the AO command, which connects to \\.\pipe\ao-pty-<sessionId>:
-ao session attach <sessionId>
+athene session attach <sessionId>
 
 # Enable verbose logging
-AO_LOG_LEVEL=debug ao start
+AO_LOG_LEVEL=debug athene start
 ```
 
 ---

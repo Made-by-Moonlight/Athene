@@ -46,7 +46,7 @@ By default the AO dashboard binds to `localhost:3000` and is only accessible fro
    Then start AO with `HOST=0.0.0.0` so it listens on all interfaces (not just localhost):
 
    ```bash
-   HOST=0.0.0.0 ao start
+   HOST=0.0.0.0 athene start
    ```
 
    Access the dashboard from another Tailscale device at:
@@ -77,20 +77,20 @@ AO uses Next.js for the dashboard. To bind to all interfaces (required for any r
 
 ```bash
 # Bind to all interfaces
-HOST=0.0.0.0 ao start
+HOST=0.0.0.0 athene start
 ```
 
 Or set it in your shell profile:
 
 ```bash
 export HOST=0.0.0.0
-ao start
+athene start
 ```
 
 To bind to a specific IP only (e.g. your Tailscale IP):
 
 ```bash
-HOST=100.64.0.1 ao start
+HOST=100.64.0.1 athene start
 ```
 
 The terminal WebSocket ports (`terminalPort` and `directTerminalPort`) also need to be reachable. If you're using Tailscale, the mesh handles this transparently as long as the ports are not firewalled locally.
@@ -100,14 +100,14 @@ The terminal WebSocket ports (`terminalPort` and `directTerminalPort`) also need
 If you run AO on a Mac, the machine going to sleep will kill the agents and the dashboard. Use `caffeinate` to prevent sleep while AO is running:
 
 ```bash
-caffeinate -i ao start
+caffeinate -i athene start
 ```
 
 `caffeinate -i` prevents idle sleep (triggered by inactivity) but still allows display sleep. For a machine you want to run headlessly overnight:
 
 ```bash
 # Prevent all sleep (including display)
-caffeinate -dims ao start
+caffeinate -dims athene start
 ```
 
 To run AO persistently in the background as a launchd service, create a plist at `~/Library/LaunchAgents/com.ao.orchestrator.plist`:
@@ -199,7 +199,7 @@ server {
 Then start AO with the matching path env var so the browser client dials through the proxy:
 
 ```bash
-HOST=0.0.0.0 NEXT_PUBLIC_TERMINAL_WS_PATH=/ws/terminal ao start
+HOST=0.0.0.0 NEXT_PUBLIC_TERMINAL_WS_PATH=/ws/terminal athene start
 ```
 
 ### Caddy
@@ -217,7 +217,7 @@ ao.example.com {
 Start AO the same way:
 
 ```bash
-HOST=0.0.0.0 NEXT_PUBLIC_TERMINAL_WS_PATH=/ws/terminal ao start
+HOST=0.0.0.0 NEXT_PUBLIC_TERMINAL_WS_PATH=/ws/terminal athene start
 ```
 
 ### Pinning WebSocket ports
@@ -233,7 +233,7 @@ directTerminalPort: 14801
 Or pass them as environment variables when starting:
 
 ```bash
-HOST=0.0.0.0 TERMINAL_PORT=14800 DIRECT_TERMINAL_PORT=14801 ao start
+HOST=0.0.0.0 TERMINAL_PORT=14800 DIRECT_TERMINAL_PORT=14801 athene start
 ```
 
 ## Accessing the dashboard from mobile

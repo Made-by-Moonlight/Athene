@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from "vitest";
-import type { OrchestratorEvent, NotifyAction } from "@aoagents/ao-core";
+import type { OrchestratorEvent, NotifyAction } from "@made-by-moonlight/athene-core";
 
 // Mock node:child_process
 vi.mock("node:child_process", () => ({
@@ -225,7 +225,7 @@ describe("notifier-desktop", () => {
               pr: {
                 number: 1579,
                 title: "Normalize AO notifier payloads",
-                url: "https://github.com/ComposioHQ/agent-orchestrator/pull/1579",
+                url: "https://github.com/slievr/Athene/pull/1579",
                 branch: "ao/demo-notifier-harness",
                 baseBranch: "main",
               },
@@ -593,7 +593,7 @@ describe("notifier-desktop", () => {
       mockExistsSync.mockReturnValue(false);
       const notifier = create({ backend: "ao-app" });
 
-      await expect(notifier.notify(makeEvent())).rejects.toThrow("ao setup desktop");
+      await expect(notifier.notify(makeEvent())).rejects.toThrow("athene setup desktop");
       expect(mockExecFile).not.toHaveBeenCalled();
     });
 

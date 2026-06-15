@@ -45,9 +45,9 @@ route only the priorities each destination should receive.
 ## Testing
 
 ```bash
-ao notify test --to slack --template basic
-ao notify test --route urgent
-ao notify test --all --dry-run
+athene notify test --to slack --template basic
+athene notify test --route urgent
+athene notify test --all --dry-run
 ```
 
 Use `--to` for one target, `--route` for a priority route, or `--all` for every
@@ -58,7 +58,7 @@ a real test message.
 
 | Event | When |
 |---|---|
-| `session.spawned` | `ao spawn` succeeds |
+| `session.spawned` | `athene spawn` succeeds |
 | `session.working` | Agent is actively editing code |
 | `pr.opened` | Agent pushed a branch and opened a PR |
 | `ci.failed` | Required check fails |

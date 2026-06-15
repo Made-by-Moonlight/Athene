@@ -1,7 +1,7 @@
 import type { ObservabilityLevel } from "./observability.js";
 
 /**
- * Agent Orchestrator — Core Type Definitions
+ * Athene — Core Type Definitions
  *
  * This file defines ALL interfaces and types that the system uses.
  * Every plugin, CLI command, and web API route builds against these.
@@ -422,7 +422,7 @@ export interface Runtime {
 
   /**
    * Optional: validate that this runtime's prerequisites are present before
-   * it is exercised by `ao spawn`. Throw with an actionable, human-readable
+   * it is exercised by `athene spawn`. Throw with an actionable, human-readable
    * message; the CLI catches and formats the error.
    */
   preflight?(context: PreflightContext): Promise<void>;
@@ -547,7 +547,7 @@ export interface Agent {
 
   /**
    * Optional: Set up agent-specific hooks/config in the workspace for automatic metadata updates.
-   * Called once per workspace during ao start and when creating new worktrees.
+   * Called once per workspace during athene start and when creating new worktrees.
    *
    * Each agent plugin implements this for their own config format:
    * - Claude Code: writes .claude/settings.json with PostToolUse hook
@@ -575,7 +575,7 @@ export interface Agent {
 
   /**
    * Optional: validate that this agent's prerequisites are present before
-   * it is exercised by `ao spawn`. Throw with an actionable error message.
+   * it is exercised by `athene spawn`. Throw with an actionable error message.
    */
   preflight?(context: PreflightContext): Promise<void>;
 }
@@ -687,7 +687,7 @@ export interface Workspace {
 
   /**
    * Optional: validate that this workspace's prerequisites (e.g. git in PATH,
-   * write access to the worktree root) are present before `ao spawn`.
+   * write access to the worktree root) are present before `athene spawn`.
    */
   preflight?(context: PreflightContext): Promise<void>;
 }
@@ -747,7 +747,7 @@ export interface Tracker {
 
   /**
    * Optional: validate that this tracker's prerequisites (auth tokens, CLI
-   * tools) are present before `ao spawn` runs. Throw with an actionable
+   * tools) are present before `athene spawn` runs. Throw with an actionable
    * error message.
    */
   preflight?(context: PreflightContext): Promise<void>;
@@ -897,7 +897,7 @@ export interface SCM {
 
   /**
    * Optional: validate that this SCM's prerequisites (auth, CLI tools) are
-   * present before `ao spawn` runs. Plugins should consult
+   * present before `athene spawn` runs. Plugins should consult
    * `context.intent.willClaimExistingPR` and skip PR-write prereqs when the
    * spawn won't exercise them.
    */
@@ -1340,7 +1340,7 @@ export interface LifecycleConfig {
   /**
    * When a session's PR is detected as merged, automatically tear down the
    * tmux runtime, remove the worktree, and archive the session metadata.
-   * Defaults to true so `ao status` does not retain stale merged entries.
+   * Defaults to true so `athene status` does not retain stale merged entries.
    */
   autoCleanupOnMerge: boolean;
   /**
@@ -2030,7 +2030,7 @@ export class SessionNotFoundError extends Error {
 /** Thrown when no agent-orchestrator.yaml config file can be found. */
 export class ConfigNotFoundError extends Error {
   constructor(message?: string) {
-    super(message ?? "No agent-orchestrator.yaml found. Run `ao start` to create one.");
+    super(message ?? "No agent-orchestrator.yaml found. Run `athene start` to create one.");
     this.name = "ConfigNotFoundError";
   }
 }
@@ -2082,7 +2082,7 @@ export interface PortfolioPreferences {
   }>;
 }
 
-/** Registered projects (explicit `ao project add`) */
+/** Registered projects (explicit `athene project add`) */
 export interface PortfolioRegistered {
   version: 1;
   projects: Array<{

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Postinstall script for @aoagents/ao (npm/yarn global installs).
+ * Postinstall script for @made-by-moonlight/athene (npm/yarn global installs).
  *
  * 1. Fixes node-pty's spawn-helper binary missing the execute bit.
  *    node-pty@1.1.0 ships spawn-helper without +x; the monorepo works around
@@ -9,15 +9,15 @@
  *
  * 2. Verifies the prebuilt binary is compatible with the current Node.js version.
  *    If not (common with nvm/fnm/volta), rebuilds from source via npx node-gyp.
- *    See: https://github.com/ComposioHQ/agent-orchestrator/issues/987
+ *    See: https://github.com/slievr/Athene/issues/987
  *
  * 3. Verifies better-sqlite3 has a native binding for this Node ABI.
  *    Node majors can ship new NODE_MODULE_VERSION values before better-sqlite3
  *    publishes matching prebuilds; global installs must rebuild from source.
- *    See: https://github.com/ComposioHQ/agent-orchestrator/issues/1822
+ *    See: https://github.com/slievr/Athene/issues/1822
  *
  * 4. Clears stale Next.js runtime cache (.next/cache) from @composio/ao-web
- *    after a version upgrade, so `ao start` serves fresh dashboard assets.
+ *    after a version upgrade, so `athene start` serves fresh dashboard assets.
  *    Writes a version stamp (.next/AO_VERSION) to skip cleanup on subsequent runs.
  */
 
@@ -50,23 +50,23 @@ export function resolveNodeModulesPackage(fromDir, ...segments) {
 }
 
 export function findWebDir() {
-  const directWebDir = findPackageUp(__dirname, "@aoagents", "ao-web");
+  const directWebDir = findPackageUp(__dirname, "@made-by-moonlight", "web");
   if (directWebDir) return directWebDir;
 
-  const cliDir = findPackageUp(__dirname, "@aoagents", "ao-cli");
+  const cliDir = findPackageUp(__dirname, "@made-by-moonlight", "cli");
   if (!cliDir) return null;
 
-  return resolveNodeModulesPackage(cliDir, "@aoagents", "ao-web");
+  return resolveNodeModulesPackage(cliDir, "@made-by-moonlight", "web");
 }
 
 export function findBetterSqlite3Dir() {
   const directBetterSqlite3Dir = findPackageUp(__dirname, "better-sqlite3");
   if (directBetterSqlite3Dir) return directBetterSqlite3Dir;
 
-  const cliDir = findPackageUp(__dirname, "@aoagents", "ao-cli");
+  const cliDir = findPackageUp(__dirname, "@made-by-moonlight", "cli");
   if (!cliDir) return null;
 
-  const coreDir = resolveNodeModulesPackage(cliDir, "@aoagents", "ao-core");
+  const coreDir = resolveNodeModulesPackage(cliDir, "@made-by-moonlight", "core");
   if (!coreDir) return null;
 
   return (

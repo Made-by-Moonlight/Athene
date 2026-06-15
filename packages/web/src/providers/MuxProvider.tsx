@@ -88,7 +88,7 @@ function buildMuxWsUrl(runtimeConfig: {
   const loc = window.location;
   const protocol = loc.protocol === "https:" ? "wss:" : "ws:";
 
-  // Runtime proxy path takes priority (set by `ao start` via TERMINAL_WS_PATH env var)
+  // Runtime proxy path takes priority (set by `athene start` via TERMINAL_WS_PATH env var)
   const proxyWsPath = runtimeConfig.proxyWsPath ?? process.env.NEXT_PUBLIC_TERMINAL_WS_PATH;
   if (proxyWsPath) {
     const basePath = proxyWsPath.replace(/\/ws\/?$/, "");

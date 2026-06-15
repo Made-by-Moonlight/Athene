@@ -7,7 +7,7 @@ import {
   getProjectDir,
   loadGlobalConfig,
   registerProjectInGlobalConfig,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 
 const invalidatePortfolioServicesCache = vi.fn();
 const getServices = vi.fn();

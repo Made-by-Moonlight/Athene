@@ -1,13 +1,13 @@
 /**
- * SIGINT/SIGTERM shutdown handler for the long-running `ao start` process.
+ * SIGINT/SIGTERM shutdown handler for the long-running `athene start` process.
  *
  * Installs `process.once` listeners that perform a full graceful shutdown:
  * stop lifecycle workers, kill all active sessions, record last-stop state
- * for restore on next `ao start`, unregister from running.json, await the
+ * for restore on next `athene start`, unregister from running.json, await the
  * bun-tmp janitor's final sweep, then exit.
  *
  * Lives in its own module so the orchestration is testable in isolation
- * and so the equivalent kill-and-record logic in `ao stop` can converge
+ * and so the equivalent kill-and-record logic in `athene stop` can converge
  * here in a later refactor (today the two paths duplicate the core loop;
  * see ao-118 plan PR B).
  */
@@ -18,7 +18,7 @@ import {
   markDaemonShutdownHandlerInstalled,
   recordActivityEvent,
   sweepDaemonChildren,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 import { stopBunTmpJanitor } from "./bun-tmp-janitor.js";
 import { getSessionManager } from "./create-session-manager.js";
 import { stopAllLifecycleWorkers } from "./lifecycle-service.js";
@@ -31,7 +31,7 @@ export interface ShutdownContext {
   /** Path to the orchestrator config; re-read at shutdown time so any
    *  config edits since startup are honored. */
   configPath: string;
-  /** Project this `ao start` invocation owns; used to scope last-stop's
+  /** Project this `athene start` invocation owns; used to scope last-stop's
    *  primary `sessionIds` field (other projects go to `otherProjects`). */
   projectId: string;
 }

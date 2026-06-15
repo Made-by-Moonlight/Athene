@@ -14,7 +14,7 @@ import {
   type IssueUpdate,
   type CreateIssueInput,
   type ProjectConfig,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 
 // ---------------------------------------------------------------------------
 // Helpers

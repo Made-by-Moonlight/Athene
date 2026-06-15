@@ -24,7 +24,7 @@ import time
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 
-DEFAULT_REPO = "ComposioHQ/agent-orchestrator"
+DEFAULT_REPO = "slievr/Athene"
 DEFAULT_WINDOW_DAYS = 7
 MAX_BODY_CHARS = 2000
 MIN_HIGHLIGHTS = 8
@@ -250,7 +250,7 @@ def fetch_stars(repo: str) -> int | None:
         return None
 
 
-def fetch_npm_version(package: str = "@aoagents/ao") -> str | None:
+def fetch_npm_version(package: str = "@made-by-moonlight/athene") -> str | None:
     """Fetch the latest published version from the npm registry."""
     try:
         result = subprocess.run(
@@ -442,8 +442,8 @@ def render_markdown(snap: Snapshot) -> str:
     install_block = [
         "## Install",
         "```bash",
-        "npm install -g @aoagents/ao",
-        f"# or pin to the current release: npm install -g @aoagents/ao@{version}",
+        "npm install -g @made-by-moonlight/athene",
+        f"# or pin to the current release: npm install -g @made-by-moonlight/athene@{version}",
         "```",
     ]
 

@@ -8,7 +8,7 @@
 
 ## The Golden Rule
 
-> **Never write `process.platform === "win32"` in new code. Use `isWindows()` from `@aoagents/ao-core`. If you need branching the helper doesn't cover, add it to `packages/core/src/platform.ts` (or one of the targeted helpers in [the inventory](#helper-inventory)) — never inline at the call site.**
+> **Never write `process.platform === "win32"` in new code. Use `isWindows()` from `@made-by-moonlight/athene-core`. If you need branching the helper doesn't cover, add it to `packages/core/src/platform.ts` (or one of the targeted helpers in [the inventory](#helper-inventory)) — never inline at the call site.**
 
 This isn't stylistic. The branching in `platform.ts` is centrally tested with `Object.defineProperty(process, "platform", …)` so both Windows and POSIX paths are exercised on every CI runner. Inline `process.platform` checks are invisible to that test pattern, drift out of sync, and produce the bugs that took weeks to track down on the way to shipping the Windows port.
 
@@ -54,13 +54,13 @@ import {
   killProcessTree,
   findPidByPort,
   getEnvDefaults,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 ```
 
 | Symbol | Purpose | Notes |
 |--------|---------|-------|
 | `isWindows(): boolean` | The canonical OS check. **Always use this** instead of `process.platform === "win32"`. | Constant-time. Trivially mockable in tests. |
-| `getDefaultRuntime(): "tmux" \| "process"` | Returns `"process"` on Windows, `"tmux"` elsewhere. Used by `ao start` / startup-preflight to default runtime selection. | Don't hardcode `"tmux"`. |
+| `getDefaultRuntime(): "tmux" \| "process"` | Returns `"process"` on Windows, `"tmux"` elsewhere. Used by `athene start` / startup-preflight to default runtime selection. | Don't hardcode `"tmux"`. |
 | `getShell(): { cmd, args(command) }` | Resolves the shell for non-interactive command execution. POSIX → `/bin/sh -c`. Windows → priority order: `AO_SHELL` env override → `pwsh` → `powershell.exe` (absolute path, robust to degraded PATH) → `powershell` → `cmd.exe`. Cached. | Use this whenever you need to run *any* shellish string. Don't assume bash. |
 | `killProcessTree(pid, signal?)` | Kills a process and its descendants. Windows → `taskkill /T /F /PID <pid>`. POSIX → `process.kill(-pid, signal)` with direct-PID fallback. Guards `pid > 0`. | **Never write `process.kill(-pid, …)` directly.** Negative PIDs are POSIX-only. |
 | `findPidByPort(port): Promise<string \| null>` | Finds the LISTENING PID on a port. Windows → parses `netstat -ano`. POSIX → `lsof -ti :PORT -sTCP:LISTEN`. | Use this; don't shell-out yourself. |
@@ -82,7 +82,7 @@ import { pathsEqual, canonicalCompareKey } from "../../src/lib/path-equality.js"
 
 ### Windows pty-host registry — `packages/core/src/windows-pty-registry.ts`
 
-Only used by Windows runtime code, but exported from `@aoagents/ao-core` so the CLI's `ao stop` can find detached pty-hosts that `taskkill /T` cannot reach.
+Only used by Windows runtime code, but exported from `@made-by-moonlight/athene-core` so the CLI's `athene stop` can find detached pty-hosts that `taskkill /T` cannot reach.
 
 ```ts
 import {
@@ -90,7 +90,7 @@ import {
   unregisterWindowsPtyHost,
   getWindowsPtyHosts,
   clearWindowsPtyHostRegistry,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 ```
 
 | Symbol | Purpose |
@@ -114,7 +114,7 @@ import {
   ptyHostKill,
   MessageParser,
   encodeMessage,
-} from "@aoagents/ao-plugin-runtime-process";
+} from "@made-by-moonlight/athene-plugin-runtime-process";
 ```
 
 | Symbol | Purpose |
@@ -130,10 +130,10 @@ import {
 ### Pty-host sweep — `packages/plugins/runtime-process/src/index.ts`
 
 ```ts
-import { sweepWindowsPtyHosts } from "@aoagents/ao-plugin-runtime-process";
+import { sweepWindowsPtyHosts } from "@made-by-moonlight/athene-plugin-runtime-process";
 ```
 
-`sweepWindowsPtyHosts(): Promise<{ attempted, gracefullyExited, forceKilled, failed }>` — iterates the registry, sends graceful `MSG_KILL_REQ`, polls up to 500 ms, then `killProcessTree` for stragglers. Called by `ao stop`. **No-op on non-Windows.**
+`sweepWindowsPtyHosts(): Promise<{ attempted, gracefullyExited, forceKilled, failed }>` — iterates the registry, sends graceful `MSG_KILL_REQ`, polls up to 500 ms, then `killProcessTree` for stragglers. Called by `athene stop`. **No-op on non-Windows.**
 
 The exit-poll inside this function is the canonical EPERM/ESRCH pattern — copy it whenever you probe a Windows process for liveness:
 
@@ -172,7 +172,7 @@ import { stopStaleWindowsPtyHosts } from "@/lib/windows-pty-cleanup";
 ### Agent plugin helpers — `packages/core/src/agent-workspace-hooks.ts`
 
 ```ts
-import { setupPathWrapperWorkspace, buildAgentPath } from "@aoagents/ao-core";
+import { setupPathWrapperWorkspace, buildAgentPath } from "@made-by-moonlight/athene-core";
 ```
 
 | Symbol | Purpose |
@@ -191,7 +191,7 @@ import {
   classifyTerminalActivity,
   recordTerminalActivity,
   readLastJsonlEntry,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 ```
 
 `getActivityFallbackState` is **mandatory** for new agent plugins. See [the agent-plugin section in the root CLAUDE.md](../CLAUDE.md#agent-plugin-implementation-standards) for the full contract — but the relevant cross-platform note is: AO activity JSONL works the same on all platforms, so write your activity-detection logic against it, not against tmux capture-pane / ps output.
@@ -199,7 +199,7 @@ import {
 ### Shell escaping — `packages/core/src/utils.ts`
 
 ```ts
-import { shellEscape } from "@aoagents/ao-core";
+import { shellEscape } from "@made-by-moonlight/athene-core";
 ```
 
 `shellEscape(arg)` produces a safely-quoted argument. Always use it when interpolating any value into a shell command line, even on Windows. Windows quoting rules are messier than POSIX and the helper handles them.
@@ -240,7 +240,7 @@ For the architectural detail of how the Windows pty-host, named-pipe protocol, a
 - **Never `process.kill(-pid, …)`** to kill a process group. Negative PIDs are POSIX-only and become a no-op or worse on Windows. Use `killProcessTree()`.
 - **Graceful shutdown before SIGKILL on Windows**: SIGKILL'ing the pty-host while ConPTY is mid-spawn orphans `conpty_console_list_agent.exe` and triggers a Windows Error Reporting dialog (`0x800700e8`). Send the cooperative kill (`ptyHostKill`) first, poll for exit ~500 ms, **then** `killProcessTree`.
 - **`pid <= 0` guard**: `process.kill(0, …)` signals the *current process group* on Unix. Always guard `pid > 0` before signalling.
-- **Detached children**: on Windows `ao start` does NOT detach its dashboard child (so Ctrl+C reaches the whole console group natively); on POSIX it does. Use `detached: !isWindows()` rather than always-`true` or always-`false`.
+- **Detached children**: on Windows `athene start` does NOT detach its dashboard child (so Ctrl+C reaches the whole console group natively); on POSIX it does. Use `detached: !isWindows()` rather than always-`true` or always-`false`.
 
 ## Paths
 
@@ -332,7 +332,7 @@ function setPlatform(p: NodeJS.Platform) {
 
 Before saying "done" on any feature, verify each of these (or mark N/A with reasoning):
 
-1. **No raw `process.platform` checks** — used `isWindows()` from `@aoagents/ao-core`?
+1. **No raw `process.platform` checks** — used `isWindows()` from `@made-by-moonlight/athene-core`?
 2. **Process spawning** — used `runtime-process` (Windows) or `runtime-tmux` (POSIX) abstractions? Shell-out used `shellEscape` + `getShell` or `execFile`? `windowsHide: true` and `shell: isWindows()` for `.cmd`/`.bat` resolution?
 3. **Process killing** — distinguished `EPERM` from `ESRCH`? No negative PIDs? Used `killProcessTree`? Guarded `pid > 0`? Cooperative kill before force-kill on Windows?
 4. **Paths** — used `pathsEqual` for comparison? `path.join` for construction? No `===`, no hardcoded `/` or `\`?
@@ -362,7 +362,7 @@ import {
   checkActivityLogState, getActivityFallbackState,
   classifyTerminalActivity, recordTerminalActivity,
   readLastJsonlEntry,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 
 // Path comparison (CLI package)
 import { pathsEqual, canonicalCompareKey }
@@ -374,7 +374,7 @@ import {
   ptyHostGetOutput, ptyHostIsAlive, ptyHostKill,
   MessageParser, encodeMessage,
   sweepWindowsPtyHosts,
-} from "@aoagents/ao-plugin-runtime-process";
+} from "@made-by-moonlight/athene-plugin-runtime-process";
 
 // Web-side helpers
 import { validateSessionId, resolvePipePath }

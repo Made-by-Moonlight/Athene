@@ -8,7 +8,7 @@ const mockRemoveProjectFromRunning = vi.fn();
 const mockSetHealth = vi.fn();
 const activeWorkers = new Set<string>();
 
-vi.mock("@aoagents/ao-core", () => ({
+vi.mock("@made-by-moonlight/athene-core", () => ({
   ConfigNotFoundError: class ConfigNotFoundError extends Error {
     constructor(message = "No agent-orchestrator.yaml found.") {
       super(message);
@@ -410,7 +410,7 @@ describe("project-supervisor", () => {
     await reconcileProjectSupervisor({ configPath: "/repo/agent-orchestrator.yaml" });
     expect(activeWorkers.has("local-only")).toBe(true);
 
-    // Tick 2: global appears (e.g. another `ao start <url>` wrote it),
+    // Tick 2: global appears (e.g. another `athene start <url>` wrote it),
     // listing only "from-global". Source = "global" → detach pass runs.
     mockLoadConfig.mockImplementation((path?: string) => {
       if (path === "/tmp/global-config.yaml") return makeConfig(["from-global"]);
@@ -470,7 +470,7 @@ describe("project-supervisor", () => {
   });
 
   it("exits cleanly when neither global nor local config exists", async () => {
-    const { ConfigNotFoundError } = await import("@aoagents/ao-core");
+    const { ConfigNotFoundError } = await import("@made-by-moonlight/athene-core");
     mockLoadConfig
       .mockImplementationOnce(() => {
         throw Object.assign(new Error("ENOENT"), {

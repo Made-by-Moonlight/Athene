@@ -49,7 +49,7 @@ No plugin-level config.
 
 <Accordions>
   <Accordion title="Session can't be found when resuming">
-    `ao session remap <sessionId>` re-discovers and persists the OpenCode session mapping. Use `--force` to override a stale mapping.
+    `athene session remap <sessionId>` re-discovers and persists the OpenCode session mapping. Use `--force` to override a stale mapping.
   </Accordion>
   <Accordion title="Activity stuck on `idle`">
     If the OpenCode session API doesn't respond, AO falls back to the activity JSONL, which uses age-based decay. If even that returns `idle` forever, check that `opencode session list` works on its own.

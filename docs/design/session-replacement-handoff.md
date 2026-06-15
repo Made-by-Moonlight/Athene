@@ -92,15 +92,15 @@ For MVP, explicit replacement is better than clever inference.
 Introduce a replacement-oriented command or API, such as:
 
 ```bash
-ao session replace app-7
+athene session replace app-7
 ```
 
 Potential options later:
 
 ```bash
-ao session replace app-7 --reason stuck
-ao session replace app-7 --claim-pr
-ao session replace app-7 --carry-context
+athene session replace app-7 --reason stuck
+athene session replace app-7 --claim-pr
+athene session replace app-7 --carry-context
 ```
 
 ### Internal behavior
@@ -382,7 +382,7 @@ After replacement:
 - the replacement session should be the only active PR owner
 - CI/review reactions should target the replacement session
 - old session should not receive future automated PR-routing work
-- dashboard / `ao session ls` should show the lineage clearly
+- dashboard / `athene session ls` should show the lineage clearly
 
 This is where explicit lineage metadata matters.
 

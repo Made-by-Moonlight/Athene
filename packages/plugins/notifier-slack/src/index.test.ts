@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { OrchestratorEvent, NotifyAction, EventPriority } from "@aoagents/ao-core";
+import type { OrchestratorEvent, NotifyAction, EventPriority } from "@made-by-moonlight/athene-core";
 import { manifest, create } from "./index.js";
 
 function makeEvent(overrides: Partial<OrchestratorEvent> = {}): OrchestratorEvent {
@@ -110,7 +110,7 @@ describe("notifier-slack", () => {
       await notifier.notify(makeEvent());
 
       const body = JSON.parse(fetchMock.mock.calls[0][1].body);
-      expect(body.username).toBe("Agent Orchestrator");
+      expect(body.username).toBe("Athene");
     });
 
     it("uses custom username when configured", async () => {

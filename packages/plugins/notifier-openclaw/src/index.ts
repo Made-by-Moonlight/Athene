@@ -13,8 +13,8 @@ import {
   type PluginModule,
   getObservabilityBaseDir,
   recordActivityEvent,
-} from "@aoagents/ao-core";
-import { isRetryableHttpStatus, normalizeRetryConfig, validateUrl } from "@aoagents/ao-core/utils";
+} from "@made-by-moonlight/athene-core";
+import { isRetryableHttpStatus, normalizeRetryConfig, validateUrl } from "@made-by-moonlight/athene-core/utils";
 
 /**
  * Read the hooks token from OpenClaw's config. AO treats OpenClaw as the
@@ -176,13 +176,13 @@ async function postWithRetry(
             plugin: "notifier-openclaw",
             status: response.status,
             url,
-            fixHint: "ao setup openclaw",
+            fixHint: "athene setup openclaw",
           },
         });
         lastError = new Error(
           `OpenClaw rejected the auth token (HTTP ${response.status}).\n` +
             `  Check that hooks.token in your OpenClaw config matches the token configured for AO.\n` +
-            `  Reconfigure: ao setup openclaw`,
+            `  Reconfigure: athene setup openclaw`,
         );
         shouldRethrowResponseError = true;
         throw lastError;
@@ -222,7 +222,7 @@ async function postWithRetry(
         throw new Error(
           `Can't reach OpenClaw gateway at ${url}.\n` +
             `  Is OpenClaw running? Check: openclaw status\n` +
-            `  Wrong URL? Run: ao setup openclaw`,
+            `  Wrong URL? Run: athene setup openclaw`,
           { cause: err },
         );
       }
@@ -424,7 +424,7 @@ function formatActionsLine(actions: NotifyAction[]): string {
 
 /**
  * Resolve a token value that may be a `${ENV_VAR}` placeholder (as written
- * into agent-orchestrator.yaml by `ao setup openclaw`) or a literal string.
+ * into agent-orchestrator.yaml by `athene setup openclaw`) or a literal string.
  * Returns undefined for empty/unresolvable values so callers can chain `??`.
  */
 function resolveEnvVarToken(raw: unknown): string | undefined {
@@ -459,7 +459,7 @@ export function create(config?: Record<string, unknown>): Notifier {
     console.warn(
       "[notifier-openclaw] No token configured.\n" +
         "  Add hooks.token to your OpenClaw config, or set notifiers.openclaw.openclawConfigPath.\n" +
-        "  Run: ao setup openclaw",
+        "  Run: athene setup openclaw",
     );
   }
 

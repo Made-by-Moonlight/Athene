@@ -1,16 +1,22 @@
 name: Release
 
-# Two-stage release pipeline.
+# Release pipeline: version bumps + npm publish via changesets.
 #
-# This public repo is responsible for version bumps, tagging, and creating
-# the GitHub release. npm publishing is handled by a private cron job (AO)
-# that polls GitHub releases and publishes when a new tag is ahead of the
-# current npm version.
+# On every push to main, changesets/action opens/updates a "Version Packages"
+# PR while changesets are pending. When that PR merges (no pending changesets),
+# the action runs `pnpm release` (build + `changeset publish`) to publish the
+# @made-by-moonlight/* packages to npm, then this workflow tags and creates the GitHub
+# release.
 #
-# No NPM_TOKEN or publisher dispatch secrets are needed in this repo.
-# The only secret used is GITHUB_TOKEN (automatic).
+# Publishing uses npm Trusted Publishing (OIDC) — no NPM_TOKEN secret required.
+# id-token: write lets GitHub Actions mint an OIDC token; the npm CLI exchanges
+# it automatically for a short-lived publish credential. Provenance attestations
+# are generated automatically as part of Trusted Publishing.
+# See: https://docs.npmjs.com/trusted-publishers
 #
-# See CONTRIBUTING.md → "Release architecture" for the full picture.
+# Before the first publish, configure a Trusted Publisher for each
+# @made-by-moonlight/* package on npmjs.com pointing at this workflow file
+# (release.yml) in the slievr/Athene repo. GITHUB_TOKEN is automatic.
 
 on:
   workflow_run:
@@ -29,6 +35,7 @@ concurrency:
 permissions:
   contents: write
   pull-requests: write
+  id-token: write # npm provenance via OIDC
 
 jobs:
   release:
@@ -46,29 +53,33 @@ jobs:
       - uses: pnpm/action-setup@7088e561eb65bb68695d245aa206f005ef30921d
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
-          # No `registry-url`: this workflow does not publish to npm.
+          registry-url: "https://registry.npmjs.org"
       - run: echo "HUSKY=0" >> $GITHUB_ENV
       - run: pnpm install --frozen-lockfile
       - run: pnpm -r build
       # Pre-publish guard: catches the case where a publishable package has a
       # workspace:* runtime dep on a `private: true` package — pnpm would
       # rewrite the dep on publish to a version that doesn't exist on npm,
-      # breaking `npm install -g @aoagents/ao`. Still runs here so the
+      # breaking `npm install -g @made-by-moonlight/athene`. Still runs here so the
       # public repo blocks a malformed version bump before it reaches npm.
       - run: node scripts/check-publishable-deps.mjs
 
       # changesets/action manages the "Version Packages" PR — when there
       # are pending changesets it opens/updates the PR; when there are
-      # none (i.e. that PR was just merged) it would normally invoke the
-      # `publish:` command. We deliberately omit `publish:` so the action
-      # never runs `changeset publish`. npm publishing is handled by a
-      # private cron that detects the GitHub release.
+      # none (i.e. that PR was just merged) it runs the `publish:` command
+      # (`pnpm release` = `pnpm -r build && changeset publish`) to publish
+      # the @made-by-moonlight/* packages to npm. The tag + GitHub release steps below
+      # then run for the same version-bump commit.
+      #
+      # No NPM_TOKEN is needed: npm CLI detects the GitHub OIDC environment
+      # (id-token: write above) and authenticates automatically via Trusted Publishing.
       - uses: changesets/action@63a615b9cd06ba9a3e6d13796c7fbcb080a60a0b
         id: changesets
         with:
           version: pnpm changeset version
+          publish: pnpm release
           title: "chore: version packages"
           commit: "chore: version packages"
         env:
@@ -85,7 +96,7 @@ jobs:
       # version-bump commit by comparing the umbrella package's
       # version against its value in the parent commit — a Version
       # Packages merge changes that version, a regular commit does not.
-      # The umbrella `@aoagents/ao` is the canonical version source for
+      # The umbrella `@made-by-moonlight/athene` is the canonical version source for
       # the `vX.Y.Z` tag scheme and is part of the linked group, so
       # any release that bumps the cohort will bump this file.
       - name: Determine release state
@@ -94,12 +105,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          version=$(node -p "require('./packages/ao/package.json').version")
+          version=$(node -p "require('./packages/athene/package.json').version")
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
           prev_version=""
           if git rev-parse HEAD^ >/dev/null 2>&1; then
-            prev_version=$(git show HEAD^:packages/ao/package.json 2>/dev/null | jq -r .version 2>/dev/null || echo "")
+            prev_version=$(git show HEAD^:packages/athene/package.json 2>/dev/null | jq -r .version 2>/dev/null || echo "")
           fi
           if [ -n "$prev_version" ] && [ "$prev_version" != "$version" ]; then
             echo "is_release_commit=true" >> "$GITHUB_OUTPUT"

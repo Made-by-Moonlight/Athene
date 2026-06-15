@@ -1,4 +1,4 @@
-import type { CodeReviewRunSummary } from "@aoagents/ao-core";
+import type { CodeReviewRunSummary } from "@made-by-moonlight/athene-core";
 
 export type ReviewBoardColumn =
   | "queued"

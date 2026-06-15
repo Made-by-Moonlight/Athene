@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
   const projectName = getProjectName();
   return {
     name: `ao | ${projectName}`,
-    short_name: "ao",
+    short_name: "athene",
     description: "Dashboard for managing parallel AI coding agents",
     start_url: "/",
     scope: "/",

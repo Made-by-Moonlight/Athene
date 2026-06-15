@@ -12,7 +12,7 @@ import {
   type NotifyAction,
   type EventPriority,
   type NotificationDataV3,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 
 function xmlEscape(s: string): string {
   return s
@@ -40,7 +40,7 @@ function buildWindowsToastScript(title: string, message: string, sound: boolean)
     "$xml = New-Object Windows.Data.Xml.Dom.XmlDocument",
     `$xml.LoadXml('${psSafeXml}')`,
     "$toast = [Windows.UI.Notifications.ToastNotification]::new($xml)",
-    "[Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('Agent Orchestrator').Show($toast)",
+    "[Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('Athene').Show($toast)",
   ].join("; ");
 }
 
@@ -52,7 +52,7 @@ export const manifest = {
 };
 
 // Re-export for backwards compatibility
-export { escapeAppleScript } from "@aoagents/ao-core";
+export { escapeAppleScript } from "@made-by-moonlight/athene-core";
 
 type DesktopBackend = "auto" | "ao-app" | "terminal-notifier" | "osascript";
 const PLACEHOLDER_MARKER_NAME = "ao-notifier-placeholder";
@@ -424,7 +424,7 @@ function sendNotification(
 
       if (backend === "ao-app") {
         if (!detectAoNotifierApp(options.mac.appPath)) {
-          reject(new Error("AO Notifier.app is not installed. Run: ao setup desktop"));
+          reject(new Error("AO Notifier.app is not installed. Run: athene setup desktop"));
           return;
         }
 

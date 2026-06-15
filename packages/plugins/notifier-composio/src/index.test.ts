@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import type { OrchestratorEvent, NotifyAction } from "@aoagents/ao-core";
+import type { OrchestratorEvent, NotifyAction } from "@made-by-moonlight/athene-core";
 import { manifest, create } from "./index.js";
 
 const { mockToolsExecute, mockConstructorOptions } = vi.hoisted(() => ({
@@ -288,7 +288,7 @@ describe("notifier-composio", () => {
               pr: {
                 number: 1579,
                 title: "Normalize AO notifier payloads",
-                url: "https://github.com/ComposioHQ/agent-orchestrator/pull/1579",
+                url: "https://github.com/slievr/Athene/pull/1579",
                 branch: "ao/demo-notifier-harness",
                 baseBranch: "main",
               },
@@ -304,7 +304,7 @@ describe("notifier-composio", () => {
                   name: "typecheck",
                   status: "failed",
                   conclusion: "FAILURE",
-                  url: "https://github.com/ComposioHQ/agent-orchestrator/pull/1579/checks",
+                  url: "https://github.com/slievr/Athene/pull/1579/checks",
                 },
               ],
             },
@@ -651,7 +651,7 @@ describe("notifier-composio", () => {
               pr: {
                 number: 1579,
                 title: "Normalize AO notifier payloads",
-                url: "https://github.com/ComposioHQ/agent-orchestrator/pull/1579",
+                url: "https://github.com/slievr/Athene/pull/1579",
               },
             },
             transition: { kind: "session_status", from: "approved", to: "mergeable" },
@@ -714,7 +714,7 @@ describe("notifier-composio", () => {
           connectedAccountId: "ca_gmail",
           arguments: {
             recipient_email: "test@test.com",
-            subject: "Agent Orchestrator Message",
+            subject: "Athene Message",
             body: expect.stringContaining("<!doctype html>"),
             is_html: true,
           },
@@ -760,7 +760,7 @@ describe("notifier-composio", () => {
 
       const notifier = create({ composioApiKey: "k" });
 
-      await expect(notifier.notify(makeEvent())).rejects.toThrow("ao setup composio");
+      await expect(notifier.notify(makeEvent())).rejects.toThrow("athene setup composio");
     });
 
     it("uses mail setup guidance for Gmail connection errors", async () => {
@@ -775,7 +775,7 @@ describe("notifier-composio", () => {
         connectedAccountId: "ca_gmail",
       });
 
-      await expect(notifier.notify(makeEvent())).rejects.toThrow("ao setup composio-mail");
+      await expect(notifier.notify(makeEvent())).rejects.toThrow("athene setup composio-mail");
     });
 
     it("requires connectedAccountId before executing Gmail notifications", async () => {

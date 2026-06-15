@@ -1,5 +1,5 @@
 {
-  "name": "@aoagents/ao-core",
+  "name": "@made-by-moonlight/athene-core",
   "version": "0.9.1",
   "description": "Core library — types, config, session manager, lifecycle manager, event bus",
   "license": "MIT",
@@ -69,12 +69,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ComposioHQ/agent-orchestrator.git",
+    "url": "https://github.com/slievr/Athene.git",
     "directory": "packages/core"
   },
-  "homepage": "https://github.com/ComposioHQ/agent-orchestrator",
+  "homepage": "https://github.com/slievr/Athene",
   "bugs": {
-    "url": "https://github.com/ComposioHQ/agent-orchestrator/issues"
+    "url": "https://github.com/slievr/Athene/issues"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -105,7 +105,6 @@
     "vitest": "^4.0.18"
   },
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   }
 }

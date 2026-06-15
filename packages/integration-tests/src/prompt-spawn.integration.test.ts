@@ -24,7 +24,7 @@ import {
   type OrchestratorConfig,
   getProjectSessionsDir,
   type Session,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 
 // ── Shared setup ─────────────────────────────────────────────────────
 

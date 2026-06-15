@@ -1,7 +1,7 @@
 /**
  * OpenClaw gateway probing utilities.
  *
- * Used by `ao setup openclaw` and future TypeScript-based doctor checks.
+ * Used by `athene setup openclaw` and future TypeScript-based doctor checks.
  * Probes the OpenClaw gateway for reachability and validates auth tokens.
  */
 

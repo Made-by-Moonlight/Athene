@@ -689,7 +689,7 @@ export function createLifecycleManager(deps: LifecycleManagerDeps): LifecycleMan
         });
         recordActivityEvent({
           // Tag with scopedProjectId when the lifecycle worker is project-scoped
-          // so `ao events list --project <id>` surfaces this failure. Unscoped
+          // so `athene events list --project <id>` surfaces this failure. Unscoped
           // (multi-project) supervisors leave projectId null because the batch
           // crosses project boundaries — RCA there should query without --project.
           projectId: scopedProjectId,
@@ -3081,7 +3081,7 @@ export function createLifecycleManager(deps: LifecycleManagerDeps): LifecycleMan
         level: "warn",
         // Trigger is a bounded enum (no_acknowledge | stale_report |
         // agent_needs_input); auditResult.message includes free-form
-        // report.note text from `ao report` and must not land in summary,
+        // report.note text from `athene report` and must not land in summary,
         // which is FTS-indexed and only truncated by sanitizeSummary.
         // Full message stays in `data.message` where sanitizeData redacts
         // credential URLs.

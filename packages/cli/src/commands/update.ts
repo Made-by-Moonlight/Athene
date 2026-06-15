@@ -10,7 +10,7 @@ import {
   loadGlobalConfig,
   recordActivityEvent,
   type Session,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 import { runRepoScript } from "../lib/script-runner.js";
 import {
   checkForUpdate,
@@ -32,7 +32,7 @@ function isTTY(): boolean {
 }
 
 /**
- * The dashboard's POST /api/update spawns `ao update` with `stdio: "ignore"`,
+ * The dashboard's POST /api/update spawns `athene update` with `stdio: "ignore"`,
  * which makes `isTTY()` return false. That used to be fatal: handleNpmUpdate
  * fell into the "non-interactive — print and return" branch and never invoked
  * the install. The route would respond 202 "started" and absolutely nothing
@@ -77,7 +77,7 @@ export function registerUpdate(program: Command): void {
         restore?: boolean;
       }) => {
         if (opts.skipSmoke && opts.smokeOnly) {
-          console.error("`ao update` does not allow `--skip-smoke` together with `--smoke-only`.");
+          console.error("`athene update` does not allow `--skip-smoke` together with `--smoke-only`.");
           process.exit(1);
         }
 
@@ -92,12 +92,12 @@ export function registerUpdate(program: Command): void {
           source: "cli",
           kind: "cli.update_invoked",
           level: "info",
-          summary: `ao update invoked (method: ${method})`,
+          summary: `athene update invoked (method: ${method})`,
           data: { method, options: opts },
         });
 
         // Reject git-only flags up front when the install isn't a git source.
-        // Without this, users copy/pasting `ao update --skip-smoke` from older
+        // Without this, users copy/pasting `athene update --skip-smoke` from older
         // docs would silently no-op on npm/pnpm/bun installs (the flag would be
         // accepted, ignored, and the user would never know why smoke tests
         // didn't run — because they never ran on these install methods anyway).
@@ -141,7 +141,7 @@ async function handleCheck(): Promise<void> {
 // ---------------------------------------------------------------------------
 
 /**
- * Best-effort snapshot used by `ao update` to pause and resume AO around the
+ * Best-effort snapshot used by `athene update` to pause and resume AO around the
  * package-manager install. Missing/broken config should not block an update;
  * in that case we proceed without attempting a stop/start round trip.
  */
@@ -159,11 +159,11 @@ async function getUpdateLifecyclePlan(): Promise<UpdateLifecyclePlan> {
   let runningBeforeUpdate = false;
   try {
     // Live signal first: running.json lists whichever projects the active
-    // `ao start` daemon is currently polling. That can include local-only
+    // `athene start` daemon is currently polling. That can include local-only
     // projects whose `agent-orchestrator.yaml` is NOT in the global registry
-    // (Dhruv edge case: user runs `ao start` from a repo with a local config
+    // (Dhruv edge case: user runs `athene start` from a repo with a local config
     // and no global registration — sessions live on disk, would be clobbered
-    // if `ao update` proceeded).
+    // if `athene update` proceeded).
     //
     // If a daemon is running, trust its configPath — it's the source of
     // truth for "which sessions does the running ao instance own?"
@@ -181,7 +181,7 @@ async function getUpdateLifecyclePlan(): Promise<UpdateLifecyclePlan> {
       sessions = await sm.list();
     } else {
       // No live daemon. Fall back to the global registry — covers the case
-      // where the user ran `ao stop` (running.json gone) but stale sessions
+      // where the user ran `athene stop` (running.json gone) but stale sessions
       // sit on disk under ~/.agent-orchestrator/{hash}-{projectId}/. The
       // SessionManager's enrichment will reconcile any stale-runtime
       // sessions to `killed`, so terminal statuses don't block the update.
@@ -244,7 +244,7 @@ async function pauseAoForUpdate(plan: UpdateLifecyclePlan): Promise<boolean> {
       source: "cli",
       kind: "cli.update_failed",
       level: "error",
-      summary: `ao update failed: internal ao stop exited non-zero`,
+      summary: `athene update failed: internal athene stop exited non-zero`,
       data: { exitCode: stopExit },
     });
     console.error(chalk.red(`\nAO update could not stop the running daemon (exit ${stopExit}).`));
@@ -257,7 +257,7 @@ async function pauseAoForUpdate(plan: UpdateLifecyclePlan): Promise<boolean> {
       source: "cli",
       kind: "cli.update_failed",
       level: "error",
-      summary: `ao update failed: AO still appears active after internal ao stop`,
+      summary: `athene update failed: AO still appears active after internal athene stop`,
       data: {
         runningAfterStop: afterStop.runningBeforeUpdate,
         activeSessionCount: afterStop.activeSessions.length,
@@ -266,7 +266,7 @@ async function pauseAoForUpdate(plan: UpdateLifecyclePlan): Promise<boolean> {
     });
     console.error(
       chalk.red(
-        "\nAO update stopped before installing because AO still appears to be running after `ao stop --yes`.",
+        "\nAO update stopped before installing because AO still appears to be running after `athene stop --yes`.",
       ),
     );
     if (afterStop.activeSessions.length > 0) {
@@ -278,7 +278,7 @@ async function pauseAoForUpdate(plan: UpdateLifecyclePlan): Promise<boolean> {
         console.error(chalk.dim(`    … and ${afterStop.activeSessions.length - 5} more`));
       }
     }
-    console.error(chalk.dim("Run `ao stop` and retry `ao update` after AO is fully stopped."));
+    console.error(chalk.dim("Run `athene stop` and retry `athene update` after AO is fully stopped."));
     process.exit(1);
   }
 
@@ -300,7 +300,7 @@ async function restartAoAfterUpdate(
       source: "cli",
       kind: "cli.update_restart_failed",
       level: "error",
-      summary: `ao update could not restart AO after install`,
+      summary: `athene update could not restart AO after install`,
       data: { exitCode, args },
     });
     console.error(
@@ -318,7 +318,7 @@ function runAoLifecycleCommand(
   opts: { configPath?: string } = {},
 ): Promise<number> {
   return new Promise<number>((resolveExit) => {
-    const child = spawn("ao", args, {
+    const child = spawn("athene", args, {
       stdio: "inherit",
       shell: isWindows(),
       windowsHide: true,
@@ -351,13 +351,13 @@ async function handleGitUpdate(opts: {
   if (opts.smokeOnly) args.push("--smoke-only");
 
   try {
-    const exitCode = await runRepoScript("ao-update.sh", args);
+    const exitCode = await runRepoScript("athene-update.sh", args);
     if (exitCode !== 0) {
       recordActivityEvent({
         source: "cli",
         kind: "cli.update_failed",
         level: "error",
-        summary: `ao update (git) failed: ao-update.sh exited non-zero`,
+        summary: `athene update (git) failed: athene-update.sh exited non-zero`,
         data: { method: "git", exitCode },
       });
       if (shouldRestart) {
@@ -370,18 +370,18 @@ async function handleGitUpdate(opts: {
       await restartAoAfterUpdate(lifecyclePlan, { restore: opts.restore !== false });
     }
   } catch (error) {
-    if (error instanceof Error && error.message.includes("Script not found: ao-update.sh")) {
+    if (error instanceof Error && error.message.includes("Script not found: athene-update.sh")) {
       recordActivityEvent({
         source: "cli",
         kind: "cli.update_failed",
         level: "error",
-        summary: `ao update (git) failed: ao-update.sh missing from bundled assets`,
+        summary: `athene update (git) failed: athene-update.sh missing from bundled assets`,
         data: { method: "git", reason: "script_missing" },
       });
       console.error(
         chalk.red(
-          "ao-update.sh is missing from the bundled assets. " +
-            "If you're running from a source checkout, rebuild with `pnpm --filter @aoagents/ao-cli build`. " +
+          "athene-update.sh is missing from the bundled assets. " +
+            "If you're running from a source checkout, rebuild with `pnpm --filter @made-by-moonlight/athene-cli build`. " +
             "If you're on a package install, reinstall the package.",
         ),
       );
@@ -395,7 +395,7 @@ async function handleGitUpdate(opts: {
       source: "cli",
       kind: "cli.update_failed",
       level: "error",
-      summary: `ao update (git) failed`,
+      summary: `athene update (git) failed`,
       data: {
         method: "git",
         errorMessage: error instanceof Error ? error.message : String(error),
@@ -429,7 +429,7 @@ async function handleNpmUpdate(method: InstallMethod, opts: { restore: boolean }
       source: "cli",
       kind: "cli.update_failed",
       level: "error",
-      summary: `ao update (${method}) failed: npm registry lookup threw`,
+      summary: `athene update (${method}) failed: npm registry lookup threw`,
       data: {
         method,
         channel,
@@ -446,7 +446,7 @@ async function handleNpmUpdate(method: InstallMethod, opts: { restore: boolean }
       source: "cli",
       kind: "cli.update_failed",
       level: "error",
-      summary: `ao update (${method}) failed: npm registry lookup returned no version`,
+      summary: `athene update (${method}) failed: npm registry lookup returned no version`,
       data: { method, channel, reason: "registry_unreachable" },
     });
     console.error(chalk.red("Could not reach npm registry. Check your network and try again."));
@@ -463,7 +463,7 @@ async function handleNpmUpdate(method: InstallMethod, opts: { restore: boolean }
     !info.isOutdated && previousChannel !== undefined && previousChannel !== channel;
 
   // First-channel opt-in. previousChannel === undefined means we've never
-  // installed via the auto-updater. A user who just ran `ao config set
+  // installed via the auto-updater. A user who just ran `athene config set
   // updateChannel nightly` (after a manual install) would otherwise see
   // "Already on latest nightly" because semver says prerelease < stable.
   // Treat any version mismatch as install-worthy in that case.
@@ -518,7 +518,7 @@ async function handleNpmUpdate(method: InstallMethod, opts: { restore: boolean }
     // Soft auto-install: when the user has opted into stable or nightly we
     // skip the confirm prompt — they've already said "keep me on this channel."
     // Manual users (and explicit channel switches / first opt-ins) still see
-    // the confirm so an unintended `ao update` doesn't wipe the version they
+    // the confirm so an unintended `athene update` doesn't wipe the version they
     // pinned to.
     if (channel === "manual" || isChannelSwitch || isFirstChannelOptIn) {
       const promptText =
@@ -535,7 +535,7 @@ async function handleNpmUpdate(method: InstallMethod, opts: { restore: boolean }
   } else {
     // Non-TTY but also not API-invoked (piped output). Keep the old
     // "print the command and let the user run it" behavior so a script
-    // running `ao update | tee` doesn't get a surprise install.
+    // running `athene update | tee` doesn't get a surprise install.
     console.log(`Run: ${chalk.cyan(command)}`);
     return;
   }
@@ -547,7 +547,7 @@ async function handleNpmUpdate(method: InstallMethod, opts: { restore: boolean }
       source: "cli",
       kind: "cli.update_failed",
       level: "error",
-      summary: `ao update (${method}) failed: install command exited non-zero`,
+      summary: `athene update (${method}) failed: install command exited non-zero`,
       data: {
         method,
         command,
@@ -576,7 +576,7 @@ async function handleNpmUpdate(method: InstallMethod, opts: { restore: boolean }
       source: "cli",
       kind: "cli.update_failed",
       level: "error",
-      summary: `ao update (${method}) failed: installed version verification failed`,
+      summary: `athene update (${method}) failed: installed version verification failed`,
       data: {
         method,
         command,
@@ -674,7 +674,7 @@ async function verifyInstalledVersion(
   expectedVersion: string,
   previousVersion: string,
 ): Promise<VerificationResult> {
-  const result = await runCommandCapture("ao", ["--version"]);
+  const result = await runCommandCapture("athene", ["--version"]);
   const output = result.output.trim();
   const actualVersion = parseAoVersion(output);
 
@@ -682,14 +682,14 @@ async function verifyInstalledVersion(
     return {
       ok: false,
       output,
-      message: `\`ao --version\` failed with exit ${result.exitCode}.`,
+      message: `\`athene --version\` failed with exit ${result.exitCode}.`,
     };
   }
   if (!actualVersion) {
     return {
       ok: false,
       output,
-      message: `Could not parse \`ao --version\` output: ${output || "<empty>"}`,
+      message: `Could not parse \`athene --version\` output: ${output || "<empty>"}`,
     };
   }
   if (actualVersion !== expectedVersion) {
@@ -717,7 +717,7 @@ function classifyInstallFailure(output: string): { kind: string; guidance: strin
     return {
       kind: "pnpm_virtual_store",
       guidance:
-        "pnpm's global store metadata is inconsistent. Try `pnpm store prune`, then retry `ao update`. " +
+        "pnpm's global store metadata is inconsistent. Try `pnpm store prune`, then retry `athene update`. " +
         "If pnpm remains stuck, use the npm fallback below.",
     };
   }
@@ -732,7 +732,7 @@ function classifyInstallFailure(output: string): { kind: string; guidance: strin
     return {
       kind: "network",
       guidance:
-        "The registry request failed due to a network error. Check connectivity/VPN/proxy settings and retry `ao update`.",
+        "The registry request failed due to a network error. Check connectivity/VPN/proxy settings and retry `athene update`.",
     };
   }
   if (
@@ -760,7 +760,7 @@ function classifyInstallFailure(output: string): { kind: string; guidance: strin
   return {
     kind: "unknown",
     guidance:
-      "The package manager failed before AO could verify the new version. Retry `ao update` after addressing the package-manager error below.",
+      "The package manager failed before AO could verify the new version. Retry `athene update` after addressing the package-manager error below.",
   };
 }
 
@@ -784,7 +784,7 @@ function printInstallFailure(opts: {
     ),
   );
   console.error(chalk.yellow(classification.guidance));
-  console.error(chalk.dim(`\nTo retry: ao update`));
+  console.error(chalk.dim(`\nTo retry: athene update`));
   if (opts.command !== fallbackCommand) {
     console.error(chalk.dim(`You can also try: ${fallbackCommand}`));
   }

@@ -1,7 +1,7 @@
 import { readdir, stat, unlink } from "node:fs/promises";
 import { join } from "node:path";
 
-import { getOpenCodeTmpDir } from "@aoagents/ao-core";
+import { getOpenCodeTmpDir } from "@made-by-moonlight/athene-core";
 
 // Bun-bundled binaries (opencode, etc.) extract embedded shared libraries to
 // `TMPDIR` on startup and never unlink them on exit — this is a known upstream
@@ -9,7 +9,7 @@ import { getOpenCodeTmpDir } from "@aoagents/ao-core";
 // `.{16hex}-{8hex}.{so|dylib}` (e.g. `.fcb8efb7fbaad77d-00000000.so`).
 //
 // We point every `opencode` child we spawn at an AO-owned subdirectory via
-// `TMPDIR` (see `getOpenCodeChildEnv` in `@aoagents/ao-core`). The janitor
+// `TMPDIR` (see `getOpenCodeChildEnv` in `@made-by-moonlight/athene-core`). The janitor
 // then sweeps **only that directory**, which keeps the blast radius bounded:
 // no other user's or other application's Bun artifacts can ever be touched
 // even if AO runs as root on a shared host.
@@ -21,7 +21,7 @@ import { getOpenCodeTmpDir } from "@aoagents/ao-core";
 // immediately. Windows does not allow unlinking mapped files, and opencode
 // does not ship a Windows binary, so the janitor is a no-op there.
 //
-// This janitor runs once per `ao start` process and sweeps matching files
+// This janitor runs once per `athene start` process and sweeps matching files
 // older than `ageMs` at every interval.
 
 const BUN_TMP_LIB_PATTERN = /^\.[0-9a-f]{8,}-[0-9a-f]{6,}\.(so|dylib)$/i;

@@ -9,7 +9,7 @@ import {
   findConfigFile,
   normalizeDashboardNotificationLimit,
   readDashboardNotificationsFromFile,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 import {
   applyNotifierRoutingPreset,
   getNotifierRoutingState,
@@ -65,7 +65,7 @@ function readConfigContext(): ConfigContext {
   const configPath = findConfigFile() ?? undefined;
   if (!configPath) {
     throw new DashboardSetupError(
-      "No agent-orchestrator.yaml found. Run 'ao start' first to create one.",
+      "No agent-orchestrator.yaml found. Run 'athene start' first to create one.",
     );
   }
 
@@ -183,7 +183,7 @@ async function resolveInteractiveSetup(
   const optionRoutingPreset = resolveDashboardRoutingPreset(opts.routingPreset);
   const existingLimit = parseLimit(existingDashboard["limit"]);
 
-  clack.intro(chalk.bgCyan(chalk.black(" ao setup dashboard ")));
+  clack.intro(chalk.bgCyan(chalk.black(" athene setup dashboard ")));
 
   while (true) {
     const limitInput = await clack.text({
@@ -282,10 +282,10 @@ export async function runDashboardSetupAction(opts: DashboardSetupOptions): Prom
     const clack = await import("@clack/prompts");
     clack.outro(
       `${chalk.green("Dashboard setup complete!")} AO will retain the latest ${resolved.limit} dashboard notifications.\n` +
-        chalk.dim("  Test it with: ao notify test --to dashboard --template basic"),
+        chalk.dim("  Test it with: athene notify test --to dashboard --template basic"),
     );
   } else {
     console.log(chalk.green("\nDashboard setup complete."));
-    console.log(chalk.dim("Test it with: ao notify test --to dashboard --template basic"));
+    console.log(chalk.dim("Test it with: athene notify test --to dashboard --template basic"));
   }
 }

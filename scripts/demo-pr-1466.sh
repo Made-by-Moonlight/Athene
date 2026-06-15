@@ -65,7 +65,7 @@ banner "Pre-flight: build CLI + reset sandbox"
 
 if [[ ! -f "$AO_CLI" ]]; then
   note "CLI bundle not found, building..."
-  (cd "$AO_REPO" && pnpm --filter @aoagents/ao-cli build >/dev/null)
+  (cd "$AO_REPO" && pnpm --filter @made-by-moonlight/athene-cli build >/dev/null)
 fi
 
 rm -rf "$DEMO_HOME"
@@ -430,12 +430,12 @@ echo "  Session metadata format (key=value, flat strings) — ao-1:"
 sed 's/^/    /' "$HASH_DIR_A/sessions/ao-1"
 sleep 6
 
-step "ao migrate-storage --dry-run  (shows the plan, mutates nothing)"
-ao migrate-storage --dry-run --force || true
+step "athene migrate-storage --dry-run  (shows the plan, mutates nothing)"
+athene migrate-storage --dry-run --force || true
 sleep 3
 
-step "ao migrate-storage  (atomic per-project, with rollback on failure)"
-ao migrate-storage --force
+step "athene migrate-storage  (atomic per-project, with rollback on failure)"
+athene migrate-storage --force
 sleep 2
 
 step "After — V2 layout (projects/{projectId}/sessions/{sid}.json)"
@@ -507,7 +507,7 @@ console.log('    ' + (ok ? 'PASS' : 'FAIL') + ' — agent-report flat-key contra
 sleep 5
 
 step "Rollback safety: re-running migration is a no-op (markers prevent re-process)"
-ao migrate-storage --force 2>&1 | tail -5
+athene migrate-storage --force 2>&1 | tail -5
 sleep 3
 
 # ───────────────────────────────────────────────────────────────────────────
@@ -515,9 +515,9 @@ banner "Act 2 — Cross-project CLI (the P1 review fix)"
 # ───────────────────────────────────────────────────────────────────────────
 
 note "Behavior under test:"
-note "  1. ao start (project=A)            → running.json {pid, projects:[A]}"
-note "  2. ao stop A                       → projects:[]            (parent alive)"
-note "  3. ao start A                      → projects:[A] same pid  (ATTACH, no 2nd daemon)"
+note "  1. athene start (project=A)            → running.json {pid, projects:[A]}"
+note "  2. athene stop A                       → projects:[]            (parent alive)"
+note "  3. athene start A                      → projects:[A] same pid  (ATTACH, no 2nd daemon)"
 note ""
 note "Pre-fix: step 3 fell through to runStartup() → spawned a SECOND dashboard"
 note "on a new port, clobbered running.json. Reproduced and fixed in commit bfc7f48f."
@@ -531,7 +531,7 @@ sed -n '/attaches to existing daemon (no second dashboard)/,/^  });$/p' \
 sleep 5
 
 step "Run the test live (filtered by test name via vitest -t)"
-(cd "$AO_REPO" && pnpm --filter @aoagents/ao-cli test -- start.test.ts -t "attaches to existing daemon" 2>&1 \
+(cd "$AO_REPO" && pnpm --filter @made-by-moonlight/athene-cli test -- start.test.ts -t "attaches to existing daemon" 2>&1 \
   | grep -E "✓|✗|FAIL|Test Files|^\s*Tests " | head -10 | sed 's/^/    /') || true
 sleep 3
 
@@ -556,10 +556,10 @@ grep -B 1 -A 7 "No project filter — sidebar needs all sessions" \
 sleep 4
 
 # ───────────────────────────────────────────────────────────────────────────
-banner "Act 4 — Restore from ao stop  (last-stop.json round-trip)"
+banner "Act 4 — Restore from athene stop  (last-stop.json round-trip)"
 # ───────────────────────────────────────────────────────────────────────────
 
-step "Simulate what ao stop writes to last-stop.json"
+step "Simulate what athene stop writes to last-stop.json"
 cat >"$DEMO_HOME/.agent-orchestrator/last-stop.json" <<JSON
 {
   "stoppedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
@@ -572,7 +572,7 @@ echo
 sed 's/^/    /' "$DEMO_HOME/.agent-orchestrator/last-stop.json"
 sleep 3
 
-step "What ao start does with it (start.ts)"
+step "What athene start does with it (start.ts)"
 echo
 grep -n "readLastStop\|Restore .* sessions" \
   "$AO_REPO/packages/cli/src/commands/start.ts" | head -6 | sed 's/^/    /'
@@ -589,7 +589,7 @@ sleep 3
 banner "Act 5 — Ctrl+C performs a full graceful shutdown (no tmux orphans)"
 # ───────────────────────────────────────────────────────────────────────────
 
-note "SIGINT/SIGTERM handler in start.ts mirrors ao stop:"
+note "SIGINT/SIGTERM handler in start.ts mirrors athene stop:"
 note "  kill all sessions → write last-stop.json → unregister → process.exit"
 note "  10s hard timeout via setTimeout().unref() in case cleanup hangs."
 sleep 2
@@ -601,7 +601,7 @@ grep -n "shutdown.*signal: NodeJS.Signals\|10s hard timeout\|SHUTDOWN_TIMEOUT_MS
 sleep 3
 
 # ───────────────────────────────────────────────────────────────────────────
-banner "Act 6 — Empty-repo guard for ao start <URL>"
+banner "Act 6 — Empty-repo guard for athene start <URL>"
 # ───────────────────────────────────────────────────────────────────────────
 
 note "Before fix: empty repos caused 'Unable to resolve base ref' deep inside"
@@ -626,12 +626,12 @@ banner "Test summary: 560 CLI + 981 core (last full run)"
 # Restore the real HOME and unset sandbox env vars when running the full
 # test suites — otherwise tests that read getGlobalConfigPath() see the
 # demo's sparse config and fail spuriously.
-step "pnpm --filter @aoagents/ao-cli test"
-(cd "$AO_REPO" && env -u AO_GLOBAL_CONFIG HOME="$REAL_HOME" pnpm --filter @aoagents/ao-cli test 2>&1 \
+step "pnpm --filter @made-by-moonlight/athene-cli test"
+(cd "$AO_REPO" && env -u AO_GLOBAL_CONFIG HOME="$REAL_HOME" pnpm --filter @made-by-moonlight/athene-cli test 2>&1 \
   | grep -E "^\s*(Tests|Test Files|Duration)" | sed 's/^/    /') || true
 
-step "pnpm --filter @aoagents/ao-core test"
-(cd "$AO_REPO" && env -u AO_GLOBAL_CONFIG HOME="$REAL_HOME" pnpm --filter @aoagents/ao-core test 2>&1 \
+step "pnpm --filter @made-by-moonlight/athene-core test"
+(cd "$AO_REPO" && env -u AO_GLOBAL_CONFIG HOME="$REAL_HOME" pnpm --filter @made-by-moonlight/athene-core test 2>&1 \
   | grep -E "^\s*(Tests|Test Files|Duration)" | sed 's/^/    /') || true
 
 # ───────────────────────────────────────────────────────────────────────────

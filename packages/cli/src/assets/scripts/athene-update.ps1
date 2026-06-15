@@ -1,9 +1,9 @@
-﻿# PowerShell port of ao-update.sh — Windows-native source-checkout updater for AO.
-# Invoked by `ao update` on Windows via runRepoScript() when install method is 'git'.
+﻿# PowerShell port of athene-update.sh — Windows-native source-checkout updater for AO.
+# Invoked by `athene update` on Windows via runRepoScript() when install method is 'git'.
 
 $ErrorActionPreference = 'Stop'
 
-# Manual arg parsing — matches ao-update.sh's `--skip-smoke` / `--smoke-only` /
+# Manual arg parsing — matches athene-update.sh's `--skip-smoke` / `--smoke-only` /
 # `-h` / `--help` flags rather than PowerShell's `-SkipSmoke` convention, so the
 # calling contract is identical on Linux/macOS/Windows.
 $SkipSmoke = $false
@@ -24,9 +24,9 @@ foreach ($a in $args) {
 
 if ($Help) {
     @'
-Usage: ao update [--skip-smoke] [--smoke-only]
+Usage: athene update [--skip-smoke] [--smoke-only]
 
-Fast-forwards the local Agent Orchestrator install repo to main, installs deps,
+Fast-forwards the local Athene install repo to main, installs deps,
 clean-rebuilds all workspace packages, refreshes the ao launcher, and runs smoke tests.
 
 Options:
@@ -44,7 +44,7 @@ if ($SkipSmoke -and $SmokeOnly) {
 $TargetBranch = if ($env:AO_UPDATE_BRANCH) { $env:AO_UPDATE_BRANCH } else { 'main' }
 
 function Test-AoRepoRoot([string]$path) {
-    return (Test-Path (Join-Path $path 'packages/ao/bin/ao.js')) -and
+    return (Test-Path (Join-Path $path 'packages/athene/bin/athene.js')) -and
            (Test-Path (Join-Path $path 'packages/cli'))
 }
 
@@ -65,7 +65,7 @@ function Resolve-RepoRoot {
     if ($fromScript) { return $fromScript }
     $fromCwd = Find-RepoRootFrom (Get-Location).Path
     if ($fromCwd) { return $fromCwd }
-    Write-Error "Unable to find Agent Orchestrator repo root. Fix: run via ao update or set AO_REPO_ROOT."
+    Write-Error "Unable to find Athene repo root. Fix: run via athene update or set AO_REPO_ROOT."
     exit 1
 }
 
@@ -139,7 +139,7 @@ function Sync-OriginWithUpstream {
 function Run-SmokeTests {
     Write-Host ""
     Write-Host "Running smoke tests..."
-    $aoBin = Join-Path $RepoRoot 'packages/ao/bin/ao.js'
+    $aoBin = Join-Path $RepoRoot 'packages/athene/bin/athene.js'
     Run-Cmd node $aoBin --version
     Run-Cmd node $aoBin doctor --help
     Run-Cmd node $aoBin update --help
@@ -156,12 +156,12 @@ function Ensure-RepoClean([string]$reason) {
 function Ensure-OnTargetBranch {
     $current = (& git branch --show-current).Trim()
     if ($current -ne $TargetBranch) {
-        Write-Error "Current branch is $current, expected $TargetBranch. Fix: git switch $TargetBranch then rerun ao update."
+        Write-Error "Current branch is $current, expected $TargetBranch. Fix: git switch $TargetBranch then rerun athene update."
         exit 1
     }
 }
 
-Write-Host "Agent Orchestrator Update`n"
+Write-Host "Athene Update`n"
 
 Require-Command 'node' 'install Node.js 20+'
 
@@ -176,11 +176,11 @@ if (-not $SmokeOnly) {
 
     & git rev-parse --is-inside-work-tree *> $null
     if ($LASTEXITCODE -ne 0) {
-        Write-Error "The update command must run inside the Agent Orchestrator git checkout."
+        Write-Error "The update command must run inside the Athene git checkout."
         exit 1
     }
 
-    Ensure-RepoClean 'Working tree is dirty. Fix: commit or stash local changes before running ao update.'
+    Ensure-RepoClean 'Working tree is dirty. Fix: commit or stash local changes before running athene update.'
     Ensure-OnTargetBranch
 
     Sync-OriginWithUpstream
@@ -202,7 +202,7 @@ if (-not $SmokeOnly) {
 
         Write-Host ""
         Write-Host "Refreshing ao launcher..."
-        Push-Location (Join-Path $RepoRoot 'packages/ao')
+        Push-Location (Join-Path $RepoRoot 'packages/athene')
         try {
             & npm link --force
             if ($LASTEXITCODE -ne 0) {

@@ -1,12 +1,12 @@
 #!/bin/bash
-# Agent Orchestrator setup script
+# Athene setup script
 # Validates prerequisites, installs dependencies, builds packages, and links the CLI globally
 
 set -e  # Exit on error
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
-echo "Agent Orchestrator Setup"
+echo "Athene Setup"
 echo ""
 
 # ─── Hard requirements (exit 1 if missing) ────────────────────────────────────
@@ -136,7 +136,7 @@ pnpm build
 
 echo ""
 echo "Linking CLI globally..."
-cd packages/ao
+cd packages/athene
 npm_link_error="$(mktemp)"
 if npm link --force 2>"$npm_link_error"; then
   rm -f "$npm_link_error"
@@ -150,7 +150,7 @@ elif [ "$INTERACTIVE" = true ]; then
 else
   cat "$npm_link_error" >&2
   rm -f "$npm_link_error"
-  echo "ERROR: Launcher refresh failed. Run manually: cd packages/ao && sudo npm link --force"
+  echo "ERROR: Launcher refresh failed. Run manually: cd packages/athene && sudo npm link --force"
   exit 1
 fi
 cd "$REPO_ROOT"
@@ -158,7 +158,7 @@ cd "$REPO_ROOT"
 # ─── Verify ao is in PATH ────────────────────────────────────────────────────
 
 echo ""
-if command -v ao &> /dev/null; then
+if command -v athene &> /dev/null; then
   echo "[ok] 'ao' command is available in PATH"
 else
   NPM_BIN="$(npm bin -g 2>/dev/null || npm config get prefix)/bin"
@@ -180,9 +180,9 @@ echo ""
 echo "  Navigate to your project directory and start:"
 echo ""
 echo "    cd ~/your-project"
-echo "    ao start            # auto-detects, creates config, launches dashboard"
+echo "    athene start            # auto-detects, creates config, launches dashboard"
 echo ""
 echo "  Want to add more projects later?"
 echo ""
-echo "    ao start ~/path/to/another-repo"
+echo "    athene start ~/path/to/another-repo"
 echo ""

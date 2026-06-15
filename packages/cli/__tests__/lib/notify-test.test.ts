@@ -10,7 +10,7 @@ import {
   type OrchestratorConfig,
   type OrchestratorEvent,
   type PluginRegistry,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 import {
   addSinkNotifierConfig,
   createNotifyTestEvent,
@@ -108,7 +108,7 @@ describe("notify test helper", () => {
       subject: {
         pr: {
           number: 1579,
-          url: "https://github.com/ComposioHQ/agent-orchestrator/pull/1579",
+          url: "https://github.com/slievr/Athene/pull/1579",
         },
       },
       ci: {
@@ -294,7 +294,7 @@ describe("notify test helper", () => {
       expect(request?.json).toMatchObject({
         type: "notification",
         event: {
-          message: "Test notification from ao notify test",
+          message: "Test notification from athene notify test",
         },
       });
     } finally {

@@ -1,9 +1,9 @@
 ---
 title: Architecture
-description: How Agent Orchestrator fits together — plugin slots, session lifecycle, event bus, prompt assembly, and activity detection.
+description: How Athene fits together — plugin slots, session lifecycle, event bus, prompt assembly, and activity detection.
 ---
 
-Agent Orchestrator (AO) is a Node.js orchestrator that spawns and manages parallel AI coding agents across isolated git worktrees. Every moving part is a plugin; the core provides the state machine, event bus, and prompt assembly that ties them together.
+Athene (AO) is a Node.js orchestrator that spawns and manages parallel AI coding agents across isolated git worktrees. Every moving part is a plugin; the core provides the state machine, event bus, and prompt assembly that ties them together.
 
 ## The 8 Plugin Slots
 
@@ -184,9 +184,9 @@ The `orchestratorRules` field in `ProjectConfig` is reserved for orchestrator-ro
 
 Orchestrator sessions do not receive the standard three-layer prompt. Instead, `generateOrchestratorPrompt()` in `packages/core/src/orchestrator-prompt.ts` builds a standalone prompt that provides:
 
-- **Role rules** — read-only investigations only; never own a PR; never use `tmux send-keys` directly; always use `ao send` / `ao spawn` to delegate.
+- **Role rules** — read-only investigations only; never own a PR; never use `tmux send-keys` directly; always use `athene send` / `athene spawn` to delegate.
 - **Project info** — name, repo, default branch, session prefix, local path, dashboard port.
-- **Quick-start commands** — `ao status`, `ao spawn`, `ao batch-spawn`, `ao session claim-pr`, `ao send`, `ao open`.
+- **Quick-start commands** — `athene status`, `athene spawn`, `athene batch-spawn`, `athene session claim-pr`, `athene send`, `athene open`.
 - **Available `ao` commands table** — full reference adapted to whether a repo is configured.
 - **Session management workflows** — spawning, monitoring, PR takeover, investigation workflow, cleanup.
 - **Dashboard info** — URL and feature summary.
@@ -308,7 +308,7 @@ agent-orchestrator.yaml ──► Config Loader (Zod) ──► Plugin Registry
                                           ┌───────────────┘
                                           │
                                           ▼
-                                    Session Manager ◄─── ao spawn / ao session
+                                    Session Manager ◄─── athene spawn / athene session
                                           │
                                           ▼
                                   Lifecycle Manager ────► Events ────► Notifiers

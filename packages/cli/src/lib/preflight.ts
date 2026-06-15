@@ -1,7 +1,7 @@
 /**
- * Pre-flight checks for `ao start` (port + dashboard build artifacts).
+ * Pre-flight checks for `athene start` (port + dashboard build artifacts).
  *
- * Tool/auth checks for `ao spawn` live on each plugin's `preflight()` method.
+ * Tool/auth checks for `athene spawn` live on each plugin's `preflight()` method.
  * Adding a new runtime/tracker/scm therefore doesn't require editing this
  * file — the plugin declares its own prereqs.
  *
@@ -28,23 +28,23 @@ async function checkPort(port: number): Promise<void> {
 
 /**
  * Check that workspace packages have been compiled (TypeScript → JavaScript).
- * Locates @aoagents/ao-core by walking up from webDir, handling both pnpm
+ * Locates @made-by-moonlight/athene-core by walking up from webDir, handling both pnpm
  * workspaces (symlinked deps in webDir/node_modules) and npm/yarn global
  * installs (hoisted to a parent node_modules).
  */
 async function checkBuilt(webDir: string): Promise<void> {
   const isNpmInstall = isInstalledUnderNodeModules(webDir);
-  const corePkgDir = findPackageUp(webDir, "@aoagents", "ao-core");
+  const corePkgDir = findPackageUp(webDir, "@made-by-moonlight", "core");
   if (!corePkgDir) {
     const hint = isNpmInstall
-      ? "Run: npm install -g @aoagents/ao@latest"
+      ? "Run: npm install -g @made-by-moonlight/athene@latest"
       : "Run: pnpm install && pnpm build";
     throw new Error(`Dependencies not installed. ${hint}`);
   }
   const coreEntry = resolve(corePkgDir, "dist", "index.js");
   if (!existsSync(coreEntry)) {
     const hint = isNpmInstall
-      ? "Run: npm install -g @aoagents/ao@latest"
+      ? "Run: npm install -g @made-by-moonlight/athene@latest"
       : "Run: pnpm build";
     throw new Error(`Packages not built. ${hint}`);
   }
@@ -53,7 +53,7 @@ async function checkBuilt(webDir: string): Promise<void> {
   const startAllEntry = resolve(webDir, "dist-server", "start-all.js");
   if (!existsSync(webBuildId) || !existsSync(startAllEntry)) {
     const hint = isNpmInstall
-      ? "Run: npm install -g @aoagents/ao@latest"
+      ? "Run: npm install -g @made-by-moonlight/athene@latest"
       : "Run: pnpm build";
     throw new Error(`Packages not built. ${hint}`);
   }

@@ -1,16 +1,16 @@
 ---
 title: Troubleshooting
-description: Common AO problems and concrete fixes. Most start with `ao doctor`.
+description: Common AO problems and concrete fixes. Most start with `athene doctor`.
 ---
 
 import { Accordions, Accordion } from "fumadocs-ui/components/accordion";
 
-## First step: `ao doctor`
+## First step: `athene doctor`
 
 ```bash
-ao doctor
-ao doctor --fix           # auto-repair safe things
-ao doctor --test-notify   # send a test through each notifier
+athene doctor
+athene doctor --fix           # auto-repair safe things
+athene doctor --test-notify   # send a test through each notifier
 ```
 
 Covers: install health, plugin resolution, notifier connectivity, stale temp files.
@@ -28,30 +28,30 @@ Covers: install health, plugin resolution, notifier connectivity, stale temp fil
     Run `gh auth login`. AO uses `gh` for every GitHub interaction.
   </Accordion>
   <Accordion title="Port 3000 already in use">
-    AO auto-picks the next free port. You'll see the actual URL in the `ao start` output.
+    AO auto-picks the next free port. You'll see the actual URL in the `athene start` output.
   </Accordion>
   <Accordion title="Dashboard crashes with 'vendor-chunks not found'">
-    Stale Next.js artifacts. Run `ao dashboard --rebuild`.
+    Stale Next.js artifacts. Run `athene dashboard --rebuild`.
   </Accordion>
 </Accordions>
 
 ## Agents & sessions
 
 <Accordions>
-  <Accordion title="`ao spawn` hangs at 'waiting for idle'">
-    The agent never reached idle state. Run `ao status --watch` to see what's happening — if it's legitimately working (e.g. large install step), wait. Otherwise `ao session kill <session>` and spawn again.
+  <Accordion title="`athene spawn` hangs at 'waiting for idle'">
+    The agent never reached idle state. Run `athene status --watch` to see what's happening — if it's legitimately working (e.g. large install step), wait. Otherwise `athene session kill <session>` and spawn again.
   </Accordion>
   <Accordion title="Dashboard activity stuck on 'active' or 'idle'">
-    `getActivityState` reads the agent's JSONL / activity log. If that file is missing or stale, you'll see wrong states. `ao doctor` flags this. See the agent's individual plugin page under [Plugins › Agents](/docs/plugins/agents) for recovery.
+    `getActivityState` reads the agent's JSONL / activity log. If that file is missing or stale, you'll see wrong states. `athene doctor` flags this. See the agent's individual plugin page under [Plugins › Agents](/docs/plugins/agents) for recovery.
   </Accordion>
   <Accordion title="Agent opened a PR but the dashboard doesn't know">
-    The PATH wrapper didn't record it (possible if the agent called `gh` by absolute path). Use `ao session claim-pr <pr> <sessionId>` to link retroactively.
+    The PATH wrapper didn't record it (possible if the agent called `gh` by absolute path). Use `athene session claim-pr <pr> <sessionId>` to link retroactively.
   </Accordion>
   <Accordion title="Session won't restore">
-    `ao session restore <sessionId>` relaunches the agent in the same worktree. If restore keeps failing, check the agent plugin's resume docs — some agents don't support resume at all (Cursor, Aider).
+    `athene session restore <sessionId>` relaunches the agent in the same worktree. If restore keeps failing, check the agent plugin's resume docs — some agents don't support resume at all (Cursor, Aider).
   </Accordion>
   <Accordion title="`Session can't be found` with OpenCode">
-    Run `ao session remap <sessionId>` to re-discover the OpenCode mapping. Use `--force` if a stale mapping is stuck.
+    Run `athene session remap <sessionId>` to re-discover the OpenCode mapping. Use `--force` if a stale mapping is stuck.
   </Accordion>
 </Accordions>
 
@@ -89,20 +89,20 @@ Covers: install health, plugin resolution, notifier connectivity, stale temp fil
 ## Windows-specific
 
 <Accordions>
-  <Accordion title="`ao open` prints a URL instead of opening a tab">
+  <Accordion title="`athene open` prints a URL instead of opening a tab">
     Expected on Windows. The iTerm2 helper only runs on macOS. Use the dashboard's built-in terminal (the printed URL takes you there).
   </Accordion>
   <Accordion title="Child process exits immediately">
-    Shell quoting issue. Pass long prompts via `--prompt` with simple ASCII, or via `ao send --file <path>`.
+    Shell quoting issue. Pass long prompts via `--prompt` with simple ASCII, or via `athene send --file <path>`.
   </Accordion>
 </Accordions>
 
 ## Still stuck
 
 - Check the [FAQ](/docs/faq).
-- Open an issue: [`ComposioHQ/agent-orchestrator`](https://github.com/ComposioHQ/agent-orchestrator/issues).
+- Open an issue: [`slievr/Athene`](https://github.com/slievr/Athene/issues).
 When opening an issue, include:
 
-- Output of `ao --version`
+- Output of `athene --version`
 - The contents of `~/.agent-orchestrator/{hash}-observability/processes/` (one JSON snapshot per process; each contains traces, health, and metrics)
 - Your `agent-orchestrator.yaml` (redact any secrets)

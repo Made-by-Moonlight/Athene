@@ -33,7 +33,7 @@ fail_step() {
 
 # Test starts here
 echo -e "${BLUE}╔════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║  Agent Orchestrator - Onboarding Integration Test     ║${NC}"
+echo -e "${BLUE}║  Athene - Onboarding Integration Test     ║${NC}"
 echo -e "${BLUE}╔════════════════════════════════════════════════════════╗${NC}"
 echo ""
 
@@ -51,10 +51,10 @@ end_step "Step 2: Setup completed"
 
 # Step 3: Verify ao command is available
 start_step "Step 3: Verify ao command"
-if ! command -v ao &> /dev/null; then
+if ! command -v athene &> /dev/null; then
     fail_step "Step 3: ao command not found (npm link failed?)"
 fi
-ao --version || fail_step "Step 3: ao --version failed"
+athene --version || fail_step "Step 3: athene --version failed"
 end_step "Step 3: ao command available"
 
 # Step 4: Create minimal test config
@@ -90,7 +90,7 @@ end_step "Step 5: Configuration validated"
 # Step 6: Start orchestrator (in background)
 start_step "Step 6: Start orchestrator"
 # Start in background and capture PID
-ao start --no-orchestrator &  # Only start dashboard, not the orchestrator session
+athene start --no-orchestrator &  # Only start dashboard, not the orchestrator session
 DASHBOARD_PID=$!
 
 # Wait for dashboard to be ready (max 30 seconds)
@@ -141,7 +141,7 @@ for i in $(seq 1 $max_retries); do
         break
     fi
     if [ $i -eq $max_retries ]; then
-        fail_step "Step 8: WebSocket terminal server not responding (bug: ao start didn't launch all services)"
+        fail_step "Step 8: WebSocket terminal server not responding (bug: athene start didn't launch all services)"
     fi
     sleep 1
 done

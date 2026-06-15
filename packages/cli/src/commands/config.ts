@@ -1,5 +1,5 @@
 /**
- * `ao config` — read/write fields in ~/.agent-orchestrator/config.yaml.
+ * `athene config` — read/write fields in ~/.agent-orchestrator/config.yaml.
  *
  * Today this only manages `updateChannel` and `installMethod`, which are the
  * two settings the release pipeline depends on. We deliberately resist adding
@@ -19,7 +19,7 @@ import {
   type GlobalConfig,
   type UpdateChannel,
   type InstallMethodOverride,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 import { existsSync } from "node:fs";
 
 const SUPPORTED_KEYS = ["updateChannel", "installMethod"] as const;

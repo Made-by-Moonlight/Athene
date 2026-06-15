@@ -10,8 +10,8 @@ const { recordActivityEventMock } = vi.hoisted(() => ({
   recordActivityEventMock: vi.fn(),
 }));
 
-vi.mock("@aoagents/ao-core", async () => {
-  const actual = (await vi.importActual("@aoagents/ao-core")) as Record<string, unknown>;
+vi.mock("@made-by-moonlight/athene-core", async () => {
+  const actual = (await vi.importActual("@made-by-moonlight/athene-core")) as Record<string, unknown>;
   return {
     ...actual,
     recordActivityEvent: recordActivityEventMock,
@@ -27,7 +27,7 @@ import {
   _resetGhUnavailableEmittedForTesting,
   _resetBatchEnrichPRFailedEmittedForTesting,
 } from "../src/graphql-batch.js";
-import type { PRInfo } from "@aoagents/ao-core";
+import type { PRInfo } from "@made-by-moonlight/athene-core";
 
 const samplePRs: PRInfo[] = [
   {

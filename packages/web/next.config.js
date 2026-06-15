@@ -9,19 +9,19 @@ const homeDir = os.homedir().replace(/\\/g, "/");
 const nextConfig = {
   outputFileTracingRoot: path.join(__dirname, "../.."),
   transpilePackages: [
-    "@aoagents/ao-plugin-agent-claude-code",
-    "@aoagents/ao-plugin-agent-codex",
-    "@aoagents/ao-plugin-agent-opencode",
-    "@aoagents/ao-plugin-runtime-tmux",
-    "@aoagents/ao-plugin-scm-github",
-    "@aoagents/ao-plugin-tracker-github",
-    "@aoagents/ao-plugin-tracker-linear",
-    "@aoagents/ao-plugin-workspace-worktree",
+    "@made-by-moonlight/athene-plugin-agent-claude-code",
+    "@made-by-moonlight/athene-plugin-agent-codex",
+    "@made-by-moonlight/athene-plugin-agent-opencode",
+    "@made-by-moonlight/athene-plugin-runtime-tmux",
+    "@made-by-moonlight/athene-plugin-scm-github",
+    "@made-by-moonlight/athene-plugin-tracker-github",
+    "@made-by-moonlight/athene-plugin-tracker-linear",
+    "@made-by-moonlight/athene-plugin-workspace-worktree",
   ],
   serverExternalPackages: [
     "yaml",
     "zod",
-    "@aoagents/ao-core",
+    "@made-by-moonlight/athene-core",
     "better-sqlite3",
   ],
   webpack: (config, { isServer }) => {

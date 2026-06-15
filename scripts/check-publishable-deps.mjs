@@ -6,10 +6,10 @@
  * package (one without `"private": true`) is itself publishable. Without
  * this, pnpm would rewrite the workspace dep on publish to a literal
  * version pointing at a package that doesn't exist on npm, and consumers
- * doing `npm install -g @aoagents/ao` would fail.
+ * doing `npm install -g @made-by-moonlight/athene` would fail.
  *
- * Concretely: this catches the case where `@aoagents/ao-cli` has
- * `"@aoagents/ao-web": "workspace:*"` while `@aoagents/ao-web` is
+ * Concretely: this catches the case where `@made-by-moonlight/athene-cli` has
+ * `"@made-by-moonlight/athene-web": "workspace:*"` while `@made-by-moonlight/athene-web` is
  * `"private": true` — the dashboard would never reach consumers.
  *
  * Run from CI before `changeset publish`.

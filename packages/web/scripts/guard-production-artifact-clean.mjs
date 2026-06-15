@@ -94,7 +94,7 @@ if (running) {
         : "AO dashboard is running from this checkout";
     console.error(
       `Refusing to delete production dashboard artifacts while ${checkoutDetail} (PID ${matchingPid}, port ${running.port}).\n` +
-        "Stop it first with `ao stop`, or rebuild through `ao start --rebuild` / `ao dashboard --rebuild` so AO can stop the old dashboard safely.",
+        "Stop it first with `athene stop`, or rebuild through `athene start --rebuild` / `athene dashboard --rebuild` so AO can stop the old dashboard safely.",
     );
     process.exit(1);
   }

@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import chalk from "chalk";
 import { parseDocument } from "yaml";
-import { CONFIG_SCHEMA_URL, findConfigFile, isCanonicalGlobalConfigPath } from "@aoagents/ao-core";
+import { CONFIG_SCHEMA_URL, findConfigFile, isCanonicalGlobalConfigPath } from "@made-by-moonlight/athene-core";
 import {
   applyNotifierRoutingPreset,
   getNotifierRoutingState,
@@ -12,7 +12,7 @@ import {
 } from "./notifier-routing.js";
 
 const SLACK_APPS_URL = "https://api.slack.com/apps";
-const DEFAULT_USERNAME = "Agent Orchestrator";
+const DEFAULT_USERNAME = "Athene";
 const SETUP_TIMEOUT_MS = 10_000;
 
 export interface SlackSetupOptions {
@@ -79,7 +79,7 @@ function readConfigContext(): ConfigContext {
   const configPath = findConfigFile() ?? undefined;
   if (!configPath) {
     throw new SlackSetupError(
-      "No agent-orchestrator.yaml found. Run 'ao start' first to create one.",
+      "No agent-orchestrator.yaml found. Run 'athene start' first to create one.",
     );
   }
 
@@ -418,7 +418,7 @@ async function resolveInteractiveSetup(
   const existingWebhookUrl = stringValue(existingSlack["webhookUrl"]);
   const optionRoutingPreset = resolveSlackRoutingPreset(opts.routingPreset);
 
-  clack.intro(chalk.bgCyan(chalk.black(" ao setup slack ")));
+  clack.intro(chalk.bgCyan(chalk.black(" athene setup slack ")));
   explainChannelBinding();
 
   while (true) {
@@ -471,7 +471,7 @@ function resolveNonInteractiveSetup(
     (opts.refresh ? stringValue(existingSlack["webhookUrl"]) : undefined);
   if (!webhookUrl) {
     throw new SlackSetupError(
-      "Slack webhook URL is required. Pass --webhook-url, or run `ao setup slack --refresh` with an existing Slack config.",
+      "Slack webhook URL is required. Pass --webhook-url, or run `athene setup slack --refresh` with an existing Slack config.",
     );
   }
 
@@ -619,10 +619,10 @@ export async function runSlackSetupAction(opts: SlackSetupOptions): Promise<void
     const clack = await import("@clack/prompts");
     clack.outro(
       `${chalk.green("Slack setup complete!")} AO will send notifications through the configured Slack webhook.\n` +
-        chalk.dim("  Test it with: ao notify test --to slack --template basic"),
+        chalk.dim("  Test it with: athene notify test --to slack --template basic"),
     );
   } else {
     console.log(chalk.green("\n✓ Slack setup complete."));
-    console.log(chalk.dim("Test it with: ao notify test --to slack --template basic"));
+    console.log(chalk.dim("Test it with: athene notify test --to slack --template basic"));
   }
 }

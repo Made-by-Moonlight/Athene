@@ -10,7 +10,7 @@ import {
   migrateToGlobalConfig,
   recordActivityEvent,
   registerProjectInGlobalConfig,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 import { revalidatePath } from "next/cache";
 import { getAllProjects } from "@/lib/project-name";
 import { invalidatePortfolioServicesCache } from "@/lib/services";

@@ -1,5 +1,5 @@
 /**
- * OpenClaw Plugin: Agent Orchestrator v0.3.0
+ * OpenClaw Plugin: Athene v0.3.0
  *
  * Open-source, pluggable agentic coding orchestrator. Manages durable coding
  * agents (Claude Code, Codex, OpenCode) and wires up feedback loops so PR
@@ -580,7 +580,7 @@ export default function (api: PluginApi) {
         : "No active AO sessions (or AO not running).";
 
       return [
-        "=== LIVE AGENT ORCHESTRATOR DATA (just fetched — use this, NOT your memory) ===",
+        "=== LIVE ATHENE DATA (just fetched — use this, NOT your memory) ===",
         "",
         issuesSummary,
         "",
@@ -632,7 +632,7 @@ export default function (api: PluginApi) {
     // Inform the model that AO is available and what it offers.
     // Not a command — just context so the model can make an informed choice.
     const routingContext = [
-      "[Agent Orchestrator] This project has AO installed — an open-source orchestrator " +
+      "[Athene] This project has AO installed — an open-source orchestrator " +
         "for durable coding agents (Claude Code, Codex, OpenCode). ao_spawn creates an " +
         "isolated git worktree, starts an agent, and wires up feedback loops so PR reviews " +
         "and CI failures automatically route to the right agent.",
@@ -689,7 +689,7 @@ export default function (api: PluginApi) {
   api.registerCommand({
     name: "ao",
     description:
-      "Agent Orchestrator — /ao sessions | status | spawn | issues | batch-spawn | retry | kill | doctor",
+      "Athene — /ao sessions | status | spawn | issues | batch-spawn | retry | kill | doctor",
     acceptsArgs: true,
     requireAuth: true,
     handler: async (ctx: CommandContext) => {
@@ -711,14 +711,14 @@ export default function (api: PluginApi) {
         }
 
         case "status": {
-          // `ao status` shows all sessions; no per-session lookup available
+          // `athene status` shows all sessions; no per-session lookup available
           const result = tryRunAo(config, ["status"]);
           if (!result.ok) return { text: `Failed:\n${result.error}` };
           return { text: result.output };
         }
 
         case "spawn": {
-          if (!rest) return { text: "Usage: /ao spawn <issue-number>" };
+          if (!rest) return { text: "Usage: /athene spawn <issue-number>" };
           const issueArg = sanitizeArg(rest.split(/\s+/)[0]);
           if (!isValidIssueId(issueArg))
             return {
@@ -744,7 +744,7 @@ export default function (api: PluginApi) {
         }
 
         case "batch-spawn": {
-          if (!rest) return { text: "Usage: /ao batch-spawn <issue1> <issue2> ..." };
+          if (!rest) return { text: "Usage: /athene batch-spawn <issue1> <issue2> ..." };
           const issueArgs = rest.split(/\s+/).map(sanitizeArg);
           if (!issueArgs.every(isValidIssueId))
             return { text: `Invalid issue identifiers. Expected numbers like: 42 43 44` };
@@ -830,7 +830,7 @@ export default function (api: PluginApi) {
 
           steps.push("");
           steps.push("⚡ Restart the gateway to apply: pm2 restart openclaw-gateway");
-          steps.push("Then verify with: /ao doctor");
+          steps.push("Then verify with: /athene doctor");
           steps.push("");
           steps.push("⚠️  Action required — run these once to avoid conflicts:");
           steps.push("   openclaw config set skills.entries.coding-agent.enabled false");
@@ -844,16 +844,16 @@ export default function (api: PluginApi) {
         default:
           return {
             text: [
-              "Agent Orchestrator commands:",
+              "Athene commands:",
               "  /ao sessions              — list all sessions",
-              "  /ao status                — all sessions overview",
+              "  /athene status                — all sessions overview",
               "  /ao issues [owner/repo]   — list open issues",
-              "  /ao spawn <issue>         — spawn agent on issue",
-              "  /ao batch-spawn <i1> <i2> — spawn multiple agents",
+              "  /athene spawn <issue>         — spawn agent on issue",
+              "  /athene batch-spawn <i1> <i2> — spawn multiple agents",
               "  /ao retry <id>            — retry failed session",
               "  /ao kill <id>             — kill a session",
-              "  /ao doctor                — run health checks",
-              "  /ao setup                 — auto-configure OpenClaw for AO",
+              "  /athene doctor                — run health checks",
+              "  /athene setup                 — auto-configure OpenClaw for AO",
             ].join("\n"),
           };
       }
@@ -867,7 +867,7 @@ export default function (api: PluginApi) {
   api.registerTool({
     name: "ao_sessions",
     description:
-      "Returns live session data from Agent Orchestrator — what agents are running, " +
+      "Returns live session data from Athene — what agents are running, " +
       "their status, branches, and progress. Use when the user asks about status or progress.",
     parameters: { type: "object", properties: {}, required: [] },
     async execute() {
@@ -953,7 +953,7 @@ export default function (api: PluginApi) {
       if (params.issue) {
         args.push(sanitizeCliArg(params.issue));
       } else {
-        // Freeform spawn — ao CLI supports bare `ao spawn` which creates
+        // Freeform spawn — ao CLI supports bare `athene spawn` which creates
         // a session without an issue. Use ao_send afterward to describe the task.
         api.logger.info("[ao_spawn] Spawning without issue — freeform session");
       }
@@ -1038,7 +1038,7 @@ export default function (api: PluginApi) {
 
   api.registerTool({
     name: "ao_send",
-    description: "Send a message to a running Agent Orchestrator session.",
+    description: "Send a message to a running Athene session.",
     parameters: {
       type: "object",
       properties: {
@@ -1064,7 +1064,7 @@ export default function (api: PluginApi) {
   api.registerTool({
     name: "ao_kill",
     description:
-      "Kill an Agent Orchestrator session. Always confirm with the user before calling this.",
+      "Kill an Athene session. Always confirm with the user before calling this.",
     parameters: {
       type: "object",
       properties: {
@@ -1090,7 +1090,7 @@ export default function (api: PluginApi) {
 
   api.registerTool({
     name: "ao_doctor",
-    description: "Run Agent Orchestrator health checks. Use when troubleshooting.",
+    description: "Run Athene health checks. Use when troubleshooting.",
     parameters: { type: "object", properties: {}, required: [] },
     async execute() {
       const result = tryRunAo(config, ["doctor"], 30_000);

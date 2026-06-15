@@ -1,9 +1,9 @@
-﻿# PowerShell port of ao-doctor.sh — Windows-native health checks for AO.
-# Invoked by `ao doctor` on Windows via runRepoScript().
+﻿# PowerShell port of athene-doctor.sh — Windows-native health checks for AO.
+# Invoked by `athene doctor` on Windows via runRepoScript().
 
 $ErrorActionPreference = 'Continue'
 
-# Manual arg parsing — matches ao-doctor.sh's `--fix` / `-h` / `--help` flags
+# Manual arg parsing — matches athene-doctor.sh's `--fix` / `-h` / `--help` flags
 # rather than PowerShell's `-Fix` convention, so the calling contract is
 # identical on Linux/macOS/Windows.
 $Fix  = $false
@@ -22,7 +22,7 @@ foreach ($a in $args) {
 
 if ($Help) {
     @'
-Usage: ao doctor [--fix]
+Usage: athene doctor [--fix]
 
 Checks install, PATH, binaries, service health, stale temp files, and runtime sanity.
 
@@ -175,16 +175,16 @@ function Check-Pnpm {
 }
 
 function Check-Launcher {
-    $resolved = Get-Command 'ao' -ErrorAction SilentlyContinue
+    $resolved = Get-Command 'athene' -ErrorAction SilentlyContinue
     if ($resolved) {
         Write-Pass "ao launcher resolves to $($resolved.Source)"
         return
     }
-    if ($ScriptLayout -eq 'source-checkout' -and $Fix -and (Get-Command npm -ErrorAction SilentlyContinue) -and (Test-Path (Join-Path $RepoRoot 'packages/ao'))) {
-        Push-Location (Join-Path $RepoRoot 'packages/ao')
+    if ($ScriptLayout -eq 'source-checkout' -and $Fix -and (Get-Command npm -ErrorAction SilentlyContinue) -and (Test-Path (Join-Path $RepoRoot 'packages/athene'))) {
+        Push-Location (Join-Path $RepoRoot 'packages/athene')
         try {
             $null = & npm link --force 2>&1
-            if ($LASTEXITCODE -eq 0 -and (Get-Command 'ao' -ErrorAction SilentlyContinue)) {
+            if ($LASTEXITCODE -eq 0 -and (Get-Command 'athene' -ErrorAction SilentlyContinue)) {
                 Write-Fixed "ao launcher refreshed with npm link --force"
                 return
             }
@@ -193,10 +193,10 @@ function Check-Launcher {
         return
     }
     if ($ScriptLayout -eq 'package-install') {
-        Write-Warn2 "ao launcher is not in PATH. Fix: reinstall with npm install -g @aoagents/ao@latest"
+        Write-Warn2 "ao launcher is not in PATH. Fix: reinstall with npm install -g @made-by-moonlight/athene@latest"
         return
     }
-    Write-Warn2 "ao launcher is not in PATH. Fix: cd $RepoRoot; pwsh scripts/setup.ps1 (or run npm link --force in packages/ao)"
+    Write-Warn2 "ao launcher is not in PATH. Fix: cd $RepoRoot; pwsh scripts/setup.ps1 (or run npm link --force in packages/athene)"
 }
 
 function Check-Tmux {
@@ -227,12 +227,12 @@ function Check-InstallLayout {
         $checks = @(
             @{ Path = 'package.json';                    Label = 'CLI package metadata is present' }
             @{ Path = 'dist/index.js';                   Label = 'packaged CLI entrypoint exists' }
-            @{ Path = 'dist/assets/scripts/ao-doctor.ps1'; Label = 'bundled doctor script is available' }
-            @{ Path = 'dist/assets/scripts/ao-update.ps1'; Label = 'bundled update script is available' }
+            @{ Path = 'dist/assets/scripts/athene-doctor.ps1'; Label = 'bundled doctor script is available' }
+            @{ Path = 'dist/assets/scripts/athene-update.ps1'; Label = 'bundled update script is available' }
         )
         foreach ($c in $checks) {
             $full = Join-Path $RepoRoot $c.Path
-            if (Test-Path $full) { Write-Pass $c.Label } else { Write-Fail "$($c.Label) (missing $full). Fix: reinstall @aoagents/ao" }
+            if (Test-Path $full) { Write-Pass $c.Label } else { Write-Fail "$($c.Label) (missing $full). Fix: reinstall @made-by-moonlight/athene" }
         }
         return
     }
@@ -244,12 +244,12 @@ function Check-InstallLayout {
     if (Test-Path (Join-Path $RepoRoot 'packages/core/dist/index.js')) {
         Write-Pass "core package is built"
     } else {
-        Write-Fail "core package is not built. Fix: run pnpm --filter @aoagents/ao-core build"
+        Write-Fail "core package is not built. Fix: run pnpm --filter @made-by-moonlight/athene-core build"
     }
     if (Test-Path (Join-Path $RepoRoot 'packages/cli/dist/index.js')) {
         Write-Pass "CLI package is built"
     } else {
-        Write-Fail "CLI package is not built. Fix: run pnpm --filter @aoagents/ao-cli build"
+        Write-Fail "CLI package is not built. Fix: run pnpm --filter @made-by-moonlight/athene-cli build"
     }
 }
 
@@ -257,25 +257,25 @@ function Check-RuntimeSanity {
     if ($ScriptLayout -eq 'package-install') {
         $entry = Join-Path $RepoRoot 'dist/index.js'
         if (-not (Test-Path $entry)) {
-            Write-Fail "packaged CLI entrypoint is missing. Fix: reinstall @aoagents/ao"
+            Write-Fail "packaged CLI entrypoint is missing. Fix: reinstall @made-by-moonlight/athene"
             return
         }
         & node $entry --version *> $null
         if ($LASTEXITCODE -eq 0) {
-            Write-Pass "packaged CLI runtime sanity check passed (ao --version)"
+            Write-Pass "packaged CLI runtime sanity check passed (athene --version)"
         } else {
-            Write-Fail "packaged CLI runtime sanity check failed. Fix: reinstall @aoagents/ao"
+            Write-Fail "packaged CLI runtime sanity check failed. Fix: reinstall @made-by-moonlight/athene"
         }
         return
     }
-    $entry = Join-Path $RepoRoot 'packages/ao/bin/ao.js'
+    $entry = Join-Path $RepoRoot 'packages/athene/bin/athene.js'
     if (-not (Test-Path $entry)) {
         Write-Fail "launcher entrypoint is missing. Fix: reinstall from a clean checkout"
         return
     }
     & node $entry --version *> $null
     if ($LASTEXITCODE -eq 0) {
-        Write-Pass "launcher runtime sanity check passed (ao --version)"
+        Write-Pass "launcher runtime sanity check passed (athene --version)"
     } else {
         Write-Fail "launcher runtime sanity check failed. Fix: run pnpm build and refresh the launcher"
     }
@@ -324,10 +324,10 @@ function Check-StaleTempFiles {
         }
         return
     }
-    Write-Warn2 "$($stale.Count) stale temp files older than 60 minutes found under $tempRoot. Fix: rerun ao doctor --fix"
+    Write-Warn2 "$($stale.Count) stale temp files older than 60 minutes found under $tempRoot. Fix: rerun athene doctor --fix"
 }
 
-Write-Host "Agent Orchestrator Doctor`n"
+Write-Host "Athene Doctor`n"
 
 Check-Node
 Check-Git
@@ -348,5 +348,5 @@ if ($script:FailCount -gt 0) {
     exit 1
 }
 
-Write-Host "Environment looks healthy enough to run Agent Orchestrator."
+Write-Host "Environment looks healthy enough to run Athene."
 exit 0

@@ -5,7 +5,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Command } from "commander";
 import { EventEmitter } from "node:events";
-import * as AoCore from "@aoagents/ao-core";
+import * as AoCore from "@made-by-moonlight/athene-core";
 
 const { mockRunRepoScript } = vi.hoisted(() => ({
   mockRunRepoScript: vi.fn(),
@@ -26,7 +26,7 @@ const {
   mockCheckForUpdate: vi.fn(),
   mockInvalidateCache: vi.fn(),
   mockGetCurrentVersion: vi.fn(() => "0.2.2"),
-  mockGetUpdateCommand: vi.fn(() => "npm install -g @aoagents/ao@latest"),
+  mockGetUpdateCommand: vi.fn(() => "npm install -g @made-by-moonlight/athene@latest"),
 }));
 
 vi.mock("../../src/lib/update-check.js", () => ({
@@ -62,7 +62,7 @@ vi.mock("node:child_process", async () => {
   return { ...actual, spawn: (...args: unknown[]) => mockSpawn(...args) };
 });
 
-vi.mock("@aoagents/ao-core", async (importOriginal) => {
+vi.mock("@made-by-moonlight/athene-core", async (importOriginal) => {
   const actual = await importOriginal<typeof AoCore>();
   return {
     ...actual,
@@ -82,7 +82,7 @@ function createMockChild(exitCode: number | null, signal?: NodeJS.Signals): Even
   return child;
 }
 
-describe("ao update — activity events", () => {
+describe("athene update — activity events", () => {
   let program: Command;
   let origStdinTTY: boolean | undefined;
   let origStdoutTTY: boolean | undefined;
@@ -114,7 +114,7 @@ describe("ao update — activity events", () => {
     Object.defineProperty(process.stdout, "isTTY", { value: origStdoutTTY, configurable: true });
   });
 
-  it("emits cli.update_failed when ao-update.sh exits non-zero (git path)", async () => {
+  it("emits cli.update_failed when athene-update.sh exits non-zero (git path)", async () => {
     mockDetectInstallMethod.mockReturnValue("git");
     mockRunRepoScript.mockResolvedValue(2);
 
@@ -135,9 +135,9 @@ describe("ao update — activity events", () => {
     );
   });
 
-  it("emits cli.update_failed when ao-update.sh script is missing (git path)", async () => {
+  it("emits cli.update_failed when athene-update.sh script is missing (git path)", async () => {
     mockDetectInstallMethod.mockReturnValue("git");
-    mockRunRepoScript.mockRejectedValue(new Error("Script not found: ao-update.sh"));
+    mockRunRepoScript.mockRejectedValue(new Error("Script not found: athene-update.sh"));
 
     await expect(program.parseAsync(["node", "ao", "update"])).rejects.toThrow("process.exit(1)");
 
@@ -159,7 +159,7 @@ describe("ao update — activity events", () => {
       latestVersion: "0.3.0",
       isOutdated: true,
       installMethod: "npm-global" as const,
-      recommendedCommand: "npm install -g @aoagents/ao@latest",
+      recommendedCommand: "npm install -g @made-by-moonlight/athene@latest",
       checkedAt: new Date().toISOString(),
     });
     Object.defineProperty(process.stdin, "isTTY", { value: true, configurable: true });
@@ -186,7 +186,7 @@ describe("ao update — activity events", () => {
       latestVersion: null,
       isOutdated: false,
       installMethod: "npm-global" as const,
-      recommendedCommand: "npm install -g @aoagents/ao@latest",
+      recommendedCommand: "npm install -g @made-by-moonlight/athene@latest",
       checkedAt: null,
     });
 

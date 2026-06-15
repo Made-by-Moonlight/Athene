@@ -8,7 +8,7 @@ import {
   SessionNotFoundError,
   recordActivityEvent,
   type OrchestratorConfig,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 import {
   getCorrelationId,
   jsonWithCorrelation,

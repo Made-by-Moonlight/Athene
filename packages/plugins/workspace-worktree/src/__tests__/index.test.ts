@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import type { ProjectConfig, WorkspaceCreateConfig, WorkspaceInfo } from "@aoagents/ao-core/types";
+import type { ProjectConfig, WorkspaceCreateConfig, WorkspaceInfo } from "@made-by-moonlight/athene-core/types";
 
 // ---------------------------------------------------------------------------
 // Mocks — must be declared before any import that uses the mocked modules
@@ -28,7 +28,7 @@ vi.mock("node:fs", () => ({
   readdirSync: vi.fn(),
 }));
 
-vi.mock("@aoagents/ao-core", () => ({
+vi.mock("@made-by-moonlight/athene-core", () => ({
   getShell: vi.fn(() => ({ cmd: "sh", args: (c: string) => ["-c", c] })),
   isWindows: vi.fn(() => false),
   recordActivityEvent: recordActivityEventMock,
@@ -62,7 +62,7 @@ import {
   mkdirSync,
   readdirSync,
 } from "node:fs";
-import * as core from "@aoagents/ao-core";
+import * as core from "@made-by-moonlight/athene-core";
 import { create, manifest } from "../index.js";
 
 // ---------------------------------------------------------------------------
@@ -783,7 +783,7 @@ describe("workspace.restore()", () => {
   // When the local session branch already exists (destroy() preserves it on
   // purpose), restore() must re-attach it instead of falling through to the
   // -b path that would either fail ("branch already exists") or discard
-  // commits. See https://github.com/ComposioHQ/agent-orchestrator/issues/1741.
+  // commits. See https://github.com/slievr/Athene/issues/1741.
   //
   // The recovery sequence (in reattachExistingBranch):
   //   1. `git worktree remove --force <path>` (best-effort: clears registry)

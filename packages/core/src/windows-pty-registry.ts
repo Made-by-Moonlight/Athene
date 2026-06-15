@@ -9,10 +9,10 @@
  * Per-session JSON metadata also can't be the source of truth for cleanup:
  * if a worktree is rm-rf'd or session JSON is lost (legacy storage cleanup,
  * crash mid-write, manual recovery), the runtime-side processes become
- * unreachable and `ao stop` orphans them silently.
+ * unreachable and `athene stop` orphans them silently.
  *
  * This registry is a flat list at `~/.agent-orchestrator/windows-pty-hosts.json`
- * that AO writes on spawn and reads on `ao stop` (and on next `ao start`'s
+ * that AO writes on spawn and reads on `athene stop` (and on next `athene start`'s
  * orphan sweep, future work). It exists outside session JSON so cleanup of
  * sessions never severs AO's ability to find and graceful-kill the hosts.
  *

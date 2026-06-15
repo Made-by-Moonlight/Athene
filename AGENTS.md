@@ -10,7 +10,7 @@ pnpm build                              # Build all packages
 pnpm dev                                # Web dashboard dev server (Next.js + 2 WS servers)
 pnpm typecheck                          # Type check all packages
 pnpm test                               # All tests (excludes web)
-pnpm --filter @aoagents/ao-web test     # Web tests
+pnpm --filter @made-by-moonlight/athene-web test     # Web tests
 pnpm lint                               # ESLint check
 pnpm lint:fix                           # ESLint fix
 pnpm format                             # Prettier format
@@ -55,7 +55,7 @@ Agents working on this repo should use these checked-in skills:
 - `packages/core/src/session-manager.ts` — Session CRUD + stale runtime reconciliation (detects dead runtimes, persists `runtime_lost`)
 - `packages/core/src/lifecycle-manager.ts` — State machine + polling loop
 - `packages/core/src/lifecycle-state.ts` — Canonical lifecycle → legacy status mapping (`deriveLegacyStatus`)
-- `packages/cli/src/commands/start.ts` — ao start/stop commands + Ctrl+C graceful shutdown
+- `packages/cli/src/commands/start.ts` — athene start/stop commands + Ctrl+C graceful shutdown
 - `packages/cli/src/lib/running-state.ts` — RunningState + LastStopState management
 - `packages/web/src/components/Dashboard.tsx` — Main dashboard view (sidebar uses unscoped sessions, kanban filters by project)
 - `packages/web/src/components/SessionDetail.tsx` — Session detail view
@@ -63,16 +63,16 @@ Agents working on this repo should use these checked-in skills:
 
 ## CLI Behavior Notes
 
-- `ao stop` loads global config to see all projects; `ao stop <project>` only kills that project's sessions
-- Ctrl+C on `ao start` performs full graceful shutdown (same as `ao stop`)
-- `LastStopState` includes `otherProjects` for cross-project session restore on next `ao start`
+- `athene stop` loads global config to see all projects; `athene stop <project>` only kills that project's sessions
+- Ctrl+C on `athene start` performs full graceful shutdown (same as `athene stop`)
+- `LastStopState` includes `otherProjects` for cross-project session restore on next `athene start`
 - Dashboard sidebar always shows ALL projects' sessions regardless of active project view
 
 ## Cross-Platform (Windows) Compatibility
 
 AO ships on macOS, Linux, **and Windows**. All three are first-class.
 
-**Golden Rule:** Never write `process.platform === "win32"` in new code. Use `isWindows()` from `@aoagents/ao-core`. If you need branching the helpers don't cover, add it to `packages/core/src/platform.ts` — never inline at the call site. Inline checks bypass the central platform-mock test pattern and become silent regressions.
+**Golden Rule:** Never write `process.platform === "win32"` in new code. Use `isWindows()` from `@made-by-moonlight/athene-core`. If you need branching the helpers don't cover, add it to `packages/core/src/platform.ts` — never inline at the call site. Inline checks bypass the central platform-mock test pattern and become silent regressions.
 
 **Read `docs/CROSS_PLATFORM.md` before merging any change that touches:** process spawning/killing/signalling, file paths, shell commands, network binding, POSIX shell-outs (`tmux`, `lsof`, etc.), runtime/agent/workspace plugins, agent-plugin internals (`setupPathWrapperWorkspace`, `getActivityState`, `formatLaunchCommand`, `isProcessRunning`, `detect()`), the Windows pty-host pipe protocol or registry, or any new `process.platform === "win32"` check.
 

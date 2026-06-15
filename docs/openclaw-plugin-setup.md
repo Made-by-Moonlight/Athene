@@ -1,11 +1,11 @@
 # OpenClaw Plugin Setup Guide
 
-How to set up the Agent Orchestrator (AO) plugin for OpenClaw so the AI bot delegates all coding work to AO agents.
+How to set up the Athene (AO) plugin for OpenClaw so the AI bot delegates all coding work to AO agents.
 
 ## Prerequisites
 
 - [OpenClaw](https://openclaw.ai) installed and running
-- [Agent Orchestrator](https://github.com/ComposioHQ/agent-orchestrator) installed with `ao start` completed in your repo
+- [Athene](https://github.com/slievr/Athene) installed with `athene start` completed in your repo
 - `ao`, `gh`, `tmux`, and `node` available in PATH
 - GitHub CLI (`gh`) authenticated
 
@@ -36,7 +36,7 @@ cp -r skills/agent-orchestrator/references ~/.openclaw/extensions/skills/agent-o
 
 ## 3. Configure OpenClaw
 
-Run `/ao setup` in any OpenClaw channel to auto-configure, or run these commands manually:
+Run `/athene setup` in any OpenClaw channel to auto-configure, or run these commands manually:
 
 ### Required Settings
 
@@ -112,7 +112,7 @@ Create these files in `~/.openclaw/workspace/` to give the bot its personality a
 
 ## How You Operate
 
-You are a MANAGER. You never write code yourself. You delegate ALL coding work to Agent Orchestrator.
+You are a MANAGER. You never write code yourself. You delegate ALL coding work to Athene.
 
 When asked about work → use `ao_issues` tool
 When asked about status → use `ao_sessions` or `ao_status` tool
@@ -129,7 +129,7 @@ If an AO tool fails, report the error. Do NOT fall back to coding directly.
 ```markdown
 # SOUL.md
 
-You are AO — an AI engineering manager. You manage coding agents through Agent Orchestrator.
+You are AO — an AI engineering manager. You manage coding agents through Athene.
 
 You NEVER write code directly. You delegate ALL coding to AO agents via ao_spawn.
 Even if spawning fails, you report the failure — you don't code directly.
@@ -152,7 +152,7 @@ openclaw agent --agent main -m "List your tools"
 # Should show ao_sessions, ao_issues, ao_spawn, etc.
 
 # Verify AO works
-/ao doctor
+/athene doctor
 ```
 
 ## Why These Settings Matter
@@ -164,15 +164,15 @@ openclaw agent --agent main -m "List your tools"
 | `tools.deny: [exec, write, ...]` | Without this, the bot will write code directly instead of delegating to AO. |
 | `skills.entries.coding-agent.enabled: false` | This built-in skill tells the bot to use Codex/Claude Code. It overrides AO. |
 | `skills.entries.gh-issues.enabled: false` | This built-in skill spawns OpenClaw sub-agents. It bypasses AO. |
-| `aoCwd` | `ao spawn` must run from the directory containing `agent-orchestrator.yaml`. |
+| `aoCwd` | `athene spawn` must run from the directory containing `agent-orchestrator.yaml`. |
 
 ## Troubleshooting
 
 | Problem | Cause | Fix |
 |---------|-------|-----|
-| Bot says "no ao_* tools available" | `tools.profile` is not `full` or `tools.allow` missing `group:plugins` | Run `/ao setup` |
-| Bot writes code directly | `coding-agent` skill is active or `exec`/`write` not denied | Run `/ao setup` |
-| `ao spawn` returns "No config found" | `aoCwd` not set or wrong path | Set `plugins.entries.agent-orchestrator.config.aoCwd` |
+| Bot says "no ao_* tools available" | `tools.profile` is not `full` or `tools.allow` missing `group:plugins` | Run `/athene setup` |
+| Bot writes code directly | `coding-agent` skill is active or `exec`/`write` not denied | Run `/athene setup` |
+| `athene spawn` returns "No config found" | `aoCwd` not set or wrong path | Set `plugins.entries.agent-orchestrator.config.aoCwd` |
 | `ao: not found` | `ao` not in PATH | Create symlink or set `aoPath` in plugin config |
 | Only 2-3 issues shown (not all) | Bot answering from stale session memory | Clear sessions: `rm ~/.openclaw/agents/main/sessions/sessions.json` |
 | Bot only responds in DMs | `groupPolicy` is `allowlist` | Set `channels.discord.groupPolicy` to `open` |

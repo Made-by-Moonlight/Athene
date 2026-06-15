@@ -14,7 +14,7 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const scriptPath = join(packageRoot, "src", "assets", "scripts", "ao-update.sh");
+const scriptPath = join(packageRoot, "src", "assets", "scripts", "athene-update.sh");
 
 function writeExecutable(path: string, content: string): void {
   writeFileSync(path, content);
@@ -25,7 +25,7 @@ function createFakeBinary(binDir: string, name: string, body: string): void {
   writeExecutable(join(binDir, name), `#!/bin/bash\nset -e\n${body}\n`);
 }
 
-describe("ao-update.sh", () => {
+describe("athene-update.sh", () => {
   it("falls back to origin when no upstream remote exists", () => {
     const tempRoot = mkdtempSync(join(tmpdir(), "ao-update-script-"));
     const fakeRepo = join(tempRoot, "repo");
@@ -84,8 +84,8 @@ esac\nexit 0`,
     expect(commands).toContain("pnpm install");
     expect(commands).toContain("pnpm -r --if-present clean");
     expect(commands).toContain("pnpm build");
-    expect(commands).not.toContain("pnpm --filter @aoagents/ao-core clean");
-    expect(commands).not.toContain("pnpm --filter @aoagents/ao-cli build");
+    expect(commands).not.toContain("pnpm --filter @made-by-moonlight/athene-core clean");
+    expect(commands).not.toContain("pnpm --filter @made-by-moonlight/athene-cli build");
     expect(commands).toContain("npm link --force");
   });
 
@@ -108,7 +108,7 @@ esac\nexit 0`,
         binDir,
         "git",
         `printf 'git %s\\n' "$*" >> ${JSON.stringify(commandLog)}\ncase "$*" in\n  "remote get-url origin") printf 'https://github.com/yyovil/agent-orchestrator.git\\n' ;;
-  "remote get-url upstream") printf 'https://github.com/ComposioHQ/agent-orchestrator.git\\n' ;;
+  "remote get-url upstream") printf 'https://github.com/slievr/Athene.git\\n' ;;
   "rev-parse --is-inside-work-tree") printf 'true\\n' ;;
   "status --porcelain") ;;
   "branch --show-current") printf 'main\\n' ;;
@@ -154,7 +154,7 @@ esac\nexit 0`,
 
       expect(result.status).toBe(0);
       expect(commands).toContain(
-        "gh repo sync yyovil/agent-orchestrator --source ComposioHQ/agent-orchestrator --branch main",
+        "gh repo sync yyovil/agent-orchestrator --source slievr/Athene --branch main",
       );
       expect(commands).toContain("git fetch upstream main");
       expect(commands).toContain("git pull --ff-only upstream main");
@@ -232,7 +232,7 @@ exit 0`,
     const tempRoot = mkdtempSync(join(tmpdir(), "ao-update-smoke-"));
     const fakeRepo = join(tempRoot, "repo");
     mkdirSync(join(fakeRepo, "packages", "ao", "bin"), { recursive: true });
-    writeFileSync(join(fakeRepo, "packages", "ao", "bin", "ao.js"), "#!/usr/bin/env node\n");
+    writeFileSync(join(fakeRepo, "packages", "ao", "bin", "athene.js"), "#!/usr/bin/env node\n");
 
     const binDir = join(tempRoot, "bin");
     mkdirSync(binDir, { recursive: true });
@@ -259,13 +259,13 @@ exit 0`,
 
     expect(result.status).toBe(0);
     expect(commands).toContain(
-      `node ${join(fakeRepo, "packages", "ao", "bin", "ao.js")} --version`,
+      `node ${join(fakeRepo, "packages", "ao", "bin", "athene.js")} --version`,
     );
     expect(commands).toContain(
-      `node ${join(fakeRepo, "packages", "ao", "bin", "ao.js")} doctor --help`,
+      `node ${join(fakeRepo, "packages", "ao", "bin", "athene.js")} doctor --help`,
     );
     expect(commands).toContain(
-      `node ${join(fakeRepo, "packages", "ao", "bin", "ao.js")} update --help`,
+      `node ${join(fakeRepo, "packages", "ao", "bin", "athene.js")} update --help`,
     );
   });
 
@@ -301,7 +301,7 @@ exit 0`,
       const repoRoot = resolve(packageRoot, "../..");
       expect(result.status).toBe(0);
       expect(commands).toContain(
-        `node ${join(repoRoot, "packages", "ao", "bin", "ao.js")} --version`,
+        `node ${join(repoRoot, "packages", "ao", "bin", "athene.js")} --version`,
       );
     },
   );
@@ -357,7 +357,7 @@ exit 0`,
     const fakeRepo = join(tempRoot, "repo");
     mkdirSync(join(fakeRepo, "packages", "cli"), { recursive: true });
     mkdirSync(join(fakeRepo, "packages", "ao", "bin"), { recursive: true });
-    writeFileSync(join(fakeRepo, "packages", "ao", "bin", "ao.js"), "#!/usr/bin/env node\n");
+    writeFileSync(join(fakeRepo, "packages", "ao", "bin", "athene.js"), "#!/usr/bin/env node\n");
 
     const binDir = join(tempRoot, "bin");
     mkdirSync(binDir, { recursive: true });
@@ -414,15 +414,15 @@ exit 0`,
     // Rebuild commands should NOT have run
     expect(commands).not.toContain("pnpm install");
     expect(commands).not.toContain("pnpm build");
-    expect(commands).not.toContain("pnpm --filter @aoagents/ao-core build");
+    expect(commands).not.toContain("pnpm --filter @made-by-moonlight/athene-core build");
     expect(commands).not.toContain("npm link");
     expect(commands).not.toContain("git pull --ff-only origin main");
     // Smoke tests SHOULD still have run
     expect(commands).toContain(
-      `node ${join(fakeRepo, "packages", "ao", "bin", "ao.js")} --version`,
+      `node ${join(fakeRepo, "packages", "ao", "bin", "athene.js")} --version`,
     );
     expect(commands).toContain(
-      `node ${join(fakeRepo, "packages", "ao", "bin", "ao.js")} doctor --help`,
+      `node ${join(fakeRepo, "packages", "ao", "bin", "athene.js")} doctor --help`,
     );
   });
 

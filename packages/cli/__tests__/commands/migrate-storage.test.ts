@@ -4,14 +4,14 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Command } from "commander";
-import * as AoCore from "@aoagents/ao-core";
+import * as AoCore from "@made-by-moonlight/athene-core";
 
 const { mockMigrateStorage, mockRollbackStorage } = vi.hoisted(() => ({
   mockMigrateStorage: vi.fn(),
   mockRollbackStorage: vi.fn(),
 }));
 
-vi.mock("@aoagents/ao-core", async (importOriginal) => {
+vi.mock("@made-by-moonlight/athene-core", async (importOriginal) => {
   const actual = await importOriginal<typeof AoCore>();
   return {
     ...actual,
@@ -26,7 +26,7 @@ import { registerMigrateStorage } from "../../src/commands/migrate-storage.js";
 const recordedEvents = (): Array<Record<string, unknown>> =>
   vi.mocked(AoCore.recordActivityEvent).mock.calls.map((c) => c[0] as Record<string, unknown>);
 
-describe("ao migrate-storage — activity events", () => {
+describe("athene migrate-storage — activity events", () => {
   let program: Command;
   let exitSpy: ReturnType<typeof vi.spyOn>;
   let consoleErrSpy: ReturnType<typeof vi.spyOn>;

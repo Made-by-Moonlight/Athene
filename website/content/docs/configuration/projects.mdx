@@ -275,7 +275,7 @@ Identity fields such as `projectId`, `path`, `storageKey`, `originUrl`, and `ses
 ## Common Problems
 
 **The project does not appear in the dashboard**  
-Run `ao start` from the repository root so AO can register the project. If the repo moved, remove and re-add or relink the project instead of editing `storageKey` manually.
+Run `athene start` from the repository root so AO can register the project. If the repo moved, remove and re-add or relink the project instead of editing `storageKey` manually.
 
 **The agent starts without environment variables**  
 Add `.env` or the relevant tool config directory to `symlinks`. AO does not copy secrets into worktrees by default.

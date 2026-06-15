@@ -11,7 +11,7 @@ import {
   type Workspace,
   type WorkspaceCreateConfig,
   type WorkspaceInfo,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 
 const execFileAsync = promisify(execFile);
 

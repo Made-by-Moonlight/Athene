@@ -54,7 +54,7 @@ const {
   };
 });
 
-vi.mock("@aoagents/ao-core", () => ({
+vi.mock("@made-by-moonlight/athene-core", () => ({
   loadConfig: mockLoadConfig,
   getGlobalConfigPath: mockGetGlobalConfigPath,
   ConfigNotFoundError: MockConfigNotFoundError,
@@ -69,15 +69,15 @@ vi.mock("@aoagents/ao-core", () => ({
   TERMINAL_STATUSES: new Set(["merged", "killed"]) as ReadonlySet<string>,
 }));
 
-vi.mock("@aoagents/ao-plugin-runtime-tmux", () => ({ default: tmuxPlugin }));
-vi.mock("@aoagents/ao-plugin-agent-claude-code", () => ({ default: claudePlugin }));
-vi.mock("@aoagents/ao-plugin-agent-codex", () => ({ default: codexPlugin }));
-vi.mock("@aoagents/ao-plugin-agent-grok", () => ({ default: grokPlugin }));
-vi.mock("@aoagents/ao-plugin-agent-opencode", () => ({ default: opencodePlugin }));
-vi.mock("@aoagents/ao-plugin-workspace-worktree", () => ({ default: worktreePlugin }));
-vi.mock("@aoagents/ao-plugin-scm-github", () => ({ default: scmPlugin }));
-vi.mock("@aoagents/ao-plugin-tracker-github", () => ({ default: trackerGithubPlugin }));
-vi.mock("@aoagents/ao-plugin-tracker-linear", () => ({ default: trackerLinearPlugin }));
+vi.mock("@made-by-moonlight/athene-plugin-runtime-tmux", () => ({ default: tmuxPlugin }));
+vi.mock("@made-by-moonlight/athene-plugin-agent-claude-code", () => ({ default: claudePlugin }));
+vi.mock("@made-by-moonlight/athene-plugin-agent-codex", () => ({ default: codexPlugin }));
+vi.mock("@made-by-moonlight/athene-plugin-agent-grok", () => ({ default: grokPlugin }));
+vi.mock("@made-by-moonlight/athene-plugin-agent-opencode", () => ({ default: opencodePlugin }));
+vi.mock("@made-by-moonlight/athene-plugin-workspace-worktree", () => ({ default: worktreePlugin }));
+vi.mock("@made-by-moonlight/athene-plugin-scm-github", () => ({ default: scmPlugin }));
+vi.mock("@made-by-moonlight/athene-plugin-tracker-github", () => ({ default: trackerGithubPlugin }));
+vi.mock("@made-by-moonlight/athene-plugin-tracker-linear", () => ({ default: trackerLinearPlugin }));
 
 describe("services", () => {
   beforeEach(() => {

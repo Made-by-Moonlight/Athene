@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import chalk from "chalk";
 import { parseDocument } from "yaml";
-import { CONFIG_SCHEMA_URL, findConfigFile, isCanonicalGlobalConfigPath } from "@aoagents/ao-core";
+import { CONFIG_SCHEMA_URL, findConfigFile, isCanonicalGlobalConfigPath } from "@made-by-moonlight/athene-core";
 import {
   applyNotifierRoutingPreset,
   getNotifierRoutingState,
@@ -15,7 +15,7 @@ const DISCORD_APP_URL = "https://discord.com/app";
 const DISCORD_SUPPORT_WEBHOOK_URL =
   "https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks";
 const DISCORD_WEBHOOK_DOCS_URL = "https://docs.discord.com/developers/resources/webhook";
-const DEFAULT_USERNAME = "Agent Orchestrator";
+const DEFAULT_USERNAME = "Athene";
 const DEFAULT_RETRIES = 2;
 const DEFAULT_RETRY_DELAY_MS = 1000;
 const SETUP_TIMEOUT_MS = 10_000;
@@ -118,7 +118,7 @@ function readConfigContext(): ConfigContext {
   const configPath = findConfigFile() ?? undefined;
   if (!configPath) {
     throw new DiscordSetupError(
-      "No agent-orchestrator.yaml found. Run 'ao start' first to create one.",
+      "No agent-orchestrator.yaml found. Run 'athene start' first to create one.",
     );
   }
 
@@ -155,7 +155,7 @@ function buildSetupPayload(resolved: ResolvedDiscordSetup): Record<string, unkno
         description: "This channel is now configured to receive AO notifications.",
         color: 0x57f287,
         timestamp: new Date().toISOString(),
-        footer: { text: "Agent Orchestrator" },
+        footer: { text: "Athene" },
       },
     ],
   };
@@ -453,7 +453,7 @@ async function resolveInteractiveSetup(
   const existingWebhookUrl = stringValue(existingDiscord["webhookUrl"]);
   const optionRoutingPreset = resolveDiscordRoutingPreset(opts.routingPreset);
 
-  clack.intro(chalk.bgCyan(chalk.black(" ao setup discord ")));
+  clack.intro(chalk.bgCyan(chalk.black(" athene setup discord ")));
   explainChannelBinding();
 
   while (true) {
@@ -565,7 +565,7 @@ function resolveNonInteractiveSetup(
     (opts.refresh ? stringValue(existingDiscord["webhookUrl"]) : undefined);
   if (!webhookUrl) {
     throw new DiscordSetupError(
-      "Discord webhook URL is required. Pass --webhook-url, or run `ao setup discord --refresh` with an existing Discord config.",
+      "Discord webhook URL is required. Pass --webhook-url, or run `athene setup discord --refresh` with an existing Discord config.",
     );
   }
 
@@ -744,10 +744,10 @@ export async function runDiscordSetupAction(opts: DiscordSetupOptions): Promise<
     const clack = await import("@clack/prompts");
     clack.outro(
       `${chalk.green("Discord setup complete!")} AO will send notifications through the configured Discord webhook.\n` +
-        chalk.dim("  Test it with: ao notify test --to discord --template basic"),
+        chalk.dim("  Test it with: athene notify test --to discord --template basic"),
     );
   } else {
     console.log(chalk.green("\n✓ Discord setup complete."));
-    console.log(chalk.dim("Test it with: ao notify test --to discord --template basic"));
+    console.log(chalk.dim("Test it with: athene notify test --to discord --template basic"));
   }
 }

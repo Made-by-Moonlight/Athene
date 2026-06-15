@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import chalk from "chalk";
 import { parseDocument } from "yaml";
-import { CONFIG_SCHEMA_URL, findConfigFile, isCanonicalGlobalConfigPath } from "@aoagents/ao-core";
+import { CONFIG_SCHEMA_URL, findConfigFile, isCanonicalGlobalConfigPath } from "@made-by-moonlight/athene-core";
 import {
   applyNotifierRoutingPreset,
   getNotifierRoutingState,
@@ -88,7 +88,7 @@ function parseDesktopBackend(value: unknown): DesktopBackend | undefined {
 function packageDirFromImport(): string | null {
   try {
     const require = createRequire(import.meta.url);
-    return dirname(require.resolve("@aoagents/ao-notifier-macos/package.json"));
+    return dirname(require.resolve("@made-by-moonlight/athene-notifier-macos/package.json"));
   } catch {
     return null;
   }
@@ -167,7 +167,7 @@ function permissionDeniedMessage(): string {
   return (
     "macOS notification permission is denied for AO Notifier.app.\n" +
     "  Open System Settings > Notifications > AO Notifier and enable Allow Notifications.\n" +
-    "  Then rerun: ao setup desktop --force"
+    "  Then rerun: athene setup desktop --force"
   );
 }
 
@@ -226,20 +226,20 @@ function printStatus(): void {
 
 function copyBundledApp(targetAppPath = getInstalledNotifierAppPath()): string {
   if (currentPlatform() !== "darwin") {
-    throw new DesktopSetupError("ao setup desktop is currently only supported on macOS.");
+    throw new DesktopSetupError("athene setup desktop is currently only supported on macOS.");
   }
 
   const sourceAppPath = getBundledNotifierAppPath();
   if (!sourceAppPath || !existsSync(getNotifierExecutablePath(sourceAppPath))) {
     throw new DesktopSetupError(
-      "AO Notifier.app is not built. Run: pnpm --filter @aoagents/ao-notifier-macos build",
+      "AO Notifier.app is not built. Run: pnpm --filter @made-by-moonlight/athene-notifier-macos build",
     );
   }
 
   if (isPlaceholderNotifierApp(sourceAppPath)) {
     throw new DesktopSetupError(
       "AO Notifier.app was built as a non-macOS placeholder and cannot be installed. " +
-        "Rebuild @aoagents/ao-notifier-macos on macOS, or use --backend terminal-notifier.",
+        "Rebuild @made-by-moonlight/athene-notifier-macos on macOS, or use --backend terminal-notifier.",
     );
   }
 
@@ -464,7 +464,7 @@ function resolveAutoBackend(appPath: string): DesktopBackend {
   if (commandExists("terminal-notifier")) return "terminal-notifier";
   if (commandExists("osascript")) return "osascript";
   throw new DesktopSetupError(
-    "No desktop notification backend is available. Run `ao setup desktop --backend ao-app`, or install terminal-notifier.",
+    "No desktop notification backend is available. Run `athene setup desktop --backend ao-app`, or install terminal-notifier.",
   );
 }
 
@@ -531,7 +531,7 @@ async function prepareDesktopBackend(
   nonInteractive: boolean,
 ): Promise<DesktopBackend> {
   if (currentPlatform() !== "darwin") {
-    throw new DesktopSetupError("ao setup desktop is currently only supported on macOS.");
+    throw new DesktopSetupError("athene setup desktop is currently only supported on macOS.");
   }
 
   if (resolved.backend === "ao-app") {
@@ -716,10 +716,10 @@ export async function runDesktopSetupAction(opts: DesktopSetupOptions): Promise<
     const clack = await import("@clack/prompts");
     clack.outro(
       `${chalk.green("Desktop setup complete!")} AO will use ${resolved.backend} for desktop notifications.\n` +
-        chalk.dim("  Test it with: ao notify test --to desktop --template basic"),
+        chalk.dim("  Test it with: athene notify test --to desktop --template basic"),
     );
   } else {
     console.log(chalk.green("\n✓ Desktop setup complete."));
-    console.log(chalk.dim("Test it with: ao notify test --to desktop --template basic"));
+    console.log(chalk.dim("Test it with: athene notify test --to desktop --template basic"));
   }
 }

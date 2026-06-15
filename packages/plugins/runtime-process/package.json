@@ -1,5 +1,5 @@
 {
-  "name": "@aoagents/ao-plugin-runtime-process",
+  "name": "@made-by-moonlight/athene-plugin-runtime-process",
   "version": "0.9.1",
   "description": "Runtime plugin: child processes",
   "license": "MIT",
@@ -17,12 +17,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ComposioHQ/agent-orchestrator.git",
+    "url": "https://github.com/slievr/Athene.git",
     "directory": "packages/plugins/runtime-process"
   },
-  "homepage": "https://github.com/ComposioHQ/agent-orchestrator",
+  "homepage": "https://github.com/slievr/Athene",
   "bugs": {
-    "url": "https://github.com/ComposioHQ/agent-orchestrator/issues"
+    "url": "https://github.com/slievr/Athene/issues"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -35,7 +35,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@aoagents/ao-core": "workspace:*",
+    "@made-by-moonlight/athene-core": "workspace:*",
     "node-pty": "^1.0.0"
   },
   "devDependencies": {
@@ -44,7 +44,6 @@
     "vitest": "^3.0.0"
   },
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   }
 }

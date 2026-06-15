@@ -9,7 +9,7 @@ import {
   TERMINAL_STATUSES,
   type OrchestratorConfig,
   type PreflightContext,
-} from "@aoagents/ao-core";
+} from "@made-by-moonlight/athene-core";
 import { DEFAULT_PORT } from "../lib/constants.js";
 import { exec } from "../lib/shell.js";
 import { banner } from "../lib/format.js";
@@ -27,7 +27,7 @@ import { projectSessionUrl } from "../lib/routes.js";
 function autoDetectProject(config: OrchestratorConfig): string {
   const projectIds = Object.keys(config.projects);
   if (projectIds.length === 0) {
-    throw new Error("No projects configured. Run 'ao start' first.");
+    throw new Error("No projects configured. Run 'athene start' first.");
   }
   if (projectIds.length === 1) {
     return projectIds[0];
@@ -69,10 +69,10 @@ function tryAutoDetectProject(config: OrchestratorConfig): string | null {
  * Resolve the project + issue from a single optional CLI argument.
  *
  * Single source of truth for the four cases:
- *   - `ao spawn`                   → auto-detect project, no issue
- *   - `ao spawn 42`                → auto-detect project, issue=42
- *   - `ao spawn xid/42`            → prefix match, issue=42
- *   - `ao spawn x402-identity/42`  → exact projectId match, issue=42
+ *   - `athene spawn`                   → auto-detect project, no issue
+ *   - `athene spawn 42`                → auto-detect project, issue=42
+ *   - `athene spawn xid/42`            → prefix match, issue=42
+ *   - `athene spawn x402-identity/42`  → exact projectId match, issue=42
  *
  * Throws (via autoDetectProject) when the project can't be resolved — the
  * caller wraps in one try/catch instead of duplicating it across branches.
@@ -101,11 +101,11 @@ interface SpawnClaimOptions {
 }
 
 /**
- * Lifecycle polling runs in-process inside the long-lived `ao start` process.
- * `ao spawn` is a one-shot CLI — it can't start polling in its own process
+ * Lifecycle polling runs in-process inside the long-lived `athene start` process.
+ * `athene spawn` is a one-shot CLI — it can't start polling in its own process
  * (the interval would keep the CLI alive forever and duplicate work).
  *
- * Refuse to spawn if no `ao start` is running, or if the running instance is
+ * Refuse to spawn if no `athene start` is running, or if the running instance is
  * not polling this project. Without an active daemon, sessions get worktrees
  * and tmux panes but no lifecycle reactions (CI-failure routing, review
  * comments, revive transitions, event log). That silent blackout is a
@@ -116,12 +116,12 @@ async function ensureAOPollingProject(projectId: string): Promise<void> {
   const running = await getRunning();
   if (!running) {
     throw new Error(
-      `AO is not running — lifecycle polling is inactive. Run \`ao start\` before spawning sessions so they get CI/review routing and state advancement.`,
+      `AO is not running — lifecycle polling is inactive. Run \`athene start\` before spawning sessions so they get CI/review routing and state advancement.`,
     );
   }
   if (!running.projects.includes(projectId)) {
     throw new Error(
-      `The running AO instance (pid ${running.pid}) is not polling project "${projectId}". Run \`ao start ${projectId}\` before spawning so sessions get tracked.`,
+      `The running AO instance (pid ${running.pid}) is not polling project "${projectId}". Run \`athene start ${projectId}\` before spawning so sessions get tracked.`,
     );
   }
 }
@@ -222,7 +222,7 @@ async function spawnSession(
       source: "cli",
       kind: "cli.spawn_invoked",
       level: "info",
-      summary: `ao spawn invoked${issueId ? ` for issue ${issueId}` : ""}`,
+      summary: `athene spawn invoked${issueId ? ` for issue ${issueId}` : ""}`,
       data: {
         issueId: issueId ?? null,
         agent: agent ?? null,
@@ -280,7 +280,7 @@ async function spawnSession(
       source: "cli",
       kind: "cli.spawn_failed",
       level: "error",
-      summary: `ao spawn failed${issueId ? ` for issue ${issueId}` : ""}`,
+      summary: `athene spawn failed${issueId ? ` for issue ${issueId}` : ""}`,
       data: {
         issueId: issueId ?? null,
         agent: agent ?? null,
@@ -323,9 +323,9 @@ export function registerSpawn(program: Command): void {
         if (command.args.length > 1) {
           console.error(
             chalk.red(
-              `✗ \`ao spawn\` accepts at most 1 argument, but ${command.args.length} were provided.\n\n` +
+              `✗ \`athene spawn\` accepts at most 1 argument, but ${command.args.length} were provided.\n\n` +
                 `Use:\n` +
-                `  ao spawn [issue]`,
+                `  athene spawn [issue]`,
             ),
           );
           process.exit(1);
@@ -342,7 +342,7 @@ export function registerSpawn(program: Command): void {
         }
 
         if (!opts.claimPr && opts.assignOnGithub) {
-          console.error(chalk.red("--assign-on-github requires --claim-pr on `ao spawn`."));
+          console.error(chalk.red("--assign-on-github requires --claim-pr on `athene spawn`."));
           process.exit(1);
         }
 
@@ -360,7 +360,7 @@ export function registerSpawn(program: Command): void {
             source: "cli",
             kind: "cli.spawn_failed",
             level: "error",
-            summary: `ao spawn preflight failed${issueId ? ` for issue ${issueId}` : ""}`,
+            summary: `athene spawn preflight failed${issueId ? ` for issue ${issueId}` : ""}`,
             data: {
               issueId: issueId ?? null,
               agent: opts.agent ?? null,

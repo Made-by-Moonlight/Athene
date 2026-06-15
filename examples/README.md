@@ -1,4 +1,4 @@
-# Agent Orchestrator Config Examples
+# Athene Config Examples
 
 This directory contains example configurations for common use cases.
 
@@ -9,7 +9,7 @@ Copy an example and customize:
 ```bash
 cp examples/simple-github.yaml agent-orchestrator.yaml
 nano agent-orchestrator.yaml  # edit as needed
-ao spawn my-app ISSUE-123
+athene spawn my-app ISSUE-123
 ```
 
 ## Examples
@@ -108,8 +108,8 @@ Add these to your shell profile (`~/.zshrc` or `~/.bashrc`) to persist them.
 After copying an example:
 
 1. **Edit the config** - Update repo paths, team IDs, etc.
-2. **Validate** - Run `ao start` to check for config errors
-3. **Spawn an agent** - Try `ao spawn project-id ISSUE-123`
-4. **Monitor** - Use `ao status` or open the dashboard (default http://localhost:3000, configurable via `port:` in config)
+2. **Validate** - Run `athene start` to check for config errors
+3. **Spawn an agent** - Try `athene spawn project-id ISSUE-123`
+4. **Monitor** - Use `athene status` or open the dashboard (default http://localhost:3000, configurable via `port:` in config)
 
 See [SETUP.md](../SETUP.md) for detailed configuration reference and troubleshooting.

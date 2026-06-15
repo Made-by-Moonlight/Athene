@@ -5,8 +5,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import worktreePlugin from "@aoagents/ao-plugin-workspace-worktree";
-import type { ProjectConfig, WorkspaceInfo } from "@aoagents/ao-core";
+import worktreePlugin from "@made-by-moonlight/athene-plugin-workspace-worktree";
+import type { ProjectConfig, WorkspaceInfo } from "@made-by-moonlight/athene-core";
 
 const execFileAsync = promisify(execFile);
 
@@ -206,7 +206,7 @@ describe("workspace-worktree (integration)", () => {
     }
   }, 30_000);
 
-  // Regression for https://github.com/ComposioHQ/agent-orchestrator/issues/1741.
+  // Regression for https://github.com/slievr/Athene/issues/1741.
   // After a clean destroy(), the local session branch is intentionally kept so
   // the user's commits aren't lost. restore() must re-attach that branch
   // without recreating it (-b) or force-resetting it (-B), so the session's

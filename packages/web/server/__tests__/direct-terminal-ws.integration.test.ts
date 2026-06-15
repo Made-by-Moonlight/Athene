@@ -357,7 +357,7 @@ describeWithTmux("mux terminal open", () => {
 
   it("bounds re-attach attempts when tmux session dies mid-subscription (issue #1639)", async () => {
     // Reproduces the runaway re-attach loop that exhausts the system PTY
-    // pool in seconds when `ao stop` kills the tmux session out from
+    // pool in seconds when `athene stop` kills the tmux session out from
     // under a still-subscribed dashboard.
     //
     // Pre-fix behaviour: each "successful" re-attach reset reattachAttempts
