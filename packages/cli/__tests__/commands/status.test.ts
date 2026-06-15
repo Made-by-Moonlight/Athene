@@ -18,8 +18,8 @@ import {
   createActivitySignal,
   createCodeReviewStore,
   sessionFromMetadata,
-} from "@aoagents/ao-core";
-import type * as AoCore from "@aoagents/ao-core";
+} from "@slievr/core";
+import type * as AoCore from "@slievr/core";
 
 const {
   mockTmux,
@@ -79,7 +79,7 @@ vi.mock("../../src/lib/shell.js", () => ({
   },
 }));
 
-vi.mock("@aoagents/ao-core", async (importOriginal) => {
+vi.mock("@slievr/core", async (importOriginal) => {
   const actual = await importOriginal<typeof AoCore>();
   return {
     ...actual,
@@ -1035,7 +1035,7 @@ describe("status command", () => {
 
   // ── lines 262-266: loadConfig() throws → fallback to tmux discovery ───────
   it("falls back to tmux session discovery when loadConfig throws", async () => {
-    // The vi.mock for @aoagents/ao-core uses `() => mockConfigRef.current`.
+    // The vi.mock for @slievr/core uses `() => mockConfigRef.current`.
     // Setting current to a throwing getter makes loadConfig throw.
     // Simpler: use a Proxy-based trick — but easiest is a getter that throws.
     const originalCurrent = mockConfigRef.current;

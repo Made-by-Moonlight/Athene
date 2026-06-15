@@ -1,4 +1,4 @@
-import type { PluginModule, Terminal, Session } from "@aoagents/ao-core";
+import type { PluginModule, Terminal, Session } from "@slievr/core";
 
 export const manifest = {
   name: "web",

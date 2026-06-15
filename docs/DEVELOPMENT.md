@@ -165,11 +165,11 @@ When you are developing Agent Orchestrator from a long-lived local checkout, ref
 
 ```bash
 git switch main
-git status --short --branch   # `ao update` expects a clean working tree on main
-ao update
+git status --short --branch   # `athene update` expects a clean working tree on main
+athene update
 ```
 
-`ao update` is intentionally conservative: it fast-forwards the local install checkout from `origin/main`, runs `pnpm install`, clean-rebuilds `@aoagents/ao-core`, `@aoagents/ao-cli`, and `@aoagents/ao-web`, refreshes the global launcher with `npm link`, and ends with CLI smoke tests. Use `ao update --skip-smoke` to stop after the rebuild, or `ao update --smoke-only` to rerun the smoke checks without fetching or rebuilding.
+`athene update` is intentionally conservative: it fast-forwards the local install checkout from `origin/main`, runs `pnpm install`, clean-rebuilds `@slievr/core`, `@slievr/cli`, and `@slievr/web`, refreshes the global launcher with `npm link`, and ends with CLI smoke tests. Use `athene update --skip-smoke` to stop after the rebuild, or `athene update --smoke-only` to rerun the smoke checks without fetching or rebuilding.
 
 If your branch has drift from `main`, update the install checkout first and then return to your feature worktree. That keeps CLI behavior and generated docs aligned with the version contributors are expected to run.
 
@@ -196,7 +196,7 @@ function processInput(value: unknown): string {
 }
 
 // Type-only imports for type-only usage
-import type { PluginModule, Runtime } from "@aoagents/ao-core";
+import type { PluginModule, Runtime } from "@slievr/core";
 ```
 
 Formatting: semicolons, double quotes, 2-space indent, strict mode.
@@ -234,7 +234,7 @@ A plugin exports a `manifest`, a `create()` factory, and a default `PluginModule
 
 ```typescript
 // packages/plugins/runtime-myplugin/src/index.ts
-import type { PluginModule, Runtime } from "@aoagents/ao-core";
+import type { PluginModule, Runtime } from "@slievr/core";
 
 export const manifest = {
   name: "myplugin",
@@ -268,7 +268,7 @@ export default { manifest, create } satisfies PluginModule<Runtime>;
 
 ```json
 {
-  "name": "@aoagents/ao-runtime-myplugin",
+  "name": "@slievr/athene-runtime-myplugin",
   "version": "0.1.0",
   "type": "module",
   "main": "dist/index.js",
@@ -279,7 +279,7 @@ export default { manifest, create } satisfies PluginModule<Runtime>;
     "test": "vitest"
   },
   "dependencies": {
-    "@aoagents/ao-core": "workspace:*"
+    "@slievr/core": "workspace:*"
   }
 }
 ```
@@ -333,10 +333,10 @@ Orchestrator sessions use a separate prompt from `packages/core/src/orchestrator
 pnpm test
 
 # Run tests for a specific package
-pnpm --filter @aoagents/ao-core test
+pnpm --filter @slievr/core test
 
 # Watch mode
-pnpm --filter @aoagents/ao-core test -- --watch
+pnpm --filter @slievr/core test -- --watch
 
 # Integration tests
 pnpm test:integration
@@ -359,7 +359,7 @@ Use mock plugins in tests — don't call real tmux or external services in unit 
 
 1. Edit `Session` interface in `packages/core/src/types.ts`
 2. Initialize the field in `spawn()` in `session-manager.ts`
-3. Rebuild: `pnpm --filter @aoagents/ao-core build`
+3. Rebuild: `pnpm --filter @slievr/core build`
 
 ### Add a new reaction
 
@@ -392,10 +392,10 @@ curl http://localhost:3000/api/sessions/{session-id}
 # Unix:
 tmux attach -t {hash}-{prefix}-{num}
 # Windows: there's no tmux. Use the AO command, which connects to \\.\pipe\ao-pty-<sessionId>:
-ao session attach <sessionId>
+athene session attach <sessionId>
 
 # Enable verbose logging
-AO_LOG_LEVEL=debug ao start
+AO_LOG_LEVEL=debug athene start
 ```
 
 ---

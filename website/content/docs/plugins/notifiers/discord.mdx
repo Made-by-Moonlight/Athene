@@ -17,7 +17,7 @@ description: Discord webhook with rich embeds, retry handling, and thread suppor
 Run the setup command:
 
 ```bash
-ao setup discord
+athene setup discord
 ```
 
 If Discord is already configured, the command asks whether to keep the existing
@@ -42,8 +42,8 @@ Before saving, AO also asks which notification priorities Discord should receive
 Useful setup checks:
 
 ```bash
-ao setup discord --status
-ao setup discord --refresh
+athene setup discord --status
+athene setup discord --refresh
 ```
 
 ```yaml title="agent-orchestrator.yaml"
@@ -88,6 +88,6 @@ Handles Discord's `Retry-After` header on 429 responses — waits the requested 
 ## Testing
 
 ```bash
-ao notify test --to discord --template basic
-ao notify test --to discord --template merge-ready --actions
+athene notify test --to discord --template basic
+athene notify test --to discord --template merge-ready --actions
 ```

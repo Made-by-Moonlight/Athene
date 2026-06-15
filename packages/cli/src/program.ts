@@ -27,7 +27,7 @@ export function createProgram(): Command {
   const program = new Command();
 
   program
-    .name("ao")
+    .name("athene")
     .description("Agent Orchestrator — manage parallel AI coding agents")
     .version(getCliVersion());
 

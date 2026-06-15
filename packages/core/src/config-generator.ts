@@ -1,5 +1,5 @@
 /**
- * Config generator for `ao start <url>` — auto-detects project settings
+ * Config generator for `athene start <url>` — auto-detects project settings
  * from a repo URL and generates a valid agent-orchestrator.yaml.
  *
  * SCM-agnostic: parses GitHub, GitLab, Bitbucket URLs and infers plugins.

@@ -1,5 +1,5 @@
 /**
- * @aoagents/ao-core
+ * @slievr/core
  *
  * Core library for the Agent Orchestrator.
  * Exports all types, config loader, and service implementations.
@@ -186,7 +186,7 @@ export type { LifecycleManagerDeps } from "./lifecycle-manager.js";
 export { buildPrompt, BASE_AGENT_PROMPT, BASE_AGENT_PROMPT_NO_REPO } from "./prompt-builder.js";
 export type { PromptBuildConfig } from "./prompt-builder.js";
 
-// Orchestrator prompt — generates orchestrator context for `ao start`
+// Orchestrator prompt — generates orchestrator context for `athene start`
 export { generateOrchestratorPrompt } from "./orchestrator-prompt.js";
 export type { OrchestratorPromptConfig } from "./orchestrator-prompt.js";
 

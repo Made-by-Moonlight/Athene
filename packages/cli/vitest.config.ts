@@ -34,39 +34,39 @@ export default defineConfig({
   resolve: {
     alias: [
       {
-        find: "@aoagents/ao-core/scm-webhook-utils",
+        find: "@slievr/core/scm-webhook-utils",
         replacement: resolve(__dirname, "../core/src/scm-webhook-utils.ts"),
       },
       {
-        find: "@aoagents/ao-core/types",
+        find: "@slievr/core/types",
         replacement: resolve(__dirname, "../core/src/types.ts"),
       },
       {
-        find: "@aoagents/ao-core",
+        find: "@slievr/core",
         replacement: resolve(__dirname, "../core/src/index.ts"),
       },
       {
-        find: "@aoagents/ao-plugin-agent-claude-code",
+        find: "@slievr/plugin-agent-claude-code",
         replacement: resolve(__dirname, "../plugins/agent-claude-code/src/index.ts"),
       },
       {
-        find: "@aoagents/ao-plugin-agent-codex",
+        find: "@slievr/plugin-agent-codex",
         replacement: resolve(__dirname, "../plugins/agent-codex/src/index.ts"),
       },
       {
-        find: "@aoagents/ao-plugin-agent-aider",
+        find: "@slievr/plugin-agent-aider",
         replacement: resolve(__dirname, "../plugins/agent-aider/src/index.ts"),
       },
       {
-        find: "@aoagents/ao-plugin-agent-opencode",
+        find: "@slievr/plugin-agent-opencode",
         replacement: resolve(__dirname, "../plugins/agent-opencode/src/index.ts"),
       },
       {
-        find: "@aoagents/ao-plugin-agent-cursor",
+        find: "@slievr/plugin-agent-cursor",
         replacement: resolve(__dirname, "../plugins/agent-cursor/src/index.ts"),
       },
       {
-        find: "@aoagents/ao-plugin-scm-github",
+        find: "@slievr/plugin-scm-github",
         replacement: resolve(__dirname, "../plugins/scm-github/src/index.ts"),
       },
     ],

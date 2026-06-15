@@ -1,5 +1,5 @@
 /**
- * Unified project resolution for `ao start`.
+ * Unified project resolution for `athene start`.
  *
  * Replaces the per-arg-shape dispatch that lived inline in start.ts (URL →
  * handleUrlStart, path → addProjectToConfig, none → loadConfig/autoCreate +
@@ -37,7 +37,7 @@ import {
   type OrchestratorConfig,
   type ParsedRepoUrl,
   type ProjectConfig,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 import chalk from "chalk";
 import ora from "ora";
 import { findFreePort } from "./web-dir.js";
@@ -116,7 +116,7 @@ export interface ResolveDeps {
  *   freshly clone or add must land there to be visible.
  *
  *   When `false` (default), the resolver behaves as if this were the very
- *   first `ao start`: URL clones generate a wrapped (`projects:`) yaml in
+ *   first `athene start`: URL clones generate a wrapped (`projects:`) yaml in
  *   the cloned repo, paths register against whatever config the cwd walks
  *   up to find.
  */
@@ -127,7 +127,7 @@ export interface ResolveOptions {
 /**
  * Decide whether `arg` looks like a path (rather than a project id).
  * Matches start.ts's `isLocalPath` — including Windows drive-letter and
- * UNC patterns so e.g. `ao start C:\path\to\repo` is correctly classified.
+ * UNC patterns so e.g. `athene start C:\path\to\repo` is correctly classified.
  */
 function isLocalPath(arg: string): boolean {
   if (arg.startsWith("/") || arg.startsWith("~") || arg.startsWith("./") || arg.startsWith("..")) {
@@ -223,7 +223,7 @@ async function fromUrlIntoGlobal(arg: string, deps: ResolveDeps): Promise<Resolv
     throw new Error(
       `Repository "${parsed.ownerRepo}" appears to be empty (no commits or refs).\n` +
         `  AO needs at least one commit on the default branch to spawn an orchestrator.\n` +
-        `  Push an initial commit, then re-run \`ao start ${arg}\`.`,
+        `  Push an initial commit, then re-run \`athene start ${arg}\`.`,
     );
   }
 
@@ -371,7 +371,7 @@ async function fromPath(arg: string, deps: ResolveDeps, opts: ResolveOptions): P
     // pathsEqual canonicalizes via realpathSync so symlinked paths (e.g.
     // macOS /tmp -> /private/tmp) match an entry stored under the
     // resolved target, and lowercases on Windows so drive-letter / 8.3
-    // case mismatches don't slip through. Without this, `ao start
+    // case mismatches don't slip through. Without this, `athene start
     // /tmp/foo` against a daemon whose global config has /private/tmp/foo
     // would fail to dedupe and double-register the project.
     const existingEntry = Object.entries(globalConfig.projects).find(([, p]) =>
@@ -466,7 +466,7 @@ async function fromCwdOrId(
     if (!project) {
       throw new Error(
         `Project "${arg}" is not registered in the global config (${config.configPath}).\n` +
-          `  Run \`ao project add\` or \`ao start <path|url>\` first.`,
+          `  Run \`athene project add\` or \`athene start <path|url>\` first.`,
       );
     }
     return {
@@ -547,7 +547,7 @@ async function fromCwdOrId(
 }
 
 /**
- * Resolve (and create if necessary) the project a given `ao start [arg]`
+ * Resolve (and create if necessary) the project a given `athene start [arg]`
  * invocation refers to.
  *
  * Dispatches by arg shape:

@@ -51,12 +51,12 @@ No plugin-level config — this is the default on macOS/Linux so you can also om
 ## Attaching
 
 ```bash
-ao session attach <sessionId>
+athene session attach <sessionId>
 ```
 
 Or from inside tmux, switch windows manually. You can detach at any time (`Ctrl-b d`) and AO keeps running.
 
 ## Troubleshooting
 
-- **`tmux server not running`.** `ao start` launches the server for you; if you killed it, run `ao start` again.
+- **`tmux server not running`.** `athene start` launches the server for you; if you killed it, run `athene start` again.
 - **Window disappears after agent exits.** Intentional — AO cleans up finished windows. The session metadata is archived under `~/.agent-orchestrator/.../archive/`.

@@ -11,7 +11,7 @@ import {
 import { join } from "node:path";
 import { homedir } from "node:os";
 import { setTimeout as sleep } from "node:timers/promises";
-import { atomicWriteFileSync, recordActivityEvent } from "@aoagents/ao-core";
+import { atomicWriteFileSync, recordActivityEvent } from "@slievr/core";
 
 export interface RunningState {
   pid: number;
@@ -207,7 +207,7 @@ export async function unregister(): Promise<void> {
 
 /**
  * Remove a single project from the running state's project list.
- * Used by `ao stop <project>` so that `ao start <project>` can restart
+ * Used by `athene stop <project>` so that `athene start <project>` can restart
  * the orchestrator without hitting the "already running" gate.
  * No-op if the state is missing or the project isn't listed.
  */
@@ -227,9 +227,9 @@ export async function removeProjectFromRunning(projectId: string): Promise<void>
 /**
  * Add a project to the running state's project list (idempotent).
  * Used when a project's orchestrator is spawned against an already-running
- * daemon — for example after `ao start <project>` attaches to an existing
+ * daemon — for example after `athene start <project>` attaches to an existing
  * parent process whose `projects` list didn't yet include the project.
- * Without this, subsequent `ao stop` (no args) would leave the new
+ * Without this, subsequent `athene stop` (no args) would leave the new
  * orchestrator orphaned because it isn't in `running.projects`.
  * No-op if the state is missing or the project is already listed.
  */
@@ -288,7 +288,7 @@ export async function isAlreadyRunning(): Promise<RunningState | null> {
 }
 
 /**
- * Serialize `ao start` so concurrent startups cannot both observe an empty
+ * Serialize `athene start` so concurrent startups cannot both observe an empty
  * running.json and create competing orchestrator/dashboard processes.
  */
 export async function acquireStartupLock(timeoutMs = 30000): Promise<() => void> {
@@ -309,7 +309,7 @@ export async function waitForExit(pid: number, timeoutMs = 5000): Promise<boolea
 }
 
 /**
- * Record which sessions were active when `ao stop` ran.
+ * Record which sessions were active when `athene stop` ran.
  */
 export async function writeLastStop(state: LastStopState): Promise<void> {
   const release = await acquireLock(LAST_STOP_LOCK_FILE, 5000, "last-stop.json lock");

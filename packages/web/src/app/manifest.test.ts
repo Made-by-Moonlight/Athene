@@ -10,7 +10,7 @@ describe("app manifest", () => {
 
     expect(manifest()).toMatchObject({
       name: "ao | Agent Orchestrator",
-      short_name: "ao",
+      short_name: "athene",
       start_url: "/",
       scope: "/",
       display: "standalone",

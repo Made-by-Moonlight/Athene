@@ -166,7 +166,7 @@ describe("UpdateBanner", () => {
         status: 409,
         json: async () => ({
           ok: false,
-          message: "3 sessions active. Run `ao stop` first.",
+          message: "3 sessions active. Run `athene stop` first.",
           activeSessions: 3,
         }),
       } as Response);
@@ -193,7 +193,7 @@ describe("UpdateBanner", () => {
         status: 409,
         json: async () => ({
           ok: false,
-          message: "1 session active. Run `ao stop` first.",
+          message: "1 session active. Run `athene stop` first.",
           activeSessions: 1,
         }),
       } as Response);

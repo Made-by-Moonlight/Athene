@@ -203,7 +203,7 @@ import {
   generateConfigHash,
   generateInstanceId,
   validateAndStoreOrigin,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 
 // Calculate paths dynamically
 const sessionsDir = getSessionsDir(configPath, projectPath);
@@ -297,10 +297,10 @@ pnpm build
 
 ```bash
 # Start orchestrator (creates new directory structure)
-ao start
+athene start
 
 # Spawn new sessions (uses hash-based paths)
-ao spawn my-app INT-1234
+athene spawn my-app INT-1234
 ```
 
 ### Step 6: Verify New Structure
@@ -362,7 +362,7 @@ If you need to rollback to the old architecture:
 **A**: No! PRs are on GitHub, not in local sessions. You can:
 
 1. Check `gh pr list` to see all open PRs
-2. Spawn new sessions for PRs that need work: `ao spawn integrator --branch feat/existing-branch`
+2. Spawn new sessions for PRs that need work: `athene spawn integrator --branch feat/existing-branch`
 
 ### Q: What about in-progress work?
 
@@ -419,7 +419,7 @@ No conflicts, complete isolation!
 echo -n "/path/to/your/config/dir" | sha256sum | cut -c1-12
 
 # Or let ao print it
-ao status
+athene status
 # Output shows: Config: /path/to/config.yaml
 # Hash will be in directory names: ~/.agent-orchestrator/{hash}-{project}/
 ```
@@ -444,7 +444,7 @@ If you encounter issues during migration:
 
 1. Check existing sessions: `tmux ls`
 2. Check new directory structure: `ls -la ~/.agent-orchestrator/`
-3. Check config validation: `ao status`
+3. Check config validation: `athene status`
 4. Review git worktrees: `git worktree list` (from project directory)
 5. Check logs: `journalctl -u ao-orchestrator` or tmux session output
 
@@ -459,7 +459,7 @@ For bugs or questions, file an issue: https://github.com/composiohq/agent-orches
 3. ✅ Clean up old git worktrees (`git worktree remove --force`)
 4. ✅ Remove old directories (`~/.ao-sessions`, `~/.ao-worktrees`)
 5. ✅ Update to latest version (`pnpm install && pnpm build`)
-6. ✅ Start fresh (`ao start`, `ao spawn`)
+6. ✅ Start fresh (`athene start`, `athene spawn`)
 
 **Expected Downtime**: ~10 minutes (time to kill sessions, clean worktrees, respawn)
 

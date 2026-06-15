@@ -1,4 +1,4 @@
-import type { OrchestratorConfig } from "@aoagents/ao-core";
+import type { OrchestratorConfig } from "@slievr/core";
 
 export function resolveProjectIdForSessionId(
   config: OrchestratorConfig,

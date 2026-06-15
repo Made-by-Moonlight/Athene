@@ -61,20 +61,20 @@ Comprehensive guide to installing, configuring, and troubleshooting Agent Orches
 
 - **Public dashboard URL** - If running AO behind a reverse proxy (e.g. inside a remote dev container, on a VPS fronted by Caddy/nginx/Traefik)
   - Set `AO_PUBLIC_URL` to the externally-reachable URL of the dashboard
-  - All console output, `ao open` browser launches, and orchestrator-prompt session links use this URL instead of `http://localhost:<port>`
+  - All console output, `athene open` browser launches, and orchestrator-prompt session links use this URL instead of `http://localhost:<port>`
   - Example: `export AO_PUBLIC_URL="https://ao.example.com"`
   - When the dashboard is served on a standard port (HTTPS 443 / HTTP 80) the dashboard JS connects the mux WebSocket to `/ao-terminal-mux` on the same hostname. Your proxy needs to forward that path to the direct terminal server (`DIRECT_TERMINAL_PORT`, default 14801) — its upgrade handler accepts both `/mux` and `/ao-terminal-mux`. For custom paths set `TERMINAL_WS_PATH=/your/path`.
-  - **`AO_PATH_BASED_MUX=1`** (opt-in) — if your proxy can only forward one hostname:port pair (e.g. Cloudflare Tunnel pointed at a single `service:` URL with no path-based ingress), set this and `ao start` will run a small bundled HTTP/WS proxy on `PORT` that demultiplexes: HTTP forwards to Next.js (shifted to `PORT + 1000`, override with `NEXT_INTERNAL_PORT`), and `wss://hostname/ao-terminal-mux` is tunneled to `DIRECT_TERMINAL_PORT/mux`. Tradeoff: an extra Node process and one extra hop per HTTP request, in exchange for a one-line proxy config on the operator side.
+  - **`AO_PATH_BASED_MUX=1`** (opt-in) — if your proxy can only forward one hostname:port pair (e.g. Cloudflare Tunnel pointed at a single `service:` URL with no path-based ingress), set this and `athene start` will run a small bundled HTTP/WS proxy on `PORT` that demultiplexes: HTTP forwards to Next.js (shifted to `PORT + 1000`, override with `NEXT_INTERNAL_PORT`), and `wss://hostname/ao-terminal-mux` is tunneled to `DIRECT_TERMINAL_PORT/mux`. Tradeoff: an extra Node process and one extra hop per HTTP request, in exchange for a one-line proxy config on the operator side.
 
 ## Installation
 
 ### Install via npm (recommended)
 
 ```bash
-npm install -g @aoagents/ao
+npm install -g @slievr/athene
 
 # Verify
-ao --version
+athene --version
 ```
 
 This installs the `ao` CLI globally along with all default plugins and the web dashboard.
@@ -83,17 +83,17 @@ This installs the `ao` CLI globally along with all default plugins and the web d
 
 ```bash
 # Option 1: Use sudo
-sudo npm install -g @aoagents/ao
+sudo npm install -g @slievr/athene
 
 # Option 2: Use npx (no global install needed)
-npx @aoagents/ao start
+npx @slievr/athene start
 
 # Option 3: Fix npm permissions permanently (recommended)
 mkdir -p ~/.npm-global
 npm config set prefix '~/.npm-global'
 echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.zshrc
 source ~/.zshrc
-npm install -g @aoagents/ao
+npm install -g @slievr/athene
 ```
 
 ### Build from Source (for contributors)
@@ -109,36 +109,36 @@ cd agent-orchestrator
 bash scripts/setup.sh
 
 # Verify
-ao --version
+athene --version
 ```
 
 The setup script handles pnpm installation, dependency resolution, building all packages, and linking the `ao` command globally (with automatic permission handling on macOS).
 
 ## First-Time Setup
 
-### `ao start` — the only command you need
+### `athene start` — the only command you need
 
-`ao start` handles everything: auto-detecting your project, generating config, and launching the dashboard + orchestrator. There are three ways to use it:
+`athene start` handles everything: auto-detecting your project, generating config, and launching the dashboard + orchestrator. There are three ways to use it:
 
 **From a URL (fastest for any repo):**
 
 ```bash
-ao start https://github.com/your-org/your-repo
+athene start https://github.com/your-org/your-repo
 ```
 
 This clones the repo, auto-detects language/framework/branch, generates `agent-orchestrator.yaml`, and starts everything. Supports GitHub, GitLab, and Bitbucket (HTTPS and SSH):
 
 ```bash
-ao start https://github.com/owner/repo
-ao start https://gitlab.com/org/project
-ao start git@github.com:owner/repo.git
+athene start https://github.com/owner/repo
+athene start https://gitlab.com/org/project
+athene start git@github.com:owner/repo.git
 ```
 
 **From a local repo (zero prompts):**
 
 ```bash
 cd ~/your-project
-ao start
+athene start
 ```
 
 Auto-detects git remote, default branch, language, and available agent runtimes. Generates config and starts.
@@ -146,12 +146,12 @@ Auto-detects git remote, default branch, language, and available agent runtimes.
 **Adding more projects:**
 
 ```bash
-ao start ~/path/to/another-repo
+athene start ~/path/to/another-repo
 ```
 
 If a config already exists, the new project is appended. If not, one is created first.
 
-### What `ao start` detects automatically
+### What `athene start` detects automatically
 
 - **Git remote** — parses `owner/repo` from origin
 - **Default branch** — checks symbolic-ref, GitHub API, then common names (main/master)
@@ -191,7 +191,7 @@ projects:
     defaultBranch: main
 ```
 
-`ao start` generates this automatically — you only need to write it manually if you want full control.
+`athene start` generates this automatically — you only need to write it manually if you want full control.
 
 ### Full Configuration Schema
 
@@ -355,7 +355,7 @@ gh auth status
          teamId: "your-team-id"
    ```
 
-**Branch names:** On `ao spawn <issue>` with the Linear tracker, AO **prefers** Linear’s branch name (same as **Copy git branch name**, API field `branchName`). If that value is missing, it **falls back** to the previous convention: `feat/<ISSUE-ID>` (e.g. `feat/INT-123`). To change how Linear generates `branchName`, use **Linear → Settings → Integrations → GitHub → Branch format**.
+**Branch names:** On `athene spawn <issue>` with the Linear tracker, AO **prefers** Linear’s branch name (same as **Copy git branch name**, API field `branchName`). If that value is missing, it **falls back** to the previous convention: `feat/<ISSUE-ID>` (e.g. `feat/INT-123`). To change how Linear generates `branchName`, use **Linear → Settings → Integrations → GitHub → Branch format**.
 
 **Verification:**
 
@@ -398,34 +398,34 @@ curl -X POST -H 'Content-type: application/json' \
 To add a custom tracker (Jira, Asana, etc.), create a plugin:
 
 1. See plugin examples in `packages/plugins/tracker-*/`
-2. Implement the `Tracker` interface from `@aoagents/ao-core`
+2. Implement the `Tracker` interface from `@slievr/core`
 3. Register your plugin in the config
 
 See [Development Guide](./docs/DEVELOPMENT.md) for plugin development guidelines.
 
 ## Troubleshooting
 
-### Run `ao doctor`
+### Run `athene doctor`
 
 Use the built-in doctor before debugging a broken install by hand:
 
 ```bash
-ao doctor
-ao doctor --fix
+athene doctor
+athene doctor --fix
 ```
 
-`ao doctor` reports deterministic PASS/WARN/FAIL checks for PATH and launcher resolution, required binaries, terminal-runtime health (tmux on Unix; PowerShell / `runtime-process` on Windows), GitHub CLI health, stale AO temp files, config support directories, and core build/runtime sanity. It runs and is supported on Windows. `--fix` only applies safe fixes such as creating missing AO support directories, refreshing the local launcher link, and removing stale AO temp files.
+`athene doctor` reports deterministic PASS/WARN/FAIL checks for PATH and launcher resolution, required binaries, terminal-runtime health (tmux on Unix; PowerShell / `runtime-process` on Windows), GitHub CLI health, stale AO temp files, config support directories, and core build/runtime sanity. It runs and is supported on Windows. `--fix` only applies safe fixes such as creating missing AO support directories, refreshing the local launcher link, and removing stale AO temp files.
 
-### Run `ao update`
+### Run `athene update`
 
 When you installed AO from this repository and want to refresh that local install:
 
 ```bash
 git switch main
-ao update
+athene update
 ```
 
-`ao update` is intentionally conservative: it requires a clean working tree on `main`, fast-forwards from `origin/main`, reinstalls dependencies, clean-rebuilds the critical core/CLI/web packages, refreshes the launcher with `npm link`, and runs CLI smoke tests. Works on macOS, Linux, and Windows (Windows uses the bundled `ao-update.ps1` script automatically). Use `ao update --skip-smoke` to stop after rebuild, or `ao update --smoke-only` to rerun just the smoke checks.
+`athene update` is intentionally conservative: it requires a clean working tree on `main`, fast-forwards from `origin/main`, reinstalls dependencies, clean-rebuilds the critical core/CLI/web packages, refreshes the launcher with `npm link`, and runs CLI smoke tests. Works on macOS, Linux, and Windows (Windows uses the bundled `ao-update.ps1` script automatically). Use `athene update --skip-smoke` to stop after rebuild, or `athene update --smoke-only` to rerun just the smoke checks.
 
 ### "No agent-orchestrator.yaml found"
 
@@ -434,8 +434,8 @@ ao update
 **Solution:**
 
 ```bash
-# ao start auto-creates the config if none exists
-ao start
+# athene start auto-creates the config if none exists
+athene start
 
 # Or copy an example and edit manually
 cp examples/simple-github.yaml agent-orchestrator.yaml
@@ -503,7 +503,7 @@ echo $LINEAR_API_KEY
 
 **Problem:** Another service is using the dashboard port (default 3000).
 
-**Note:** `ao start` automatically finds the next free port if the configured port is busy. You'll see a message like "Port 3000 is busy — using 3001 instead." If you still need to fix it manually:
+**Note:** `athene start` automatically finds the next free port if the configured port is busy. You'll see a message like "Port 3000 is busy — using 3001 instead." If you still need to fix it manually:
 
 ```bash
 # Option 1: Change port in agent-orchestrator.yaml
@@ -538,10 +538,10 @@ df -h
 
 ```bash
 # List active sessions
-ao session ls
+athene session ls
 
 # Check status dashboard
-ao status
+athene status
 ```
 
 ### "Agent not responding"
@@ -552,17 +552,17 @@ ao status
 
 ```bash
 # Check session status
-ao status
+athene status
 
 # Attach to session to investigate
-ao open <session-name>
+athene open <session-name>
 
 # Send message to agent
-ao send <session-name> "Please report your current status"
+athene send <session-name> "Please report your current status"
 
 # Kill and respawn if necessary
-ao session kill <session-name>
-ao spawn <issue-id>
+athene session kill <session-name>
+athene spawn <issue-id>
 ```
 
 ### "Permission denied" when spawning
@@ -792,25 +792,25 @@ projects:
 
 Three ways:
 
-1. **Dashboard** - `ao start` then visit http://localhost:3000 (or your configured `port:`)
-2. **CLI status** - `ao status` (text-based dashboard)
-3. **Attach to session** - `ao open <session-name>` (live terminal)
+1. **Dashboard** - `athene start` then visit http://localhost:3000 (or your configured `port:`)
+2. **CLI status** - `athene status` (text-based dashboard)
+3. **Attach to session** - `athene open <session-name>` (live terminal)
 
 ### What if an agent gets stuck?
 
 ```bash
 # Check status
-ao status
+athene status
 
 # Send message
-ao send <session-name> "What's your current status?"
+athene send <session-name> "What's your current status?"
 
 # Attach to investigate
-ao open <session-name>
+athene open <session-name>
 
 # Kill and respawn if necessary
-ao session kill <session-name>
-ao spawn <issue-id>
+athene session kill <session-name>
+athene spawn <issue-id>
 ```
 
 Agents also send "stuck" notifications automatically after inactivity threshold.
@@ -819,16 +819,16 @@ Agents also send "stuck" notifications automatically after inactivity threshold.
 
 ```bash
 # List all sessions
-ao session ls
+athene session ls
 
 # Kill specific session
-ao session kill <session-name>
+athene session kill <session-name>
 
 # Cleanup script (example)
-ao session ls --json --include-terminated | jq -r '.data[] | select(.status == "merged") | .id' | xargs -I{} ao session kill {}
+athene session ls --json --include-terminated | jq -r '.data[] | select(.status == "merged") | .id' | xargs -I{} athene session kill {}
 ```
 
-> **Note:** `ao session ls --json` and `ao status --json` emit `{ data: [...], meta: { hiddenTerminatedCount } }`. By default terminated sessions (`killed`, `terminated`, `done`, `merged`, `errored`, `cleanup`) are hidden — pass `--include-terminated` to include them in `data`.
+> **Note:** `athene session ls --json` and `athene status --json` emit `{ data: [...], meta: { hiddenTerminatedCount } }`. By default terminated sessions (`killed`, `terminated`, `done`, `merged`, `errored`, `cleanup`) are hidden — pass `--include-terminated` to include them in `data`.
 
 ### Can I run multiple orchestrators?
 
@@ -847,9 +847,9 @@ Useful for:
 
 ## Next Steps
 
-1. **Start the orchestrator** — `ao start` (auto-creates config on first run)
-2. **Spawn an agent** — `ao spawn 123` (project auto-detected from cwd)
-3. **Monitor progress** — `ao status` or dashboard at http://localhost:3000
+1. **Start the orchestrator** — `athene start` (auto-creates config on first run)
+2. **Spawn an agent** — `athene spawn 123` (project auto-detected from cwd)
+3. **Monitor progress** — `athene status` or dashboard at http://localhost:3000
 4. **Read [Development Guide](./docs/DEVELOPMENT.md)** — Code conventions and architecture
 5. **Explore examples** — See [examples/](./examples/) for more configs
 6. **Join the community** — Report issues, share configs, contribute plugins

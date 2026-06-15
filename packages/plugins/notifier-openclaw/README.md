@@ -5,13 +5,13 @@ OpenClaw notifier plugin for AO escalation events.
 ## Quick setup
 
 ```bash
-ao setup openclaw
+athene setup openclaw
 ```
 
 This interactive wizard auto-detects your OpenClaw gateway, lets you reuse or change the URL, OpenClaw config path, and routing values, then writes the AO config. For non-interactive use (e.g., in CI/CD pipelines or automation scripts):
 
 ```bash
-ao setup openclaw --url http://127.0.0.1:18789/hooks/agent --non-interactive
+athene setup openclaw --url http://127.0.0.1:18789/hooks/agent --non-interactive
 ```
 
 AO does not generate the token or write shell-profile exports. Local setup reads `hooks.token` from your OpenClaw config. For a remote OpenClaw gateway, you can pass `--token` and AO will store that token in `agent-orchestrator.yaml`.
@@ -19,8 +19,8 @@ AO does not generate the token or write shell-profile exports. Local setup reads
 Useful follow-up commands:
 
 ```bash
-ao setup openclaw --refresh
-ao setup openclaw --status
+athene setup openclaw --refresh
+athene setup openclaw --status
 ```
 
 Interactive setup asks which notification priorities OpenClaw should receive.
@@ -60,7 +60,7 @@ notifiers:
 
 1. Rotate `hooks.token` in OpenClaw.
 2. Restart OpenClaw so it picks up the new config.
-3. Run `ao setup openclaw --status` to verify the new token.
+3. Run `athene setup openclaw --status` to verify the new token.
 
 ## Known limitation (Phase 0)
 

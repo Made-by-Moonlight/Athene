@@ -6,7 +6,7 @@ import {
   type OrchestratorConfig,
   type PluginRegistry,
   loadConfig,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 import { importPluginModuleFromSource } from "../lib/plugin-store.js";
 
 /**
@@ -29,7 +29,7 @@ function resolveProject(
 
   const ids = Object.keys(config.projects);
   if (ids.length === 0) {
-    console.error(chalk.red("No projects configured. Run `ao start` first."));
+    console.error(chalk.red("No projects configured. Run `athene start` first."));
     process.exit(1);
   }
   if (ids.length > 1) {
@@ -56,7 +56,7 @@ async function getTracker(
 
   // getSessionManager internally creates the registry; we need the registry
   // directly, so we replicate the same pattern from create-session-manager.
-  const { createPluginRegistry } = await import("@aoagents/ao-core");
+  const { createPluginRegistry } = await import("@slievr/core");
   const registry = createPluginRegistry();
   await registry.loadFromConfig(config, importPluginModuleFromSource);
 
@@ -91,7 +91,7 @@ export function registerVerify(program: Command): void {
         try {
           config = loadConfig();
         } catch {
-          console.error(chalk.red("No config found. Run `ao start` first."));
+          console.error(chalk.red("No config found. Run `athene start` first."));
           process.exit(1);
           return;
         }
@@ -134,7 +134,7 @@ export function registerVerify(program: Command): void {
 
         // Verify/fail mode: requires an issue argument
         if (!issue) {
-          console.error(chalk.red("Issue number is required. Usage: ao verify <issue>"));
+          console.error(chalk.red("Issue number is required. Usage: athene verify <issue>"));
           process.exit(1);
         }
 

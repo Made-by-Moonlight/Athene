@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import type { OrchestratorEvent, NotifyAction } from "@aoagents/ao-core";
+import type { OrchestratorEvent, NotifyAction } from "@slievr/core";
 import { manifest, create } from "./index.js";
 
 const { mockToolsExecute, mockConstructorOptions } = vi.hoisted(() => ({
@@ -760,7 +760,7 @@ describe("notifier-composio", () => {
 
       const notifier = create({ composioApiKey: "k" });
 
-      await expect(notifier.notify(makeEvent())).rejects.toThrow("ao setup composio");
+      await expect(notifier.notify(makeEvent())).rejects.toThrow("athene setup composio");
     });
 
     it("uses mail setup guidance for Gmail connection errors", async () => {
@@ -775,7 +775,7 @@ describe("notifier-composio", () => {
         connectedAccountId: "ca_gmail",
       });
 
-      await expect(notifier.notify(makeEvent())).rejects.toThrow("ao setup composio-mail");
+      await expect(notifier.notify(makeEvent())).rejects.toThrow("athene setup composio-mail");
     });
 
     it("requires connectedAccountId before executing Gmail notifications", async () => {

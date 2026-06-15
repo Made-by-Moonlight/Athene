@@ -8,10 +8,10 @@ import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { Step, Steps } from "fumadocs-ui/components/steps";
 import { Accordions, Accordion } from "fumadocs-ui/components/accordion";
 
-This page gets your machine ready to run Agent Orchestrator. By the end, the `ao` command should be on your `PATH`, your source-control CLI should be authenticated, and `ao doctor` should be able to explain what is ready or missing.
+This page gets your machine ready to run Agent Orchestrator. By the end, the `ao` command should be on your `PATH`, your source-control CLI should be authenticated, and `athene doctor` should be able to explain what is ready or missing.
 
 <Callout type="info" title="What AO installs">
-  The published package is `@aoagents/ao`. It provides the global `ao` command and includes the built-in CLI, dashboard, and plugin packages.
+  The published package is `@slievr/athene`. It provides the global `ao` command and includes the built-in CLI, dashboard, and plugin packages.
 </Callout>
 
 ## Prerequisites
@@ -40,17 +40,17 @@ If you plan to use GitLab or Linear, install and authenticate their CLIs or cred
 <Tabs items={["npm", "pnpm", "yarn", "from source"]}>
   <Tab value="npm">
   ```bash
-  npm install -g @aoagents/ao
+  npm install -g @slievr/athene
   ```
   </Tab>
   <Tab value="pnpm">
   ```bash
-  pnpm add -g @aoagents/ao
+  pnpm add -g @slievr/athene
   ```
   </Tab>
   <Tab value="yarn">
   ```bash
-  yarn global add @aoagents/ao
+  yarn global add @slievr/athene
   ```
   </Tab>
   <Tab value="from source">
@@ -59,7 +59,7 @@ If you plan to use GitLab or Linear, install and authenticate their CLIs or cred
   cd agent-orchestrator
   pnpm install
   pnpm build
-  pnpm --filter @aoagents/ao link --global
+  pnpm --filter @slievr/athene link --global
   ```
   </Tab>
 </Tabs>
@@ -67,7 +67,7 @@ If you plan to use GitLab or Linear, install and authenticate their CLIs or cred
 Confirm the command is available:
 
 ```bash
-ao --version
+athene --version
 ```
 
 ## Authenticate Your Tools
@@ -132,11 +132,11 @@ AO launches an agent CLI inside each worker session. Start with the one you alre
 
 ### Start AO in a repo
 
-Run `ao start` from a repository you want AO to manage:
+Run `athene start` from a repository you want AO to manage:
 
 ```bash
 cd ~/code/my-repo
-ao start
+athene start
 ```
 
 If there is no `agent-orchestrator.yaml`, AO creates one. It also starts the dashboard and an orchestrator session for the project.
@@ -144,8 +144,8 @@ If there is no `agent-orchestrator.yaml`, AO creates one. It also starts the das
 You can also start from a path or clone from a URL:
 
 ```bash
-ao start ~/code/my-repo
-ao start https://github.com/your-org/your-repo
+athene start ~/code/my-repo
+athene start https://github.com/your-org/your-repo
 ```
 
 </Step>
@@ -154,13 +154,13 @@ ao start https://github.com/your-org/your-repo
 ### Run the doctor check
 
 ```bash
-ao doctor
+athene doctor
 ```
 
-`ao doctor` checks the launcher, config, plugin resolution, runtime tools, source-control authentication, notifier setup, and stale temporary files. If it reports a fixable issue, run:
+`athene doctor` checks the launcher, config, plugin resolution, runtime tools, source-control authentication, notifier setup, and stale temporary files. If it reports a fixable issue, run:
 
 ```bash
-ao doctor --fix
+athene doctor --fix
 ```
 
 </Step>
@@ -181,7 +181,7 @@ Use Slack, Discord, webhook, or another network notifier for alerts. Desktop not
 
 <Accordions>
   <Accordion title="`ao` is not found after install">
-    Your global package bin directory is not on `PATH`. Check your package manager's global bin path, then reopen your shell and run `ao --version` again.
+    Your global package bin directory is not on `PATH`. Check your package manager's global bin path, then reopen your shell and run `athene --version` again.
   </Accordion>
   <Accordion title="`gh` is not authenticated">
     Run `gh auth login`, then `gh auth status`. AO cannot read GitHub issues, PRs, reviews, or CI checks until `gh` is authenticated.
@@ -193,10 +193,10 @@ Use Slack, Discord, webhook, or another network notifier for alerts. Desktop not
     Install one supported agent CLI and run it once outside AO so it can complete its own sign-in flow.
   </Accordion>
   <Accordion title="Port 3000 is already in use">
-    `ao start` scans for a free port and prints the final dashboard URL. Use the URL in the command output.
+    `athene start` scans for a free port and prints the final dashboard URL. Use the URL in the command output.
   </Accordion>
   <Accordion title="The dashboard fails after an update">
-    Run `ao dashboard --rebuild` to clean stale dashboard build artifacts and start again.
+    Run `athene dashboard --rebuild` to clean stale dashboard build artifacts and start again.
   </Accordion>
 </Accordions>
 

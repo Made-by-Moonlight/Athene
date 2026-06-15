@@ -9,7 +9,7 @@
 
 ## TL;DR
 
-PR #1466 ("Storage V2") is the big refactor: replaces `storageKey`-based flat metadata with `projects/{projectId}/` JSON storage, introduces deterministic hashed project IDs (`{basename}_{hash}`), removes the `archive/` directory entirely, eliminates the `SessionStatus` dual-truth, ships a crash-safe `migrate-storage` command with rollback, and reworks `ao stop` / `ao start` / `Ctrl+C` for cross-project awareness with session restore.
+PR #1466 ("Storage V2") is the big refactor: replaces `storageKey`-based flat metadata with `projects/{projectId}/` JSON storage, introduces deterministic hashed project IDs (`{basename}_{hash}`), removes the `archive/` directory entirely, eliminates the `SessionStatus` dual-truth, ships a crash-safe `migrate-storage` command with rollback, and reworks `athene stop` / `athene start` / `Ctrl+C` for cross-project awareness with session restore.
 
 | Metric | Value |
 |--------|-------|
@@ -103,7 +103,7 @@ pnpm install
 pnpm build
 pnpm typecheck
 pnpm test
-pnpm --filter @aoagents/ao-web test
+pnpm --filter @slievr/web test
 
 # Commit conventionally — fix:/refactor:/docs:/test:/feat:
 git commit -m "fix(core): address review on X"
@@ -123,7 +123,7 @@ CI on this branch runs lint, typecheck, tests, and a release dry-run.
 
 This branch exists to validate the *merged* state — useful when:
 - A fix only manifests after PR #1466 conflicts have been resolved with `main`.
-- You're testing CLI behavior end-to-end (e.g. `ao stop` cross-project flows) with a representative repo state.
+- You're testing CLI behavior end-to-end (e.g. `athene stop` cross-project flows) with a representative repo state.
 - A reviewer asks "but what happens after this merges with PR #X?"
 
 ```bash
@@ -167,10 +167,10 @@ git push
 | `packages/core/src/lifecycle-state.ts` | Canonical state + reason model — new in this PR. |
 | `packages/core/src/paths.ts` | V2 path helpers (`getProjectSessionsDir`, etc.). Archive helpers removed. |
 | `packages/core/src/migrate-storage/` | The migration command + rollback. Most-reviewed code in the PR. |
-| `packages/cli/src/commands/start.ts` | Cross-project restore prompt, Ctrl+C graceful shutdown, `ao stop` logic (stop is handled inside start.ts, there is no separate stop.ts). |
+| `packages/cli/src/commands/start.ts` | Cross-project restore prompt, Ctrl+C graceful shutdown, `athene stop` logic (stop is handled inside start.ts, there is no separate stop.ts). |
 | `packages/cli/src/lib/running-state.ts` | `running.json` / `last-stop.json` read/write, `removeProjectFromRunning()`, advisory locking. |
 | `packages/web/src/components/Dashboard.tsx` | Sidebar always shows all projects' sessions. |
-| `~/.agent-orchestrator/last-stop.json` | New runtime artifact. Read by `ao start` to offer restore. |
+| `~/.agent-orchestrator/last-stop.json` | New runtime artifact. Read by `athene start` to offer restore. |
 | `~/.agent-orchestrator/config.yaml` | Global config. Cross-project commands fall back here. |
 
 ---

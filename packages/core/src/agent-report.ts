@@ -1,8 +1,8 @@
 /**
  * Agent Report — explicit workflow transitions declared by the worker agent.
  *
- * Stage 3 of the state-machine redesign. Agents run `ao acknowledge` and
- * `ao report <state>` from inside a managed session to declare the workflow
+ * Stage 3 of the state-machine redesign. Agents run `athene acknowledge` and
+ * `athene report <state>` from inside a managed session to declare the workflow
  * phase they are entering. The lifecycle manager prefers fresh agent reports
  * over weak inference, but runtime evidence (process death, merged PR) and
  * SCM ground-truth (CI, review decisions) still take precedence.

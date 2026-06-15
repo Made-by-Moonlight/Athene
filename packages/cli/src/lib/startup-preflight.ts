@@ -1,5 +1,5 @@
 /**
- * Runtime preflight checks for `ao start`.
+ * Runtime preflight checks for `athene start`.
  *
  * Distinct from `lib/preflight.ts` (which validates dashboard build
  * artifacts). This module verifies system tools (git, tmux), warns about
@@ -21,7 +21,7 @@ import {
   inventoryHashDirs,
   isWindows,
   type OrchestratorConfig,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 import { execSilent } from "./shell.js";
 import { detectOpenClawInstallation } from "./openclaw-probe.js";
 import { applyOpenClawCredentials } from "./credential-resolver.js";
@@ -102,7 +102,7 @@ export async function ensureGit(context: string): Promise<void> {
   }
 
   console.error(chalk.red("\n✗ Git is required but is not installed.\n"));
-  console.log(chalk.bold("  Install Git manually, then re-run ao start:\n"));
+  console.log(chalk.bold("  Install Git manually, then re-run athene start:\n"));
   for (const hint of gitInstallHints()) {
     console.log(chalk.cyan(`    ${hint}`));
   }
@@ -168,7 +168,7 @@ async function offerWindowsRuntimeSwitch(configPath: string): Promise<boolean> {
 
 /**
  * Ensure tmux is available — interactive install with user consent if missing.
- * Called from runtimePreflight() so all `ao start` paths are covered.
+ * Called from runtimePreflight() so all `athene start` paths are covered.
  *
  * On Windows, tmux cannot run; instead, offer to rewrite the project config
  * to `runtime: process`. Returns `{ switchedToProcess: true }` if the rewrite
@@ -184,7 +184,7 @@ export async function ensureTmux(configPath?: string): Promise<{ switchedToProce
     console.log(
       chalk.bold("  Set ") +
         chalk.cyan("runtime: process") +
-        chalk.bold(" in agent-orchestrator.yaml, then re-run ao start.\n"),
+        chalk.bold(" in agent-orchestrator.yaml, then re-run athene start.\n"),
     );
     process.exit(1);
   }
@@ -206,7 +206,7 @@ export async function ensureTmux(configPath?: string): Promise<{ switchedToProce
   }
 
   console.error(chalk.red("\n✗ tmux is required but is not installed.\n"));
-  console.log(chalk.bold("  Install tmux manually, then re-run ao start:\n"));
+  console.log(chalk.bold("  Install tmux manually, then re-run athene start:\n"));
   for (const hint of tmuxInstallHints()) {
     console.log(chalk.cyan(`    ${hint}`));
   }
@@ -229,7 +229,7 @@ export function warnAboutLegacyStorage(): void {
       chalk.yellow(
         `\n  ⚠ Found ${nonEmptyDirCount} legacy storage director${nonEmptyDirCount === 1 ? "y" : "ies"} that need${nonEmptyDirCount === 1 ? "s" : ""} migration.\n` +
           `    Sessions stored in the old format won't appear until migrated.\n` +
-          `    Run ${chalk.bold("ao migrate-storage")} to upgrade (use ${chalk.bold("--dry-run")} to preview).\n`,
+          `    Run ${chalk.bold("athene migrate-storage")} to upgrade (use ${chalk.bold("--dry-run")} to preview).\n`,
       ),
     );
   } catch {
@@ -266,12 +266,12 @@ export async function warnAboutOpenClawStatus(config: OrchestratorConfig): Promi
     if (installation.state === "running") {
       console.log(
         chalk.yellow(
-          `⚠ OpenClaw is running at ${installation.gatewayUrl} but AO is not configured to use it. Run \`ao setup openclaw\` if you want OpenClaw notifications.`,
+          `⚠ OpenClaw is running at ${installation.gatewayUrl} but AO is not configured to use it. Run \`athene setup openclaw\` if you want OpenClaw notifications.`,
         ),
       );
     }
   } catch {
-    // OpenClaw probing is advisory for `ao start`; never block startup on it.
+    // OpenClaw probing is advisory for `athene start`; never block startup on it.
   }
 }
 

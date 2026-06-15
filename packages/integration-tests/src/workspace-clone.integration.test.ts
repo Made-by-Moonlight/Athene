@@ -5,8 +5,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import clonePlugin from "@aoagents/ao-plugin-workspace-clone";
-import type { ProjectConfig, WorkspaceInfo } from "@aoagents/ao-core";
+import clonePlugin from "@slievr/plugin-workspace-clone";
+import type { ProjectConfig, WorkspaceInfo } from "@slievr/core";
 
 const execFileAsync = promisify(execFile);
 

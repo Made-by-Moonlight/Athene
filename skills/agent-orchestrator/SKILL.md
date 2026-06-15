@@ -135,7 +135,7 @@ If a tool call fails, show the error. Never claim you did something you didn't.
 
 ## Setup
 
-After installing the plugin, run `/ao setup` in any OpenClaw channel to auto-configure. Or manually:
+After installing the plugin, run `/athene setup` in any OpenClaw channel to auto-configure. Or manually:
 
 ```bash
 # Required: allow plugin tools to be visible to the AI
@@ -157,7 +157,7 @@ pm2 restart openclaw-gateway  # or however you run the gateway
 
 ## Security & Privacy
 
-AO is an orchestrator — it does not read, write, or transmit code itself. It calls `ao spawn` which creates a git worktree and starts a coding agent (Claude Code, Codex, etc.). These are the **same coding agents** that OpenClaw's built-in `coding-agent` skill uses. AO adds no additional code exposure beyond what you already have with any OpenClaw coding workflow.
+AO is an orchestrator — it does not read, write, or transmit code itself. It calls `athene spawn` which creates a git worktree and starts a coding agent (Claude Code, Codex, etc.). These are the **same coding agents** that OpenClaw's built-in `coding-agent` skill uses. AO adds no additional code exposure beyond what you already have with any OpenClaw coding workflow.
 
 What to know:
 - **GitHub access**: AO uses `gh` (GitHub CLI) with whatever credentials you've authenticated via `gh auth login`. Use a fine-grained PAT scoped to only the repos AO needs.
@@ -169,8 +169,8 @@ What to know:
 
 | Error | Fix |
 |-------|-----|
-| AO tools not visible to AI | Run `/ao setup` — needs `tools.profile: "full"` and `tools.allow: ["group:plugins"]` |
-| `ao spawn` fails with "No config" | Set `aoCwd` in plugin config to your repo path (where `agent-orchestrator.yaml` lives) |
+| AO tools not visible to AI | Run `/athene setup` — needs `tools.profile: "full"` and `tools.allow: ["group:plugins"]` |
+| `athene spawn` fails with "No config" | Set `aoCwd` in plugin config to your repo path (where `agent-orchestrator.yaml` lives) |
 | `ao: not found` | Install AO globally or set `aoPath` in plugin config |
 | `spawn tmux ENOENT` (macOS / Linux) | `brew install tmux` (macOS) or `apt install tmux` (Linux) |
 | `spawn tmux ENOENT` (Windows) | Your config has `runtime: tmux` set explicitly. Switch to `runtime: process` (or remove the override — `process` is the Windows default; ConPTY is used natively, no tmux required) |

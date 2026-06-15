@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ToastProvider, useToast } from "@/components/Toast";
 
 const IDENTITY_FIELD_TOOLTIP =
-  "These describe which repo this is. Change them via `ao project relink`.";
+  "These describe which repo this is. Change them via `athene project relink`.";
 
 interface ProjectSettingsFormProps {
   projectId: string;

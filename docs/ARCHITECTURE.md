@@ -173,14 +173,14 @@ graph LR
         Sessions2["~/.agent-orchestrator/\n{hash}-{project}/\n  sessions/{id}  ← key-value\n  worktrees/{id}/\n  archive/{id}_{ts}/"]
     end
 
-    CLI -- "pnpm ao start\nspawns both servers" --> Next
+    CLI -- "pnpm athene start\nspawns both servers" --> Next
     CLI -- "spawns" --> MuxSrv
     Next -- "reads / writes" --> Sessions2
     MuxSrv -- "GET /api/sessions/patches (every 3s)" --> Next
     MuxSrv -- "POST /api/sessions/:id/restore (recovery)" --> Next
 ```
 
-The CLI (`ao start`) forks two long-running processes:
+The CLI (`athene start`) forks two long-running processes:
 - **Next.js** on `:3000` — serves the dashboard and all REST routes
 - **Terminal WS server** on `:14801` — handles multiplexed WebSocket + PTY management + session patch polling. PTY transport is platform-specific: tmux via `node-pty` on Unix, named-pipe relay (`handleWindowsPipeMessage` → `\\.\pipe\ao-pty-{sessionId}`) on Windows. Both paths use the same outer mux protocol.
 
@@ -213,7 +213,7 @@ On Windows the high-level component map (HTTP API, mux WS server, dashboard, fla
 
 ### Default runtime
 
-`getDefaultRuntime()` from `@aoagents/ao-core` returns `"process"` on Windows and `"tmux"` everywhere else. A fresh Windows install therefore loads the `runtime-process` plugin without requiring YAML edits. Users on Unix who want the process runtime opt in via `runtime: process` in `agent-orchestrator.yaml`.
+`getDefaultRuntime()` from `@slievr/core` returns `"process"` on Windows and `"tmux"` everywhere else. A fresh Windows install therefore loads the `runtime-process` plugin without requiring YAML edits. Users on Unix who want the process runtime opt in via `runtime: process` in `agent-orchestrator.yaml`.
 
 ### The pty-host helper process
 
@@ -222,7 +222,7 @@ Because `node-pty` ConPTY sessions are tied to the lifetime of the host Node pro
 ```mermaid
 graph LR
     subgraph SessionWindows["AO Session (Windows)"]
-        AOStart["ao start / spawn"]
+        AOStart["athene start / spawn"]
         PtyHost["pty-host.cjs<br/>(detached Node child)"]
         Pipe["Named pipe<br/>\\.\pipe\ao-pty-{sessionId}"]
         ConPty["ConPTY<br/>(node-pty)"]
@@ -273,7 +273,7 @@ Client helpers in `packages/plugins/runtime-process/src/pty-client.ts`:
 
 ### Pty-host registry — `~/.agent-orchestrator/windows-pty-hosts.json`
 
-Because pty-hosts run detached, `taskkill /T` on the parent ao-start process cannot reach them. To allow `ao stop` to find and clean them up, every spawned pty-host is recorded in a small JSON registry.
+Because pty-hosts run detached, `taskkill /T` on the parent ao-start process cannot reach them. To allow `athene stop` to find and clean them up, every spawned pty-host is recorded in a small JSON registry.
 
 `packages/core/src/windows-pty-registry.ts`:
 - `registerWindowsPtyHost(entry)` — write/replace the entry on spawn.
@@ -281,7 +281,7 @@ Because pty-hosts run detached, `taskkill /T` on the parent ao-start process can
 - `unregisterWindowsPtyHost(sessionId)` — remove on session destroy.
 - `clearWindowsPtyHostRegistry()` — wipe (for tests / recovery).
 
-`sweepWindowsPtyHosts()` (in `runtime-process`) iterates the registry: for each live entry it sends a graceful `MSG_KILL_REQ` over the pipe, polls up to 500 ms for the process to exit (treating `EPERM` as still alive), then `killProcessTree(ptyHostPid, "SIGKILL")` for stragglers. It is called by `ao stop` and `ao stop --all` before tearing down the parent process.
+`sweepWindowsPtyHosts()` (in `runtime-process`) iterates the registry: for each live entry it sends a graceful `MSG_KILL_REQ` over the pipe, polls up to 500 ms for the process to exit (treating `EPERM` as still alive), then `killProcessTree(ptyHostPid, "SIGKILL")` for stragglers. It is called by `athene stop` and `athene stop --all` before tearing down the parent process.
 
 ### Process map (Windows variant)
 
@@ -291,7 +291,7 @@ graph LR
         CLI["ao CLI"]
         Next["Next.js  :3000"]
         MuxSrv["Terminal WS  :14801"]
-        Sweep["sweepWindowsPtyHosts()<br/>(called by ao stop)"]
+        Sweep["sweepWindowsPtyHosts()<br/>(called by athene stop)"]
     end
 
     subgraph Sessions["Per-session pty-hosts (detached)"]
@@ -327,7 +327,7 @@ Args are inferred from the basename: `cmd` → `/c`, `bash`/`sh`/`zsh` → `-c`,
 
 ### Other Windows-specific touch points
 
-- **CLI** — `ao start` no longer detaches its dashboard child on Windows (so Ctrl+C reaches the whole console group); `forwardSignalsToChild` is Unix-only. `ao stop` calls `sweepWindowsPtyHosts()` before terminating the parent. `script-runner.ts` runs `.ps1` siblings of `.sh` scripts directly on Windows; otherwise it tries `AO_BASH_PATH` then auto-detects Git Bash (WSL bash is excluded — it sees Linux paths from a Windows cwd).
+- **CLI** — `athene start` no longer detaches its dashboard child on Windows (so Ctrl+C reaches the whole console group); `forwardSignalsToChild` is Unix-only. `athene stop` calls `sweepWindowsPtyHosts()` before terminating the parent. `script-runner.ts` runs `.ps1` siblings of `.sh` scripts directly on Windows; otherwise it tries `AO_BASH_PATH` then auto-detects Git Bash (WSL bash is excluded — it sees Linux paths from a Windows cwd).
 - **Agent plugins** — `setupPathWrapperWorkspace()` generates `.cjs` + `.cmd` wrapper pairs (instead of bash scripts) for `gh`/`git` interception. `formatLaunchCommand` for codex / kimicode prepends `& ` so PowerShell parses the quoted binary path as a call expression. `agent-claude-code` ships a Node.js metadata-updater (`.cjs`) hook in place of the bash version; system-prompt files are inlined rather than `$(cat …)`-substituted.
-- **Path-equality** — `packages/cli/src/lib/path-equality.ts` (`pathsEqual`, `canonicalCompareKey`) handles NTFS case-insensitivity and drive-letter case differences when comparing project paths in `ao start`.
+- **Path-equality** — `packages/cli/src/lib/path-equality.ts` (`pathsEqual`, `canonicalCompareKey`) handles NTFS case-insensitivity and drive-letter case differences when comparing project paths in `athene start`.
 - **`stopStaleWindowsPtyHosts(projectDir)`** in `packages/web/src/lib/windows-pty-cleanup.ts` is a defensive sweeper used by the dashboard to clean up orphan pty-hosts found via a PowerShell `Get-CimInstance Win32_Process` query.

@@ -12,7 +12,7 @@ import {
   type NotifyAction,
   type EventPriority,
   type NotificationDataV3,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 
 function xmlEscape(s: string): string {
   return s
@@ -52,7 +52,7 @@ export const manifest = {
 };
 
 // Re-export for backwards compatibility
-export { escapeAppleScript } from "@aoagents/ao-core";
+export { escapeAppleScript } from "@slievr/core";
 
 type DesktopBackend = "auto" | "ao-app" | "terminal-notifier" | "osascript";
 const PLACEHOLDER_MARKER_NAME = "ao-notifier-placeholder";
@@ -424,7 +424,7 @@ function sendNotification(
 
       if (backend === "ao-app") {
         if (!detectAoNotifierApp(options.mac.appPath)) {
-          reject(new Error("AO Notifier.app is not installed. Run: ao setup desktop"));
+          reject(new Error("AO Notifier.app is not installed. Run: athene setup desktop"));
           return;
         }
 

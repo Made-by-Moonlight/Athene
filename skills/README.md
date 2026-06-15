@@ -71,7 +71,7 @@ cp -r skills/bug-triage .gemini/skills/bug-triage
 
 ### Agent Orchestrator (this project)
 
-Skills in this `skills/` directory are automatically available to agents spawned via `ao spawn`. Reference them in `AGENTS.md` or `CLAUDE.md` so agents load them at the start of a session.
+Skills in this `skills/` directory are automatically available to agents spawned via `athene spawn`. Reference them in `AGENTS.md` or `CLAUDE.md` so agents load them at the start of a session.
 
 ## Writing a New Skill
 

@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    site: "@aoagents",
-    creator: "@aoagents",
+    site: "@slievr",
+    creator: "@slievr",
     title: "Agent Orchestrator",
     description:
       "Open-source platform for running parallel AI coding agents. Spawn Claude Code, Codex, Aider, and more in isolated worktrees — all managed from one dashboard.",

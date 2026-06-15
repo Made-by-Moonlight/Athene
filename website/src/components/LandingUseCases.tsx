@@ -3,19 +3,19 @@ const cases = [
     scenario: "Clear a bug backlog overnight",
     before: "10 issues, 3 days of context-switching",
     after: "10 agents, 10 PRs by morning",
-    command: "ao batch-spawn 101 102 103 104 105 106 107 108 109 110",
+    command: "athene batch-spawn 101 102 103 104 105 106 107 108 109 110",
   },
   {
     scenario: "Ship a feature sprint in hours",
     before: "5 feature tickets, 1 dev, 1 week",
     after: "5 agents in parallel, PRs landing same day",
-    command: "ao batch-spawn --label feature-sprint",
+    command: "athene batch-spawn --label feature-sprint",
   },
   {
     scenario: "Migrate an API across 20 files",
     before: "Manual find-and-replace, missed edge cases",
     after: "Agent rewrites, runs tests, fixes failures, opens PR",
-    command: "ao spawn 42 --agent claude-code",
+    command: "athene spawn 42 --agent claude-code",
   },
 ];
 

@@ -23,7 +23,7 @@ const {
     },
   }));
 
-vi.mock("@aoagents/ao-core", () => {
+vi.mock("@slievr/core", () => {
   function buildSubject(input: {
     sessionId: string;
     projectId: string;
@@ -278,7 +278,7 @@ describe("notify command", () => {
 
     const output = consoleLogSpy.mock.calls.map((call) => call.join(" ")).join("\n");
     expect(output).toContain("Sink received");
-    expect(output).toContain("Test notification from ao notify test");
+    expect(output).toContain("Test notification from athene notify test");
     expect(processExitSpy).not.toHaveBeenCalled();
 
     await expect(fetch(sinkUrl, { method: "POST", body: "{}" })).rejects.toThrow();

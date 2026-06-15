@@ -711,14 +711,14 @@ export default function (api: PluginApi) {
         }
 
         case "status": {
-          // `ao status` shows all sessions; no per-session lookup available
+          // `athene status` shows all sessions; no per-session lookup available
           const result = tryRunAo(config, ["status"]);
           if (!result.ok) return { text: `Failed:\n${result.error}` };
           return { text: result.output };
         }
 
         case "spawn": {
-          if (!rest) return { text: "Usage: /ao spawn <issue-number>" };
+          if (!rest) return { text: "Usage: /athene spawn <issue-number>" };
           const issueArg = sanitizeArg(rest.split(/\s+/)[0]);
           if (!isValidIssueId(issueArg))
             return {
@@ -744,7 +744,7 @@ export default function (api: PluginApi) {
         }
 
         case "batch-spawn": {
-          if (!rest) return { text: "Usage: /ao batch-spawn <issue1> <issue2> ..." };
+          if (!rest) return { text: "Usage: /athene batch-spawn <issue1> <issue2> ..." };
           const issueArgs = rest.split(/\s+/).map(sanitizeArg);
           if (!issueArgs.every(isValidIssueId))
             return { text: `Invalid issue identifiers. Expected numbers like: 42 43 44` };
@@ -830,7 +830,7 @@ export default function (api: PluginApi) {
 
           steps.push("");
           steps.push("⚡ Restart the gateway to apply: pm2 restart openclaw-gateway");
-          steps.push("Then verify with: /ao doctor");
+          steps.push("Then verify with: /athene doctor");
           steps.push("");
           steps.push("⚠️  Action required — run these once to avoid conflicts:");
           steps.push("   openclaw config set skills.entries.coding-agent.enabled false");
@@ -846,14 +846,14 @@ export default function (api: PluginApi) {
             text: [
               "Agent Orchestrator commands:",
               "  /ao sessions              — list all sessions",
-              "  /ao status                — all sessions overview",
+              "  /athene status                — all sessions overview",
               "  /ao issues [owner/repo]   — list open issues",
-              "  /ao spawn <issue>         — spawn agent on issue",
-              "  /ao batch-spawn <i1> <i2> — spawn multiple agents",
+              "  /athene spawn <issue>         — spawn agent on issue",
+              "  /athene batch-spawn <i1> <i2> — spawn multiple agents",
               "  /ao retry <id>            — retry failed session",
               "  /ao kill <id>             — kill a session",
-              "  /ao doctor                — run health checks",
-              "  /ao setup                 — auto-configure OpenClaw for AO",
+              "  /athene doctor                — run health checks",
+              "  /athene setup                 — auto-configure OpenClaw for AO",
             ].join("\n"),
           };
       }
@@ -953,7 +953,7 @@ export default function (api: PluginApi) {
       if (params.issue) {
         args.push(sanitizeCliArg(params.issue));
       } else {
-        // Freeform spawn — ao CLI supports bare `ao spawn` which creates
+        // Freeform spawn — ao CLI supports bare `athene spawn` which creates
         // a session without an issue. Use ao_send afterward to describe the task.
         api.logger.info("[ao_spawn] Spawning without issue — freeform session");
       }

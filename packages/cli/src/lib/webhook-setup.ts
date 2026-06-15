@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import chalk from "chalk";
 import { parseDocument } from "yaml";
-import { CONFIG_SCHEMA_URL, findConfigFile, isCanonicalGlobalConfigPath } from "@aoagents/ao-core";
+import { CONFIG_SCHEMA_URL, findConfigFile, isCanonicalGlobalConfigPath } from "@slievr/core";
 import {
   applyNotifierRoutingPreset,
   getNotifierRoutingState,
@@ -83,7 +83,7 @@ function readConfigContext(): ConfigContext {
   const configPath = findConfigFile() ?? undefined;
   if (!configPath) {
     throw new WebhookSetupError(
-      "No agent-orchestrator.yaml found. Run 'ao start' first to create one.",
+      "No agent-orchestrator.yaml found. Run 'athene start' first to create one.",
     );
   }
 
@@ -311,7 +311,7 @@ async function resolveInteractiveSetup(
   const existingToken = getBearerToken(existingWebhook["headers"]);
   const optionRoutingPreset = resolveWebhookRoutingPreset(opts.routingPreset);
 
-  clack.intro(chalk.bgCyan(chalk.black(" ao setup webhook ")));
+  clack.intro(chalk.bgCyan(chalk.black(" athene setup webhook ")));
 
   while (true) {
     const resolvedUrl = await resolveInteractiveUrl(clack, opts, existingUrl);
@@ -371,7 +371,7 @@ function resolveNonInteractiveSetup(
     stringValue(opts.url) ?? (opts.refresh ? stringValue(existingWebhook["url"]) : undefined);
   if (!url) {
     throw new WebhookSetupError(
-      "Webhook URL is required. Pass --url, or run `ao setup webhook --refresh` with an existing webhook config.",
+      "Webhook URL is required. Pass --url, or run `athene setup webhook --refresh` with an existing webhook config.",
     );
   }
 
@@ -527,10 +527,10 @@ export async function runWebhookSetupAction(opts: WebhookSetupOptions): Promise<
     const clack = await import("@clack/prompts");
     clack.outro(
       `${chalk.green("Webhook setup complete!")} AO will send notifications to ${resolved.url}.\n` +
-        chalk.dim("  Test it with: ao notify test --to webhook --template basic"),
+        chalk.dim("  Test it with: athene notify test --to webhook --template basic"),
     );
   } else {
     console.log(chalk.green("\n✓ Webhook setup complete."));
-    console.log(chalk.dim("Test it with: ao notify test --to webhook --template basic"));
+    console.log(chalk.dim("Test it with: athene notify test --to webhook --template basic"));
   }
 }

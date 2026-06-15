@@ -31,7 +31,7 @@ export function LandingHowItWorks() {
                 <div className="w-2.5 h-2.5 rounded-full bg-[rgba(255,240,220,0.12)]" />
               </div>
               <div className="px-5 py-4 leading-[1.8]">
-                <div><span className="text-[var(--landing-muted)]">$</span> <span className="text-white">ao batch-spawn 42 43 44 45 46</span></div>
+                <div><span className="text-[var(--landing-muted)]">$</span> <span className="text-white">athene batch-spawn 42 43 44 45 46</span></div>
                 <div className="text-[var(--landing-muted)] opacity-60">&nbsp;</div>
                 <div className="text-[var(--landing-muted)] opacity-60">⟡ Loading config from agent-orchestrator.yaml</div>
                 <div className="text-[var(--landing-muted)] opacity-60">⟡ Resolving 5 issues from GitHub</div>

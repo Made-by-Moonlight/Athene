@@ -7,7 +7,7 @@ interface LandingHeroProps {
 }
 
 const terminalLines = [
-  { text: "$ ao batch-spawn 42 43 44 45 46", type: "cmd" as const, delay: 0 },
+  { text: "$ athene batch-spawn 42 43 44 45 46", type: "cmd" as const, delay: 0 },
   { text: "", type: "blank" as const, delay: 800 },
   { text: "⟡ Loaded agent-orchestrator.yaml (agent: claude-code, tracker: github)", type: "info" as const, delay: 1000 },
   { text: "⟡ Resolving 5 issues from ComposioHQ/my-saas-app", type: "info" as const, delay: 1400 },
@@ -106,7 +106,7 @@ export function LandingHero({ starsLabel }: LandingHeroProps) {
         </p>
         <div className="landing-fade-rise-d2 flex items-center gap-3 mt-10 flex-wrap justify-center">
           <div className="landing-card rounded-lg px-6 py-3 font-mono text-sm">
-            <span className="text-[var(--landing-muted)] opacity-40">$</span> npx @aoagents/ao start
+            <span className="text-[var(--landing-muted)] opacity-40">$</span> npx @slievr/athene start
           </div>
           <a
             href="/docs"

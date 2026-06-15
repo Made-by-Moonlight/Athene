@@ -17,11 +17,11 @@ Open an issue at [github.com/ComposioHQ/agent-orchestrator/issues](https://githu
 
 Include:
 
-- `ao --version` output
+- `athene --version` output
 - OS and Node.js version (`node --version`)
 - Steps to reproduce
 - What you expected vs. what happened
-- Relevant output from `ao doctor`
+- Relevant output from `athene doctor`
 
 ---
 
@@ -39,14 +39,14 @@ pnpm install
 pnpm build
 ```
 
-Build order matters — `@aoagents/ao-core` must be built before the CLI, web, or plugins can run. `pnpm build` at the root handles this automatically.
+Build order matters — `@slievr/core` must be built before the CLI, web, or plugins can run. `pnpm build` at the root handles this automatically.
 
 ### Running tests
 
 ```bash
 pnpm test                                         # all packages
-pnpm --filter @aoagents/ao-core test              # core only
-pnpm --filter @aoagents/ao-core test -- --watch   # watch mode
+pnpm --filter @slievr/core test              # core only
+pnpm --filter @slievr/core test -- --watch   # watch mode
 pnpm test:integration                             # integration tests
 ```
 
@@ -55,7 +55,7 @@ pnpm test:integration                             # integration tests
 ```bash
 cp agent-orchestrator.yaml.example agent-orchestrator.yaml
 # edit agent-orchestrator.yaml for your setup
-pnpm --filter @aoagents/ao-web dev
+pnpm --filter @slievr/web dev
 ```
 
 ### Refreshing a local AO install
@@ -65,10 +65,10 @@ If your local `ao` launcher or built packages seem stale, refresh the install fr
 ```bash
 git switch main
 git status --short --branch   # confirm the install repo is clean
-ao update
+athene update
 ```
 
-`ao update` fast-forwards the local install repo, reinstalls dependencies, clean-rebuilds `@aoagents/ao-core`, `@aoagents/ao-cli`, and `@aoagents/ao-web`, refreshes the global launcher with `npm link`, and finishes with CLI smoke tests. Use `ao update --skip-smoke` when you only need the rebuild step, or `ao update --smoke-only` when validating an existing install.
+`athene update` fast-forwards the local install repo, reinstalls dependencies, clean-rebuilds `@slievr/core`, `@slievr/cli`, and `@slievr/web`, refreshes the global launcher with `npm link`, and finishes with CLI smoke tests. Use `athene update --skip-smoke` when you only need the rebuild step, or `athene update --smoke-only` when validating an existing install.
 
 ## Release Architecture (maintainers only)
 
@@ -127,7 +127,7 @@ If the AO cron fails to publish, it will retry on the next poll cycle (every 15 
 ### Latest main at any time
 
 ```bash
-npm install -g @aoagents/ao@nightly
+npm install -g @slievr/athene@nightly
 ```
 
 The nightly cron publishes from `main` daily at 23:30 IST (Fri–Tue). The bake window (Wed–Thu) pauses scheduled nightlies; release captains can re-cut a nightly via `workflow_dispatch` if a fix lands during bake.
@@ -163,7 +163,7 @@ cd packages/plugins/runtime-myplugin
 
 ```json
 {
-  "name": "@aoagents/ao-runtime-myplugin",
+  "name": "@slievr/athene-runtime-myplugin",
   "version": "0.1.0",
   "type": "module",
   "main": "dist/index.js",
@@ -174,7 +174,7 @@ cd packages/plugins/runtime-myplugin
     "test": "vitest"
   },
   "dependencies": {
-    "@aoagents/ao-core": "workspace:*"
+    "@slievr/core": "workspace:*"
   }
 }
 ```
@@ -185,7 +185,7 @@ cd packages/plugins/runtime-myplugin
 
 ```typescript
 // src/index.ts
-import type { PluginModule, Runtime } from "@aoagents/ao-core";
+import type { PluginModule, Runtime } from "@slievr/core";
 
 export const manifest = {
   name: "myplugin",
@@ -220,7 +220,7 @@ export default { manifest, create } satisfies PluginModule<Runtime>;
 Add it to the CLI's dependencies in `packages/cli/package.json`:
 
 ```json
-"@aoagents/ao-runtime-myplugin": "workspace:*"
+"@slievr/athene-runtime-myplugin": "workspace:*"
 ```
 
 Then register it in `packages/core/src/plugin-registry.ts` inside `loadBuiltins()`.
@@ -243,13 +243,13 @@ describe("myplugin runtime", () => {
 ### 6. Build and test
 
 ```bash
-pnpm --filter @aoagents/ao-runtime-myplugin build
-pnpm --filter @aoagents/ao-runtime-myplugin test
+pnpm --filter @slievr/athene-runtime-myplugin build
+pnpm --filter @slievr/athene-runtime-myplugin test
 ```
 
 ### Publishing to the Marketplace Registry
 
-To list your plugin in the AO marketplace so others can install it with `ao plugin install`, submit a PR that adds an entry to `packages/cli/src/assets/plugin-registry.json`.
+To list your plugin in the AO marketplace so others can install it with `athene plugin install`, submit a PR that adds an entry to `packages/cli/src/assets/plugin-registry.json`.
 
 Each entry requires:
 
@@ -262,7 +262,7 @@ Each entry requires:
 
 Optionally include `setupAction` if post-install configuration is needed (e.g. `"openclaw-setup"`).
 
-Your plugin package must satisfy the contract in [`docs/PLUGIN_SPEC.md`](docs/PLUGIN_SPEC.md) — export a `PluginModule` with a valid manifest and `create()` function. The package must be published to npm before your registry PR is merged so `ao plugin install` can fetch it.
+Your plugin package must satisfy the contract in [`docs/PLUGIN_SPEC.md`](docs/PLUGIN_SPEC.md) — export a `PluginModule` with a valid manifest and `create()` function. The package must be published to npm before your registry PR is merged so `athene plugin install` can fetch it.
 
 ---
 

@@ -88,7 +88,7 @@ Health records provide current status and failure context per surface:
 - **Dashboard**: use **Copy debug info** in the hero toolbar (desktop) to copy `/api/observability` plus page URL, project scope, and correlation id to the clipboard for issue reports. The observability banner shows overall status, SSE stream state, last correlation id, and latest failure reason.
 - **API**: `/api/observability` returns merged per-project diagnostics (`overallStatus`, metrics, health, recent traces, session state).
 - **Terminal websocket health**: `/health` endpoints include active sessions and websocket/terminal health counters with last error/disconnect reasons.
-- **Notifications**: successful deliveries update `notification_delivery` metrics and per-target health; failed/missing targets also appear in `ao events`.
+- **Notifications**: successful deliveries update `notification_delivery` metrics and per-target health; failed/missing targets also appear in `athene events`.
 
 ## Rollout Notes
 

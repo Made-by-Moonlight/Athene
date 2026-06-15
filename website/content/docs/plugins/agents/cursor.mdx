@@ -63,6 +63,6 @@ The plugin's `detect()` checks `agent --help` output for the strings `Cursor Age
     The plugin only recognises the real Cursor binary by its help output. Run `agent --help` — if you see a different tool's help, remove or shadow it, or reinstall Cursor Agent.
   </Accordion>
   <Accordion title="Dashboard never leaves `active`">
-    Cursor doesn't emit its own session JSONL. AO classifies based on terminal output — if your terminal is being captured by another tool, the classification can drift. `ao doctor` will flag this.
+    Cursor doesn't emit its own session JSONL. AO classifies based on terminal output — if your terminal is being captured by another tool, the classification can drift. `athene doctor` will flag this.
   </Accordion>
 </Accordions>

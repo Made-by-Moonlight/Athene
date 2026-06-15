@@ -26,13 +26,13 @@ import {
   type ReviewSummary,
   type ReviewThreadsResult,
   type MergeReadiness,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 import {
   getWebhookHeader,
   parseWebhookBranchRef,
   parseWebhookJsonObject,
   parseWebhookTimestamp,
-} from "@aoagents/ao-core/scm-webhook-utils";
+} from "@slievr/core/scm-webhook-utils";
 
 import { glab, parseJSON, stripHost } from "./glab-utils.js";
 

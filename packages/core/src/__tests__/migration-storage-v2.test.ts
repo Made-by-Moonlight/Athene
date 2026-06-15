@@ -1609,7 +1609,7 @@ describe.skipIf(process.platform === "win32")("migration edge cases", () => {
   // the worktree path changes (V1 hash dir → V2 projects/ dir), but Claude
   // Code keys session JSONLs by the encoded form of the workspace path.
   // The migrator must move ~/.claude/projects/<old-encoded>/ → <new-encoded>/
-  // so chat history survives migration; otherwise the next ao start →
+  // so chat history survives migration; otherwise the next athene start →
   // restore launches a fresh `claude` and the conversation is lost.
   it.skipIf(process.platform === "win32")(
     "relinks ~/.claude/projects/<old-encoded>/ to <new-encoded>/ for migrated worktrees",

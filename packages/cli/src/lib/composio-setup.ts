@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import chalk from "chalk";
 import { parseDocument } from "yaml";
-import { CONFIG_SCHEMA_URL, findConfigFile, isCanonicalGlobalConfigPath } from "@aoagents/ao-core";
+import { CONFIG_SCHEMA_URL, findConfigFile, isCanonicalGlobalConfigPath } from "@slievr/core";
 import {
   applyNotifierRoutingPreset,
   ensureNotifierDefault,
@@ -1067,17 +1067,17 @@ function printComposioAppRequirements(choice: ComposioAppChoice): void {
     console.log("  Required: Composio API key, userId, Discord webhook URL.");
     console.log("  AO creates/stores a Composio connected account from the webhook token.");
     console.log("  No Discord bot invite is required for webhook mode.");
-    console.log("  Current command: ao setup composio-discord --webhook-url <url>");
+    console.log("  Current command: athene setup composio-discord --webhook-url <url>");
   } else if (choice === "discord-bot") {
     console.log(chalk.bold("Composio Discord bot setup"));
     console.log("  Required: Composio API key, userId, Discord channel id.");
     console.log("  Also required once: bot token, unless you already have connectedAccountId.");
-    console.log("  Current command: ao setup composio-discord-bot --channel-id <id>");
+    console.log("  Current command: athene setup composio-discord-bot --channel-id <id>");
   } else if (choice === "gmail") {
     console.log(chalk.bold("Composio Gmail setup"));
     console.log("  Required: Composio API key, userId, recipient email, Gmail connectedAccountId.");
     console.log("  Gmail OAuth/auth config must be usable in Composio with send/profile access.");
-    console.log("  Current command: ao setup composio-mail --email-to <email>");
+    console.log("  Current command: athene setup composio-mail --email-to <email>");
   }
   console.log(
     chalk.dim("This interactive hub currently implements Slack, Discord webhook/bot, and Gmail."),
@@ -2856,7 +2856,7 @@ async function runInteractiveComposioSlackSetup(
     writeComposioConfig(configPath, resolved);
     console.log(chalk.green(`✓ Config written to ${configPath}`));
     console.log(chalk.green(`✓ Slack connected account: ${connectedAccountId}`));
-    console.log(chalk.dim(`Test it with: ao notify test --to ${targetName} --template ci-failing`));
+    console.log(chalk.dim(`Test it with: athene notify test --to ${targetName} --template ci-failing`));
     clack.outro("Composio Slack setup complete.");
     return "done";
   }
@@ -3015,7 +3015,7 @@ async function runInteractiveComposioDiscordWebhookSetup(
     console.log(chalk.green(`✓ Config written to ${configPath}`));
     console.log(chalk.green("✓ Discord webhook configured through Composio"));
     console.log(chalk.green(`✓ Discord webhook connected account: ${resolved.connectedAccountId}`));
-    console.log(chalk.dim(`Test it with: ao notify test --to ${targetName} --template basic`));
+    console.log(chalk.dim(`Test it with: athene notify test --to ${targetName} --template basic`));
     clack.outro("Composio Discord webhook setup complete.");
     return "done";
   }
@@ -3175,7 +3175,7 @@ async function runInteractiveComposioDiscordBotSetup(
     writeComposioDiscordConfig(configPath, resolved);
     console.log(chalk.green(`✓ Config written to ${configPath}`));
     console.log(chalk.green(`✓ Discord bot connected account: ${connectedAccountId}`));
-    console.log(chalk.dim(`Test it with: ao notify test --to ${targetName} --template basic`));
+    console.log(chalk.dim(`Test it with: athene notify test --to ${targetName} --template basic`));
     clack.outro("Composio Discord bot setup complete.");
     return "done";
   }
@@ -3324,7 +3324,7 @@ async function runInteractiveComposioGmailSetup(
     writeComposioMailConfig(configPath, resolved, targetName);
     console.log(chalk.green(`✓ Config written to ${configPath}`));
     console.log(chalk.green(`✓ Gmail connected account: ${connectedAccountId}`));
-    console.log(chalk.dim(`Test it with: ao notify test --to ${targetName} --template basic`));
+    console.log(chalk.dim(`Test it with: athene notify test --to ${targetName} --template basic`));
     clack.outro("Composio Gmail setup complete.");
     return "done";
   }
@@ -3932,7 +3932,7 @@ export async function runComposioSetupAction(opts: ComposioSetupOptions): Promis
 
   if (!configPath) {
     throw new ComposioSetupError(
-      "No agent-orchestrator.yaml found. Run 'ao start' first to create one.",
+      "No agent-orchestrator.yaml found. Run 'athene start' first to create one.",
     );
   }
 
@@ -3966,7 +3966,7 @@ export async function runComposioSetupAction(opts: ComposioSetupOptions): Promis
   if (resolved.connectionUrl && !resolved.connectedAccountId) {
     console.log(
       chalk.yellow(
-        "Slack connection did not complete yet. Open the connect URL above, finish the Composio flow, then rerun `ao setup composio`.",
+        "Slack connection did not complete yet. Open the connect URL above, finish the Composio flow, then rerun `athene setup composio`.",
       ),
     );
     console.log(chalk.dim("No config was changed."));
@@ -3980,7 +3980,7 @@ export async function runComposioSetupAction(opts: ComposioSetupOptions): Promis
     console.log(chalk.green(`✓ Slack connected account: ${resolved.connectedAccountId}`));
   }
 
-  console.log(chalk.dim("Test it with: ao notify test --to composio --template ci-failing"));
+  console.log(chalk.dim("Test it with: athene notify test --to composio --template ci-failing"));
 }
 
 export async function runComposioSlackSetupAction(opts: ComposioSetupOptions): Promise<void> {
@@ -3995,7 +3995,7 @@ export async function runComposioSlackSetupAction(opts: ComposioSetupOptions): P
 
   if (!configPath) {
     throw new ComposioSetupError(
-      "No agent-orchestrator.yaml found. Run 'ao start' first to create one.",
+      "No agent-orchestrator.yaml found. Run 'athene start' first to create one.",
     );
   }
 
@@ -4030,7 +4030,7 @@ export async function runComposioSlackSetupAction(opts: ComposioSetupOptions): P
   if (resolved.connectionUrl && !resolved.connectedAccountId) {
     console.log(
       chalk.yellow(
-        "Slack connection did not complete yet. Open the connect URL above, finish the Composio flow, then rerun `ao setup composio-slack`.",
+        "Slack connection did not complete yet. Open the connect URL above, finish the Composio flow, then rerun `athene setup composio-slack`.",
       ),
     );
     console.log(chalk.dim("No config was changed."));
@@ -4045,7 +4045,7 @@ export async function runComposioSlackSetupAction(opts: ComposioSetupOptions): P
   }
 
   console.log(
-    chalk.dim(`Test it with: ao notify test --to ${COMPOSIO_SLACK_NOTIFIER} --template ci-failing`),
+    chalk.dim(`Test it with: athene notify test --to ${COMPOSIO_SLACK_NOTIFIER} --template ci-failing`),
   );
 }
 
@@ -4275,7 +4275,7 @@ async function resolveMailSetup(
 
     if (account && optionConnectedAccountId) {
       throw new ComposioSetupError(
-        `Connected account ${connectedAccountId} is missing Gmail send/profile access. Connect Gmail in Composio with send access, then rerun \`ao setup composio-mail --email-to ${emailTo} --connected-account-id ${connectedAccountId}\`, or pass a different Gmail connected account.`,
+        `Connected account ${connectedAccountId} is missing Gmail send/profile access. Connect Gmail in Composio with send access, then rerun \`athene setup composio-mail --email-to ${emailTo} --connected-account-id ${connectedAccountId}\`, or pass a different Gmail connected account.`,
       );
     }
 
@@ -4319,7 +4319,7 @@ async function resolveMailSetup(
       const account = await withConnectedAccountDetails(client, connection.account);
       if (!(await accountCanSendGmail(client, account))) {
         throw new ComposioSetupError(
-          `Connected Gmail account ${account.id} is missing Gmail send/profile access. Fix the Gmail connection in Composio, then rerun \`ao setup composio-mail\`.`,
+          `Connected Gmail account ${account.id} is missing Gmail send/profile access. Fix the Gmail connection in Composio, then rerun \`athene setup composio-mail\`.`,
         );
       }
       return {
@@ -4347,8 +4347,8 @@ async function resolveMailSetup(
   throw new ComposioSetupError(
     [
       `No active Gmail connected account with send access was found for user ${userId}.`,
-      "Connect Gmail in Composio first, then rerun `ao setup composio-mail`, or rerun with `--connect` to print a Composio connect URL.",
-      `You can also pass an existing Gmail account with \`ao setup composio-mail --email-to ${emailTo} --connected-account-id ca_...\`.`,
+      "Connect Gmail in Composio first, then rerun `athene setup composio-mail`, or rerun with `--connect` to print a Composio connect URL.",
+      `You can also pass an existing Gmail account with \`athene setup composio-mail --email-to ${emailTo} --connected-account-id ca_...\`.`,
     ].join(" "),
   );
 }
@@ -4365,7 +4365,7 @@ export async function runComposioDiscordWebhookSetupAction(
 
   if (!configPath) {
     throw new ComposioSetupError(
-      "No agent-orchestrator.yaml found. Run 'ao start' first to create one.",
+      "No agent-orchestrator.yaml found. Run 'athene start' first to create one.",
     );
   }
 
@@ -4405,7 +4405,7 @@ export async function runComposioDiscordWebhookSetupAction(
   }
   console.log(
     chalk.dim(
-      `Test it with: ao notify test --to ${COMPOSIO_DISCORD_WEBHOOK_NOTIFIER} --template basic`,
+      `Test it with: athene notify test --to ${COMPOSIO_DISCORD_WEBHOOK_NOTIFIER} --template basic`,
     ),
   );
 }
@@ -4422,7 +4422,7 @@ export async function runComposioDiscordBotSetupAction(
 
   if (!configPath) {
     throw new ComposioSetupError(
-      "No agent-orchestrator.yaml found. Run 'ao start' first to create one.",
+      "No agent-orchestrator.yaml found. Run 'athene start' first to create one.",
     );
   }
 
@@ -4459,7 +4459,7 @@ export async function runComposioDiscordBotSetupAction(
   console.log(chalk.green(`✓ Discord bot connected account: ${resolved.connectedAccountId}`));
   console.log(
     chalk.dim(
-      `Test it with: ao notify test --to ${COMPOSIO_DISCORD_BOT_NOTIFIER} --template basic`,
+      `Test it with: athene notify test --to ${COMPOSIO_DISCORD_BOT_NOTIFIER} --template basic`,
     ),
   );
 }
@@ -4476,7 +4476,7 @@ export async function runComposioMailSetupAction(opts: ComposioMailSetupOptions)
 
   if (!configPath) {
     throw new ComposioSetupError(
-      "No agent-orchestrator.yaml found. Run 'ao start' first to create one.",
+      "No agent-orchestrator.yaml found. Run 'athene start' first to create one.",
     );
   }
 
@@ -4511,7 +4511,7 @@ export async function runComposioMailSetupAction(opts: ComposioMailSetupOptions)
   if (resolved.connectionUrl && !resolved.connectedAccountId) {
     console.log(
       chalk.yellow(
-        "Gmail connection did not complete yet. Open the connect URL above, finish the Composio flow, then rerun `ao setup composio-mail`.",
+        "Gmail connection did not complete yet. Open the connect URL above, finish the Composio flow, then rerun `athene setup composio-mail`.",
       ),
     );
     console.log(chalk.dim("No config was changed."));
@@ -4526,6 +4526,6 @@ export async function runComposioMailSetupAction(opts: ComposioMailSetupOptions)
   }
 
   console.log(
-    chalk.dim(`Test it with: ao notify test --to ${COMPOSIO_MAIL_NOTIFIER} --template basic`),
+    chalk.dim(`Test it with: athene notify test --to ${COMPOSIO_MAIL_NOTIFIER} --template basic`),
   );
 }

@@ -1,4 +1,4 @@
-import type { CodeReviewRunSummary } from "@aoagents/ao-core";
+import type { CodeReviewRunSummary } from "@slievr/core";
 
 export type ReviewBoardColumn =
   | "queued"

@@ -945,7 +945,7 @@ function relinkClaudeSessionStorage(
  * `session_meta.cwd === session.workspacePath` exactly, so once
  * `migrate-storage` rewrites a session's `workspacePath` to the V2 layout,
  * Codex restore stops finding the prior thread and `getRestoreCommand`
- * returns null — the user loses chat history on `ao start` restore.
+ * returns null — the user loses chat history on `athene start` restore.
  *
  * For each (oldPath → newPath) move, scan rollout files, look at the first
  * non-empty parsed line, and if it is a `session_meta` entry whose
@@ -1222,7 +1222,7 @@ export async function migrateStorage(options: MigrationOptions = {}): Promise<Mi
       });
       throw new Error(
         `Found ${activeSessions.length} active AO tmux session(s): ${activeSessions.slice(0, 5).join(", ")}${activeSessions.length > 5 ? "..." : ""}. ` +
-        `Kill active sessions first (ao session kill --all) or use --force to migrate anyway.`,
+        `Kill active sessions first (athene session kill --all) or use --force to migrate anyway.`,
       );
     }
   }
@@ -1420,7 +1420,7 @@ export async function migrateStorage(options: MigrationOptions = {}): Promise<Mi
   }
 
   // Relink Claude Code session storage so chat history survives the
-  // worktree-path change. Without this, ao start → restore launches a
+  // worktree-path change. Without this, athene start → restore launches a
   // fresh `claude` instance and the prior conversation is lost.
   totals.claudeSessionsRelinked = relinkClaudeSessionStorage(allWorkspaceMoves, dryRun, log);
   totals.codexSessionsRewritten = rewriteCodexSessionStorage(allWorkspaceMoves, dryRun, log);

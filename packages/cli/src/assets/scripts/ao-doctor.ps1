@@ -1,5 +1,5 @@
 ﻿# PowerShell port of ao-doctor.sh — Windows-native health checks for AO.
-# Invoked by `ao doctor` on Windows via runRepoScript().
+# Invoked by `athene doctor` on Windows via runRepoScript().
 
 $ErrorActionPreference = 'Continue'
 
@@ -22,7 +22,7 @@ foreach ($a in $args) {
 
 if ($Help) {
     @'
-Usage: ao doctor [--fix]
+Usage: athene doctor [--fix]
 
 Checks install, PATH, binaries, service health, stale temp files, and runtime sanity.
 
@@ -175,7 +175,7 @@ function Check-Pnpm {
 }
 
 function Check-Launcher {
-    $resolved = Get-Command 'ao' -ErrorAction SilentlyContinue
+    $resolved = Get-Command 'athene' -ErrorAction SilentlyContinue
     if ($resolved) {
         Write-Pass "ao launcher resolves to $($resolved.Source)"
         return
@@ -184,7 +184,7 @@ function Check-Launcher {
         Push-Location (Join-Path $RepoRoot 'packages/ao')
         try {
             $null = & npm link --force 2>&1
-            if ($LASTEXITCODE -eq 0 -and (Get-Command 'ao' -ErrorAction SilentlyContinue)) {
+            if ($LASTEXITCODE -eq 0 -and (Get-Command 'athene' -ErrorAction SilentlyContinue)) {
                 Write-Fixed "ao launcher refreshed with npm link --force"
                 return
             }
@@ -193,7 +193,7 @@ function Check-Launcher {
         return
     }
     if ($ScriptLayout -eq 'package-install') {
-        Write-Warn2 "ao launcher is not in PATH. Fix: reinstall with npm install -g @aoagents/ao@latest"
+        Write-Warn2 "ao launcher is not in PATH. Fix: reinstall with npm install -g @slievr/athene@latest"
         return
     }
     Write-Warn2 "ao launcher is not in PATH. Fix: cd $RepoRoot; pwsh scripts/setup.ps1 (or run npm link --force in packages/ao)"
@@ -232,7 +232,7 @@ function Check-InstallLayout {
         )
         foreach ($c in $checks) {
             $full = Join-Path $RepoRoot $c.Path
-            if (Test-Path $full) { Write-Pass $c.Label } else { Write-Fail "$($c.Label) (missing $full). Fix: reinstall @aoagents/ao" }
+            if (Test-Path $full) { Write-Pass $c.Label } else { Write-Fail "$($c.Label) (missing $full). Fix: reinstall @slievr/athene" }
         }
         return
     }
@@ -244,12 +244,12 @@ function Check-InstallLayout {
     if (Test-Path (Join-Path $RepoRoot 'packages/core/dist/index.js')) {
         Write-Pass "core package is built"
     } else {
-        Write-Fail "core package is not built. Fix: run pnpm --filter @aoagents/ao-core build"
+        Write-Fail "core package is not built. Fix: run pnpm --filter @slievr/core build"
     }
     if (Test-Path (Join-Path $RepoRoot 'packages/cli/dist/index.js')) {
         Write-Pass "CLI package is built"
     } else {
-        Write-Fail "CLI package is not built. Fix: run pnpm --filter @aoagents/ao-cli build"
+        Write-Fail "CLI package is not built. Fix: run pnpm --filter @slievr/cli build"
     }
 }
 
@@ -257,14 +257,14 @@ function Check-RuntimeSanity {
     if ($ScriptLayout -eq 'package-install') {
         $entry = Join-Path $RepoRoot 'dist/index.js'
         if (-not (Test-Path $entry)) {
-            Write-Fail "packaged CLI entrypoint is missing. Fix: reinstall @aoagents/ao"
+            Write-Fail "packaged CLI entrypoint is missing. Fix: reinstall @slievr/athene"
             return
         }
         & node $entry --version *> $null
         if ($LASTEXITCODE -eq 0) {
-            Write-Pass "packaged CLI runtime sanity check passed (ao --version)"
+            Write-Pass "packaged CLI runtime sanity check passed (athene --version)"
         } else {
-            Write-Fail "packaged CLI runtime sanity check failed. Fix: reinstall @aoagents/ao"
+            Write-Fail "packaged CLI runtime sanity check failed. Fix: reinstall @slievr/athene"
         }
         return
     }
@@ -275,7 +275,7 @@ function Check-RuntimeSanity {
     }
     & node $entry --version *> $null
     if ($LASTEXITCODE -eq 0) {
-        Write-Pass "launcher runtime sanity check passed (ao --version)"
+        Write-Pass "launcher runtime sanity check passed (athene --version)"
     } else {
         Write-Fail "launcher runtime sanity check failed. Fix: run pnpm build and refresh the launcher"
     }
@@ -324,7 +324,7 @@ function Check-StaleTempFiles {
         }
         return
     }
-    Write-Warn2 "$($stale.Count) stale temp files older than 60 minutes found under $tempRoot. Fix: rerun ao doctor --fix"
+    Write-Warn2 "$($stale.Count) stale temp files older than 60 minutes found under $tempRoot. Fix: rerun athene doctor --fix"
 }
 
 Write-Host "Agent Orchestrator Doctor`n"

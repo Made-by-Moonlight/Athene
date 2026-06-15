@@ -1,4 +1,4 @@
-import type { OrchestratorConfig } from "@aoagents/ao-core";
+import type { OrchestratorConfig } from "@slievr/core";
 
 export function escapeRegex(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

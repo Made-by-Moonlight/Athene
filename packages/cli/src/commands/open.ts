@@ -7,7 +7,7 @@ import {
   isWindows,
   loadConfig,
   type Session,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 import { exec } from "../lib/shell.js";
 import { getSessionManager } from "../lib/create-session-manager.js";
 import { findProjectForSession, matchesPrefix } from "../lib/session-utils.js";
@@ -43,7 +43,7 @@ function spawnDetached(cmd: string, args: string[]): boolean {
 }
 
 /**
- * Open a new attached console window running `ao session attach <id>`.
+ * Open a new attached console window running `athene session attach <id>`.
  * Tries Windows Terminal first (matches the iTerm-tab feel on Mac), falls
  * back to a plain `cmd /k` window which works on every Windows install.
  *
@@ -54,13 +54,13 @@ function spawnDetached(cmd: string, args: string[]): boolean {
  * be the first token lets it do the .cmd resolution.
  *
  * `cwd` should be the project directory (where agent-orchestrator.yaml lives)
- * so the spawned `ao session attach` can resolve config via loadConfig's
+ * so the spawned `athene session attach` can resolve config via loadConfig's
  * upward search. Without it the new console inherits the user's homedir and
  * attach fails with "No agent-orchestrator.yaml found".
  */
 function openWindowsConsole(sessionId: string, cwd: string | undefined): boolean {
   const title = `ao:${sessionId}`;
-  const inner = ["ao", "session", "attach", sessionId];
+  const inner = ["athene", "session", "attach", sessionId];
 
   const wtArgs = ["-w", "0", "new-tab", "--title", title];
   if (cwd) wtArgs.push("-d", cwd);
@@ -158,7 +158,7 @@ export function registerOpen(program: Command): void {
               chalk.dim(`    died at ${when}: session=${sr}, runtime=${rr}`),
             );
             console.log(
-              chalk.dim(`    restart with: ao session restore ${session.id}`),
+              chalk.dim(`    restart with: athene session restore ${session.id}`),
             );
           } else {
             console.log(`  ${chalk.green(session.id)} — opened ${chalk.dim(url)}`);
@@ -173,7 +173,7 @@ export function registerOpen(program: Command): void {
             continue;
           }
         } else if (isWindows()) {
-          // The spawned `ao session attach` does loadConfig() which searches
+          // The spawned `athene session attach` does loadConfig() which searches
           // upward from cwd for agent-orchestrator.yaml. Anchor the new
           // console at the project's path (where the yaml lives); if that
           // isn't in config, fall back to the worktree (yaml may live in a

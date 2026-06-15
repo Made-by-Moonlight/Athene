@@ -94,7 +94,7 @@ REMOTE_URL="$5"
 echo ""
 echo "==> Stopping AO..."
 cd "$REPO_PATH"
-ao stop 2>/dev/null || true
+athene stop 2>/dev/null || true
 
 echo "==> Waiting for AO to fully stop..."
 sleep 3

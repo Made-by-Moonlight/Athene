@@ -5,7 +5,7 @@ import {
   type PluginModule,
   type Terminal,
   type Session,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 
 export const manifest = {
   name: "iterm2",
@@ -15,7 +15,7 @@ export const manifest = {
 };
 
 // Re-export for backwards compatibility
-export { escapeAppleScript } from "@aoagents/ao-core";
+export { escapeAppleScript } from "@slievr/core";
 
 /**
  * Run an AppleScript snippet and return stdout.

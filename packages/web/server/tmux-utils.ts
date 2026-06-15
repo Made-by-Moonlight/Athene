@@ -10,7 +10,7 @@ import { readdirSync, existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
-import { isWindows } from "@aoagents/ao-core";
+import { isWindows } from "@slievr/core";
 
 const execFileAsync = promisify(execFile);
 
@@ -261,7 +261,7 @@ export function resolveTmuxSession(
  * V1 layout (legacy fallback): line-delimited key=value at
  *   `~/.agent-orchestrator/{storageKey}/sessions/{sessionId}` where
  *   storageKey is bare 12-hex or `{hash}-{projectName}`. Kept so users
- *   who haven't run `ao migrate-storage` still see live sessions.
+ *   who haven't run `athene migrate-storage` still see live sessions.
  *
  * When `projectId` is provided, only that project's metadata file is read.
  * Without it (legacy callers), walks all projects and returns the first

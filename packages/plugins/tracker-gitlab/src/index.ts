@@ -12,9 +12,9 @@ import type {
   IssueUpdate,
   CreateIssueInput,
   ProjectConfig,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 
-import { glab, parseJSON, extractHost, stripHost } from "@aoagents/ao-plugin-scm-gitlab/glab-utils";
+import { glab, parseJSON, extractHost, stripHost } from "@slievr/plugin-scm-gitlab/glab-utils";
 
 // ---------------------------------------------------------------------------
 // Helpers

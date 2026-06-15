@@ -23,9 +23,9 @@ import {
   readLastJsonlEntry,
   type ActivityDetection,
   type AgentSessionInfo,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
-import claudeCodePlugin, { toClaudeProjectPath } from "@aoagents/ao-plugin-agent-claude-code";
+import claudeCodePlugin, { toClaudeProjectPath } from "@slievr/plugin-agent-claude-code";
 import {
   isTmuxAvailable,
   killSessionsByPrefix,

@@ -2,9 +2,9 @@
  * Shared update service — install detection, version checking, cache management.
  *
  * Single source of truth consumed by:
- *   - `ao update` (install-aware routing)
+ *   - `athene update` (install-aware routing)
  *   - Startup notifier (synchronous cache read)
- *   - `ao doctor` (version freshness check)
+ *   - `athene doctor` (version freshness check)
  *   - Dashboard (`/api/version` route)
  */
 
@@ -21,7 +21,7 @@ import {
   loadGlobalConfig,
   type UpdateChannel,
   type InstallMethodOverride,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 import { getCliVersion } from "../options/version.js";
 
 // ---------------------------------------------------------------------------
@@ -69,7 +69,7 @@ export interface CacheData {
 // ---------------------------------------------------------------------------
 
 /** Full package document — includes `dist-tags` for channel resolution. */
-const REGISTRY_PACKAGE_URL = "https://registry.npmjs.org/@aoagents%2Fao";
+const REGISTRY_PACKAGE_URL = "https://registry.npmjs.org/@slievr%2Fathene";
 const FETCH_TIMEOUT_MS = 3000;
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 const DEFAULT_GIT_REMOTE = "origin";
@@ -140,7 +140,7 @@ export function isAgentOrchestratorRepoRoot(root: string): boolean {
     return false;
   }
 
-  return readPackageName(resolve(root, "packages", "ao", "package.json")) === "@aoagents/ao";
+  return readPackageName(resolve(root, "packages", "ao", "package.json")) === "@slievr/athene";
 }
 
 export function isAoCliPackageRoot(root: string): boolean {
@@ -148,7 +148,7 @@ export function isAoCliPackageRoot(root: string): boolean {
     return false;
   }
 
-  return readPackageName(resolve(root, "package.json")) === "@aoagents/ao-cli";
+  return readPackageName(resolve(root, "package.json")) === "@slievr/cli";
 }
 
 /**
@@ -210,7 +210,7 @@ export function detectInstallMethod(): InstallMethod {
 // ---------------------------------------------------------------------------
 
 /**
- * Resolve the currently-installed `@aoagents/ao` version.
+ * Resolve the currently-installed `@slievr/athene` version.
  *
  * Delegates to core's `getInstalledAoVersion` (single source of truth shared
  * with the dashboard) and falls back to the CLI's own embedded version when
@@ -249,7 +249,7 @@ export function getGitUpdateRef(): string {
 /**
  * Map an install method + channel to the command the user should run.
  *
- * Git installs always run `ao update` (which delegates to `ao-update.sh`)
+ * Git installs always run `athene update` (which delegates to `ao-update.sh`)
  * regardless of channel — the channel only affects npm-published builds.
  *
  * Homebrew is special: we never auto-install. We surface the brew command as
@@ -262,17 +262,17 @@ export function getUpdateCommand(method: InstallMethod, channel: UpdateChannel =
   const tag = channel === "nightly" ? "nightly" : "latest";
   switch (method) {
     case "git":
-      return "ao update";
+      return "athene update";
     case "npm-global":
-      return `npm install -g @aoagents/ao@${tag}`;
+      return `npm install -g @slievr/athene@${tag}`;
     case "pnpm-global":
-      return `pnpm add -g @aoagents/ao@${tag}`;
+      return `pnpm add -g @slievr/athene@${tag}`;
     case "bun-global":
-      return `bun add -g @aoagents/ao@${tag}`;
+      return `bun add -g @slievr/athene@${tag}`;
     case "homebrew":
       return "brew upgrade ao";
     case "unknown":
-      return `npm install -g @aoagents/ao@${tag}`;
+      return `npm install -g @slievr/athene@${tag}`;
   }
 }
 
@@ -293,7 +293,7 @@ export function isOutdatedForChannel(
 // Cache
 // ---------------------------------------------------------------------------
 
-/** Directory holding the update cache. Re-exported for ao doctor / CLI smoke tests. */
+/** Directory holding the update cache. Re-exported for athene doctor / CLI smoke tests. */
 export function getCacheDir(): string {
   // dirname(getUpdateCheckCachePath()) keeps this in lock-step with core's
   // canonical path resolver.
@@ -428,7 +428,7 @@ export async function fetchGitLatestState(
 // ---------------------------------------------------------------------------
 
 /**
- * Fetch the latest version of @aoagents/ao for the given dist-tag.
+ * Fetch the latest version of @slievr/athene for the given dist-tag.
  *
  * Hits the full package document (not the per-tag URL) so we get all dist-tags
  * in one round trip. Channels:
@@ -570,7 +570,7 @@ export async function checkForUpdate(opts?: {
  * Print an update notice to stderr if a newer version is cached.
  *
  * Skipped entirely when channel is "manual" — the user opted out of nudges.
- * Stable users see "Run: ao update". Nightly users get the same nudge but
+ * Stable users see "Run: athene update". Nightly users get the same nudge but
  * the suggested install command picks `@nightly` instead of `@latest`.
  */
 export function maybeShowUpdateNotice(): void {
@@ -627,7 +627,7 @@ export function scheduleBackgroundRefresh(): void {
 /**
  * Re-export the core implementation so CLI consumers (and the existing test
  * suite) keep importing from this module while the dashboard imports the same
- * function from `@aoagents/ao-core` — single source of truth for the prerelease
+ * function from `@slievr/core` — single source of truth for the prerelease
  * comparison rules.
  */
 export const isVersionOutdated = coreIsVersionOutdated;

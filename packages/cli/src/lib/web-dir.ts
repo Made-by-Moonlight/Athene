@@ -1,5 +1,5 @@
 /**
- * Web directory locator — finds the @aoagents/ao-web package.
+ * Web directory locator — finds the @slievr/web package.
  * Shared utility to avoid duplication between dashboard.ts and start.ts.
  */
 
@@ -121,7 +121,7 @@ async function findAvailablePortPair(base: number): Promise<[number, number]> {
 
 /**
  * Build environment variables for spawning the dashboard process.
- * Shared between `ao start` and `ao dashboard` to avoid duplication.
+ * Shared between `athene start` and `athene dashboard` to avoid duplication.
  *
  * Terminal server ports default to 14800/14801 but can be overridden via config.
  * When no explicit port is set, auto-detects available ports to allow multiple
@@ -176,14 +176,14 @@ export async function buildDashboardEnv(
 }
 
 /**
- * Locate the @aoagents/ao-web package directory.
+ * Locate the @slievr/web package directory.
  * Uses createRequire for ESM-compatible require.resolve, with fallback
  * to sibling package paths that work from both src/ and dist/.
  */
 export function findWebDir(): string {
   // Try to resolve from node_modules first (installed as workspace dep)
   try {
-    const pkgJson = require.resolve("@aoagents/ao-web/package.json");
+    const pkgJson = require.resolve("@slievr/web/package.json");
     return resolve(pkgJson, "..");
   } catch {
     // Fallback: sibling package in monorepo (works both from src/ and dist/)
@@ -199,8 +199,8 @@ export function findWebDir(): string {
       }
     }
     throw new Error(
-      "Could not find @aoagents/ao-web package.\n" +
-      "  If installed via npm:    npm install -g @aoagents/ao\n" +
+      "Could not find @slievr/web package.\n" +
+      "  If installed via npm:    npm install -g @slievr/athene\n" +
       "  If cloned from source:   pnpm install && pnpm build",
     );
   }

@@ -55,15 +55,15 @@ cd "$WORKTREE"
 # ── build CLI/core/plugins ─────────────────────────────────────────────────────
 echo -e "\n${BOLD}Building $SESSION${RESET} (branch: ${CYAN}$BRANCH${RESET})\n"
 
-pnpm --filter @aoagents/ao-core \
-     --filter @aoagents/ao-cli \
-     --filter '@aoagents/ao-plugin-*' \
+pnpm --filter @slievr/core \
+     --filter @slievr/cli \
+     --filter '@slievr/plugin-*' \
      build
 
 # ── build web if requested ─────────────────────────────────────────────────────
 if [ "$WITH_WEB" = true ]; then
   echo -e "\n${BOLD}Building dashboard...${RESET}\n"
-  pnpm --filter @aoagents/ao-web build
+  pnpm --filter @slievr/web build
 fi
 
 # ── link ao ───────────────────────────────────────────────────────────────────
@@ -91,7 +91,7 @@ echo -e "  ${CYAN}bash scripts/try-pr.sh --restore${RESET}"
 
 # ── start dashboard if --with-web ──────────────────────────────────────────────
 if [ "$WITH_WEB" = true ]; then
-  # Find a free port starting from 3001 (3000 may be used by the main ao start)
+  # Find a free port starting from 3001 (3000 may be used by the main athene start)
   PORT=3001
   while lsof -ti ":$PORT" &>/dev/null; do
     PORT=$((PORT + 1))

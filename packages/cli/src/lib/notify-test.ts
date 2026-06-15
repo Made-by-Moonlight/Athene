@@ -18,7 +18,7 @@ import {
   type OrchestratorConfig,
   type OrchestratorEvent,
   type PluginRegistry,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 
 export const NOTIFY_TEST_TEMPLATE_NAMES = [
   "basic",
@@ -140,7 +140,7 @@ const DEMO_TEMPLATES: Record<NotifyTestTemplateName, NotifyTemplate> = {
     priority: "info",
     sessionId: "notify-demo",
     projectId: "demo",
-    message: "Test notification from ao notify test",
+    message: "Test notification from athene notify test",
     data: buildReactionNotificationData({
       eventType: "reaction.triggered",
       sessionId: "notify-demo",

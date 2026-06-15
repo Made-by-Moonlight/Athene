@@ -28,14 +28,14 @@ describe.runIf(process.platform === "win32")("ao-doctor.ps1", () => {
   it("prints usage and exits 0 for --help", () => {
     const result = runPwsh(["--help"]);
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("Usage: ao doctor");
+    expect(result.stdout).toContain("Usage: athene doctor");
     expect(result.stdout).toContain("--fix");
   });
 
   it("prints usage and exits 0 for -h", () => {
     const result = runPwsh(["-h"]);
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("Usage: ao doctor");
+    expect(result.stdout).toContain("Usage: athene doctor");
   });
 
   it("rejects unknown flags with exit 1", () => {

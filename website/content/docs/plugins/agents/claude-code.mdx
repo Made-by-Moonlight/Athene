@@ -58,7 +58,7 @@ Your Anthropic API key comes from wherever `claude` normally reads it — `~/.cl
     `npm install -g @anthropic-ai/claude-code`, then reopen your terminal so the PATH picks it up.
   </Accordion>
   <Accordion title="Dashboard shows no activity state">
-    AO registers the PostToolUse hook in `.claude/settings.json` on spawn. If the hook got removed, run `ao spawn` again — AO re-installs it idempotently.
+    AO registers the PostToolUse hook in `.claude/settings.json` on spawn. If the hook got removed, run `athene spawn` again — AO re-installs it idempotently.
   </Accordion>
   <Accordion title="Session won't resume">
     Claude's session JSONL lives at `~/.claude/projects/<project-slug>/<sessionId>.jsonl`. If that file is gone (cleaned up, moved), resume won't work — spawn fresh.

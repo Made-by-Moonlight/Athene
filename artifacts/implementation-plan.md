@@ -144,16 +144,16 @@ Creates the monorepo scaffold and ALL type definitions. After this, every agent 
 | Command                                | What                                                 | Reference Script                    |
 | -------------------------------------- | ---------------------------------------------------- | ----------------------------------- |
 | `ao init`                              | Interactive setup wizard → `agent-orchestrator.yaml` | New                                 |
-| `ao status`                            | Colored terminal table of all sessions               | `claude-status`                     |
-| `ao spawn <project> [issue]`           | Spawn single session                                 | `claude-spawn`                      |
-| `ao batch-spawn <project> <issues...>` | Batch spawn with dedup                               | `claude-batch-spawn`                |
-| `ao session ls\|kill\|cleanup`         | Session management                                   | `claude-ao-session` ls/kill/cleanup |
-| `ao send <session> <message>`          | Smart message delivery                               | `send-to-session`                   |
-| `ao review-check [project]`            | Trigger PR review fixes                              | `claude-review-check`               |
-| `ao dashboard`                         | Start web server                                     | `claude-dashboard`                  |
-| `ao open [session\|all]`               | Open terminal tabs                                   | `claude-open-all`, `open-iterm-tab` |
+| `athene status`                            | Colored terminal table of all sessions               | `claude-status`                     |
+| `athene spawn <project> [issue]`           | Spawn single session                                 | `claude-spawn`                      |
+| `athene batch-spawn <project> <issues...>` | Batch spawn with dedup                               | `claude-batch-spawn`                |
+| `athene session ls\|kill\|cleanup`         | Session management                                   | `claude-ao-session` ls/kill/cleanup |
+| `athene send <session> <message>`          | Smart message delivery                               | `send-to-session`                   |
+| `athene review-check [project]`            | Trigger PR review fixes                              | `claude-review-check`               |
+| `athene dashboard`                         | Start web server                                     | `claude-dashboard`                  |
+| `athene open [session\|all]`               | Open terminal tabs                                   | `claude-open-all`, `open-iterm-tab` |
 
-**Key complexity**: `ao status` needs rich terminal output (colors, columns, live data). `ao batch-spawn` needs duplicate detection.
+**Key complexity**: `athene status` needs rich terminal output (colors, columns, live data). `athene batch-spawn` needs duplicate detection.
 
 **Can start immediately** by coding against core interfaces. Wire up real implementations when Agent 1 finishes.
 

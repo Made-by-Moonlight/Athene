@@ -50,7 +50,7 @@ vi.mock("../../src/lib/running-state.js", () => ({
   getRunning: async () => mockRunningRef.current,
 }));
 
-vi.mock("@aoagents/ao-core", () => ({
+vi.mock("@slievr/core", () => ({
   loadConfig: () => mockConfigRef.current,
   isMac: () => mockIsMacRef.current,
   isWindows: () => mockIsWindowsRef.current,
@@ -271,7 +271,7 @@ describe("open command (macOS)", () => {
     expect(output).toContain("(terminated)");
     expect(output).toContain("session=runtime_lost");
     expect(output).toContain("runtime=process_missing");
-    expect(output).toContain("ao session restore app-dead");
+    expect(output).toContain("athene session restore app-dead");
   });
 
   it("--browser forces dashboard URL even on macOS", async () => {
@@ -324,7 +324,7 @@ describe("open command (Windows)", () => {
     mockIsWindowsRef.current = true;
   });
 
-  it("spawns Windows Terminal running `ao session attach <id>`", async () => {
+  it("spawns Windows Terminal running `athene session attach <id>`", async () => {
     mockListRef.current = [makeSession("tr-orchestrator", "test-repo")];
 
     await program.parseAsync(["node", "test", "open", "tr-orchestrator"]);

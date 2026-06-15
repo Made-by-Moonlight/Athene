@@ -7,7 +7,7 @@
  *
  * Cache-only by design — never makes a network call inside a request handler.
  * The CLI keeps the cache fresh (24 h TTL) via `scheduleBackgroundRefresh()`,
- * and `ao update --check` forces a refresh on demand.
+ * and `athene update --check` forces a refresh on demand.
  */
 
 import { NextResponse } from "next/server";
@@ -17,7 +17,7 @@ import {
   loadGlobalConfig,
   readUpdateCheckCacheRaw,
   type UpdateChannel,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 
 export const dynamic = "force-dynamic";
 

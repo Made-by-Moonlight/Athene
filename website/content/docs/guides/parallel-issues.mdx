@@ -9,10 +9,10 @@ The whole point of AO is running agents in parallel. Each session gets its own g
 
 ## Batch spawn
 
-`ao batch-spawn` takes one or more issue identifiers:
+`athene batch-spawn` takes one or more issue identifiers:
 
 ```bash
-ao batch-spawn 42 43 44
+athene batch-spawn 42 43 44
 ```
 
 AO:
@@ -22,15 +22,15 @@ AO:
 - Creates a worktree per agent
 - Reports a summary when all are spawned
 
-For a quick interactive version, just run `ao spawn` a few times — `batch-spawn` adds the duplicate detection.
+For a quick interactive version, just run `athene spawn` a few times — `batch-spawn` adds the duplicate detection.
 
 ## One agent, many issues? No.
 
 Each spawn is one agent working on exactly one issue. If you want the same issue worked on by two different agents (e.g. Claude Code and Codex) in parallel, pass `--agent`:
 
 ```bash
-ao spawn 42 --agent claude-code
-ao spawn 42 --agent codex
+athene spawn 42 --agent claude-code
+athene spawn 42 --agent codex
 ```
 
 AO creates two distinct sessions. Compare the PRs side by side.
@@ -64,21 +64,21 @@ The Kanban columns update as state changes — you don't need to reload.
 
 ```bash
 # List everything at a glance
-ao status
+athene status
 
 # Keep it on-screen
-ao status --watch
+athene status --watch
 
 # Filter to one project
-ao status -p my-repo --json
+athene status -p my-repo --json
 ```
 
 ## When you want fewer
 
-- `ao session kill <sessionId>` — kill one
-- `ao session cleanup` — kill everything whose PR merged or issue closed (safe; archives metadata)
-- `ao session cleanup --dry-run` — preview first
+- `athene session kill <sessionId>` — kill one
+- `athene session cleanup` — kill everything whose PR merged or issue closed (safe; archives metadata)
+- `athene session cleanup --dry-run` — preview first
 
 <Callout type="info">
-  Need them all gone? `ao stop --all` halts every running AO instance on this machine.
+  Need them all gone? `athene stop --all` halts every running AO instance on this machine.
 </Callout>

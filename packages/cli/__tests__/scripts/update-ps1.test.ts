@@ -31,7 +31,7 @@ describe.runIf(process.platform === "win32")("ao-update.ps1", () => {
   it("prints usage and exits 0 for --help", () => {
     const result = runPwsh(["--help"]);
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("Usage: ao update");
+    expect(result.stdout).toContain("Usage: athene update");
     expect(result.stdout).toContain("--skip-smoke");
     expect(result.stdout).toContain("--smoke-only");
   });
@@ -39,7 +39,7 @@ describe.runIf(process.platform === "win32")("ao-update.ps1", () => {
   it("prints usage and exits 0 for -h", () => {
     const result = runPwsh(["-h"]);
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("Usage: ao update");
+    expect(result.stdout).toContain("Usage: athene update");
   });
 
   it("rejects unknown flags with exit 1", () => {

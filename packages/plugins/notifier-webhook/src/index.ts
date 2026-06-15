@@ -4,12 +4,12 @@ import {
   type OrchestratorEvent,
   type NotifyAction,
   type NotifyContext,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 import {
   isRetryableHttpStatus,
   normalizeRetryConfig,
   validateUrl,
-} from "@aoagents/ao-core/utils";
+} from "@slievr/core/utils";
 
 export const manifest = {
   name: "webhook",

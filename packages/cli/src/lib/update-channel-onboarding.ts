@@ -1,7 +1,7 @@
 /**
  * Update-channel onboarding helpers.
  *
- * On first `ao start`, prompt the user once for an `updateChannel` and persist
+ * On first `athene start`, prompt the user once for an `updateChannel` and persist
  * it to ~/.agent-orchestrator/config.yaml. Never re-prompt — if they dismiss
  * (Ctrl+C / Esc), default to `manual` so we don't surprise-install anything.
  *
@@ -18,7 +18,7 @@ import {
   UpdateChannelSchema,
   type GlobalConfig,
   type UpdateChannel,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 import { promptSelect } from "./prompts.js";
 import { isHumanCaller } from "./caller-context.js";
 
@@ -76,7 +76,7 @@ export function persistUpdateChannel(channel: UpdateChannel): void {
  *
  * Skipped silently when:
  *   - The choice was already made (idempotent — never re-prompts).
- *   - The caller is not interactive (CI, scripted ao start).
+ *   - The caller is not interactive (CI, scripted athene start).
  *
  * On dismissal, persists `manual` so we don't ask again — surprise auto-installs
  * are worse than a quiet manual default.
@@ -88,7 +88,7 @@ export async function maybePromptForUpdateChannel(deps: PromptDeps = {}): Promis
 
   // No global config yet — skip. autoCreateConfig() handles full bootstrap
   // (creating the global config and registering the project) during first run.
-  // On the next `ao start` the global config will exist and the prompt fires.
+  // On the next `athene start` the global config will exist and the prompt fires.
   // Skipping here avoids writing an empty husk that poisons the dashboard.
   if (!existsSync(getGlobalConfigPath())) return;
 
@@ -100,7 +100,7 @@ export async function maybePromptForUpdateChannel(deps: PromptDeps = {}): Promis
   );
   console.log(
     chalk.dim(
-      "  You can switch later with `ao config set updateChannel <value>` —\n  the next `ao update` will prompt before installing the other channel's build.\n",
+      "  You can switch later with `athene config set updateChannel <value>` —\n  the next `athene update` will prompt before installing the other channel's build.\n",
     ),
   );
 
@@ -110,7 +110,7 @@ export async function maybePromptForUpdateChannel(deps: PromptDeps = {}): Promis
     raw = await promptFn("Update channel:", [
       { value: "stable", label: "Stable — weekly releases. Recommended for most users.", hint: "@latest" },
       { value: "nightly", label: "Nightly — daily builds. Bleeding edge.", hint: "@nightly" },
-      { value: "manual", label: "Manual — no checks. Run `ao update` yourself.", hint: "default if dismissed" },
+      { value: "manual", label: "Manual — no checks. Run `athene update` yourself.", hint: "default if dismissed" },
     ]);
   } catch {
     raw = "manual";
@@ -127,7 +127,7 @@ export async function maybePromptForUpdateChannel(deps: PromptDeps = {}): Promis
   persistUpdateChannel(channel);
   console.log(chalk.green(`  ✓ Update channel set to ${chalk.bold(channel)}`));
   console.log(
-    chalk.dim(`  Change it later with: ao config set updateChannel <stable|nightly|manual>\n`),
+    chalk.dim(`  Change it later with: athene config set updateChannel <stable|nightly|manual>\n`),
   );
 }
 

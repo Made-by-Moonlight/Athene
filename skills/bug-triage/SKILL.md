@@ -30,7 +30,7 @@ Before tracing code, verify the report has enough substance:
 
 **Required (ALL):** what happened, where (page/command/feature), when (after upgrade? first time?)
 
-**Required (2 of 4):** OS/shell/runtime, AO version (`ao --version`), reproducibility (consistent vs intermittent), reproduction steps
+**Required (2 of 4):** OS/shell/runtime, AO version (`athene --version`), reproducibility (consistent vs intermittent), reproduction steps
 
 If insufficient, ask:
 > "I'd like to triage this but need more info: (1) **What happened?** (error/behavior), (2) **Where?** (page/command), (3) **When did it start?**, (4) **How to reproduce?**"
@@ -41,7 +41,7 @@ Gather everything yourself before asking the reporter:
 
 ```bash
 # Environment
-ao --version && node --version && echo $SHELL && uname -a
+athene --version && node --version && echo $SHELL && uname -a
 cat agent-orchestrator.yaml
 cat ~/.agent-orchestrator/running.json
 
@@ -51,11 +51,11 @@ tmux list-sessions
 lsof -i :3000
 
 # AO event log — structured timeline
-ao events list --limit 50                          # recent events
-ao events list --session ao-5 --limit 100          # filter by session
-ao events list --log-level error --since 1h        # errors only
-ao events search "spawn failed"                    # full-text search
-ao events stats                                    # counts by kind/source
+athene events list --limit 50                          # recent events
+athene events list --session ao-5 --limit 100          # filter by session
+athene events list --log-level error --since 1h        # errors only
+athene events search "spawn failed"                    # full-text search
+athene events stats                                    # counts by kind/source
 
 # Session state files
 cat ~/.agent-orchestrator/projects/*/sessions/*.json | python3 -m json.tool
@@ -69,7 +69,7 @@ Event kinds: `session.spawned`, `session.spawn_failed`, `session.killed`, `lifec
 
 ### 3a. Trace the code path
 
-**Always trace the actual code** — don't surface-level diagnose. [#1129](https://github.com/ComposioHQ/agent-orchestrator/issues/1129) looked like a simple `ao stop` issue but was actually a session lineage/cascade problem.
+**Always trace the actual code** — don't surface-level diagnose. [#1129](https://github.com/ComposioHQ/agent-orchestrator/issues/1129) looked like a simple `athene stop` issue but was actually a session lineage/cascade problem.
 
 ```bash
 git fetch origin main && git log --oneline origin/main -5   # current HEAD
@@ -91,7 +91,7 @@ AO runs on **Windows, macOS, Linux** as first-class targets. If env info indicat
 
 - **Path separators** — hardcoded `/` or `\` breaks cross-platform
 - **Shell syntax** — PowerShell lacks `&&`, `$VAR`, `$(cat ...)`, `/dev/null`, here-docs
-- **`process.platform === "win32"` inline** — must use `isWindows()` from `@aoagents/ao-core`
+- **`process.platform === "win32"` inline** — must use `isWindows()` from `@slievr/core`
 - **`process.kill(-pid)`** — POSIX-only; use `killProcessTree()`
 - **Named pipes vs Unix sockets** — Windows uses `\\.\pipe\ao-pty-<id>`
 - **`localhost`** — Windows resolves to `::1` first, causing ~21s stalls on IPv4-only servers
@@ -221,7 +221,7 @@ Example: [PR #1608](https://github.com/ComposioHQ/agent-orchestrator/pull/1608) 
 Search by subsystem and add a `## Related` section to the issue body:
 ```
 ## Related
-- [#1020](url) — stale session blocking ao start (same subsystem)
+- [#1020](url) — stale session blocking athene start (same subsystem)
 - [#1035](url) — same race condition
 ```
 
@@ -261,7 +261,7 @@ Issue URL, PR URL (if created), labels, root cause summary, whether fix agent wa
 
 | Subsystem | Collect | Key files |
 |-----------|---------|-----------|
-| **CLI** (`ao start/stop/spawn`) | Config YAML, install method, version, OS | `packages/cli/src/commands/` |
+| **CLI** (`athene start/stop/spawn`) | Config YAML, install method, version, OS | `packages/cli/src/commands/` |
 | **Web UI** | Screenshot, browser, viewport | `packages/web/src/components/`, `globals.css` |
 | **Terminal** | Runtime type, tmux version, shell | `DirectTerminal.tsx`, `useXtermTerminal.ts` |
 | **Lifecycle** | State transitions, session IDs | `core/src/lifecycle-manager.ts`, `core/src/lifecycle-state.ts` |

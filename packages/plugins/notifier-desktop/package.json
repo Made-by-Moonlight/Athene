@@ -1,5 +1,5 @@
 {
-  "name": "@aoagents/ao-plugin-notifier-desktop",
+  "name": "@slievr/plugin-notifier-desktop",
   "version": "0.9.1",
   "description": "Notifier plugin: OS desktop notifications",
   "license": "MIT",
@@ -34,7 +34,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@aoagents/ao-core": "workspace:*"
+    "@slievr/core": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.2.3",

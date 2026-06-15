@@ -34,7 +34,7 @@ import {
   type MergeReadiness,
   type PREnrichmentData,
   type BatchObserver,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 import {
   enrichSessionsPRBatch as enrichSessionsPRBatchImpl,
   checkReviewCommentsETag,
@@ -44,7 +44,7 @@ import {
   parseWebhookBranchRef,
   parseWebhookJsonObject,
   parseWebhookTimestamp,
-} from "@aoagents/ao-core/scm-webhook-utils";
+} from "@slievr/core/scm-webhook-utils";
 
 const execFileAsync = promisify(execFile);
 

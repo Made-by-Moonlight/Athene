@@ -9,7 +9,7 @@ import {
   type EventPriority,
   type NotificationDataV3,
   CI_STATUS,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 
 export const manifest = {
   name: "slack",

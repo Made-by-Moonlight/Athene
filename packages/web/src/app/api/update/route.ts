@@ -1,5 +1,5 @@
 /**
- * POST /api/update — kick off `ao update` from the dashboard banner.
+ * POST /api/update — kick off `athene update` from the dashboard banner.
  *
  * Refuses when any session is in working/idle/needs_input/stuck — the
  * release doc is explicit: never auto-stop a user's agent. The banner
@@ -8,12 +8,12 @@
  * On success, spawns the install detached and returns 202 immediately.
  * The dashboard process exits when the install replaces the binary; the
  * banner shows progress until the SSE stream drops, at which point the
- * user re-runs `ao start` to pick up the new version.
+ * user re-runs `athene start` to pick up the new version.
  */
 
 import { spawn } from "node:child_process";
 import { NextResponse, type NextRequest } from "next/server";
-import { isWindows } from "@aoagents/ao-core";
+import { isWindows } from "@slievr/core";
 import { getServices } from "@/lib/services";
 
 export const dynamic = "force-dynamic";
@@ -33,7 +33,7 @@ interface UpdateResponse {
 
 export async function POST(_req: NextRequest) {
   // Active-session guard mirrors the CLI's `ensureNoActiveSessions`. We
-  // duplicate it here (rather than shelling out to `ao update --check`)
+  // duplicate it here (rather than shelling out to `athene update --check`)
   // so the dashboard can give an immediate, structured 409 response.
   let activeCount: number;
   try {
@@ -54,14 +54,14 @@ export async function POST(_req: NextRequest) {
     return NextResponse.json<UpdateResponse>(
       {
         ok: false,
-        message: `${activeCount} session${activeCount === 1 ? "" : "s"} active. Run \`ao stop\` first, then click Update again.`,
+        message: `${activeCount} session${activeCount === 1 ? "" : "s"} active. Run \`athene stop\` first, then click Update again.`,
         activeSessions: activeCount,
       },
       { status: 409 },
     );
   }
 
-  // Spawn `ao update` detached so this request can return before the install
+  // Spawn `athene update` detached so this request can return before the install
   // tears down the dashboard process. We rely on PATH resolution because the
   // user installed `ao` themselves — there's no canonical install location.
   //
@@ -76,7 +76,7 @@ export async function POST(_req: NextRequest) {
   // runner. The handler is a noop in production; the user will see "no
   // version change" on next page load if the install never ran.
   try {
-    const child = spawn("ao", ["update"], {
+    const child = spawn("athene", ["update"], {
       detached: true,
       stdio: "ignore",
       shell: isWindows(),
@@ -97,7 +97,7 @@ export async function POST(_req: NextRequest) {
     return NextResponse.json<UpdateResponse>(
       {
         ok: false,
-        message: `Failed to spawn 'ao update': ${err instanceof Error ? err.message : String(err)}`,
+        message: `Failed to spawn 'athene update': ${err instanceof Error ? err.message : String(err)}`,
       },
       { status: 500 },
     );
@@ -107,7 +107,7 @@ export async function POST(_req: NextRequest) {
     {
       ok: true,
       message:
-        "Update started. The dashboard will restart once the new version is installed; re-run `ao start` to resume.",
+        "Update started. The dashboard will restart once the new version is installed; re-run `athene start` to resume.",
     },
     { status: 202 },
   );

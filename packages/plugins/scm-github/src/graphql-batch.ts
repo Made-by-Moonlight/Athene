@@ -17,7 +17,7 @@ import {
   type PRInfo,
   type PRState,
   type ReviewDecision,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 import { LRUCache } from "./lru-cache.js";
 
 let execFileAsync = promisify(execFile);

@@ -10,8 +10,8 @@ import {
   type OrchestratorConfig,
   type Session,
   type SessionManager,
-} from "@aoagents/ao-core";
-import type * as AoCore from "@aoagents/ao-core";
+} from "@slievr/core";
+import type * as AoCore from "@slievr/core";
 
 const { mockConfigRef, mockSessionManager, reviewStoreRootRef } = vi.hoisted(() => ({
   mockConfigRef: { current: null as OrchestratorConfig | null },
@@ -30,7 +30,7 @@ const { mockConfigRef, mockSessionManager, reviewStoreRootRef } = vi.hoisted(() 
   reviewStoreRootRef: { current: "" },
 }));
 
-vi.mock("@aoagents/ao-core", async (importOriginal) => {
+vi.mock("@slievr/core", async (importOriginal) => {
   const actual = await importOriginal<typeof AoCore>();
   const createIsolatedStore = (projectId: string, options: AoCore.CodeReviewStoreOptions = {}) =>
     actual.createCodeReviewStore(projectId, {

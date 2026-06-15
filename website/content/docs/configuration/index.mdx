@@ -8,7 +8,7 @@ AO uses configuration in two layers:
 - **Global registry** — remembers which projects AO knows about and which repository each project points to.
 - **Local project config** — controls behavior for one project: agent, runtime, workspace, rules, reactions, tracker, SCM, and setup commands.
 
-Most users should let `ao start` create the registry entry, then edit the local `agent-orchestrator.yaml` in the project when they want to change behavior.
+Most users should let `athene start` create the registry entry, then edit the local `agent-orchestrator.yaml` in the project when they want to change behavior.
 
 <Callout type="info">
 The old wrapped format with a top-level `projects:` block is still understood for compatibility, but new project-local configs should be flat. Do not put identity fields like `path`, `projectId`, `storageKey`, or `originUrl` in a local project config.
@@ -19,7 +19,7 @@ The old wrapped format with a top-level `projects:` block is still understood fo
 When you run AO in a repository, it can register the project globally and create a local config file:
 
 ```bash
-ao start
+athene start
 ```
 
 The global registry lives at:

@@ -1,9 +1,9 @@
 /**
- * `ao start` and `ao stop` commands — unified orchestrator startup.
+ * `athene start` and `athene stop` commands — unified orchestrator startup.
  *
  * Supports two modes:
- *   1. `ao start [project]` — start from existing config
- *   2. `ao start <url>` — clone repo, auto-generate config, then start
+ *   1. `athene start [project]` — start from existing config
+ *   2. `athene start <url>` — clone repo, auto-generate config, then start
  *
  * The orchestrator prompt is passed to the agent via --append-system-prompt
  * (or equivalent flag) at launch time — no file writing required.
@@ -46,7 +46,7 @@ import {
   reapAoOrphans,
   type DaemonChildSweepResult,
   type AoOrphanProcess,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 import { parse as yamlParse, stringify as yamlStringify } from "yaml";
 import { exec, execSilent, git } from "../lib/shell.js";
 import { getSessionManager } from "../lib/create-session-manager.js";
@@ -286,7 +286,7 @@ async function resolveProject(
 
 /**
  * Resolve project from config by matching against a repo URL's ownerRepo.
- * Used when `ao start <url>` loads an existing multi-project config — the user
+ * Used when `athene start <url>` loads an existing multi-project config — the user
  * can't pass both a URL and a project name since they share the same arg slot.
  *
  * Falls back to `resolveProject` (which handles single-project configs or
@@ -576,7 +576,7 @@ export async function autoCreateConfig(workingDir: string): Promise<Orchestrator
   const outputPath = resolve(workingDir, "agent-orchestrator.yaml");
   if (existsSync(outputPath)) {
     console.log(chalk.yellow(`⚠ Config already exists: ${outputPath}`));
-    console.log(chalk.dim("  Use 'ao start' to start with the existing config.\n"));
+    console.log(chalk.dim("  Use 'athene start' to start with the existing config.\n"));
     return loadConfig(outputPath);
   }
   writeLocalProjectConfig(workingDir, localConfig, outputPath);
@@ -870,7 +870,7 @@ async function runStartup(
 ): Promise<number> {
   await runtimePreflight(config);
 
-  // Ask about the auto-update channel once on first `ao start` after this
+  // Ask about the auto-update channel once on first `athene start` after this
   // feature ships. No-op on subsequent runs (idempotent — guarded by the
   // presence of `updateChannel` in the global config).
   await maybePromptForUpdateChannel();
@@ -999,7 +999,7 @@ async function runStartup(
     }
   }
 
-  // Check for sessions from last `ao stop` and restore/prompt/skip based on caller intent.
+  // Check for sessions from last `athene stop` and restore/prompt/skip based on caller intent.
   if (opts?.restore !== false && (opts?.restore === true || isHumanCaller())) {
     try {
       const lastStop = await readLastStop();
@@ -1030,7 +1030,7 @@ async function runStartup(
         if (currentProjectSessions.length > 0) {
           console.log(
             chalk.yellow(
-              `\n  ${currentProjectSessions.length} session(s) were active before last ao stop (${stoppedAgo}):`,
+              `\n  ${currentProjectSessions.length} session(s) were active before last athene stop (${stoppedAgo}):`,
             ),
           );
           console.log(chalk.dim(`  ${currentProjectSessions.join(", ")}\n`));
@@ -1127,7 +1127,7 @@ async function runStartup(
 
             // Preserve restore state for sessions that failed (transient
             // workspace/runtime errors). Without this, a single failure on
-            // the first `ao start` would erase the only persisted record
+            // the first `athene start` would erase the only persisted record
             // and the remaining sessions would never be retryable. When
             // every session restored (or was skipped), clear the file.
             if (failedSessionIds.size > 0) {
@@ -1147,7 +1147,7 @@ async function runStartup(
                 });
                 console.log(
                   chalk.dim(
-                    `  Kept ${failedSessionIds.size} session(s) in last-stop record for retry on next ao start.\n`,
+                    `  Kept ${failedSessionIds.size} session(s) in last-stop record for retry on next athene start.\n`,
                   ),
                 );
               } else {
@@ -1199,7 +1199,7 @@ async function runStartup(
     const target =
       opts?.dashboard !== false
         ? projectSessionUrl(port, projectId, selectedOrchestratorId)
-        : `ao session attach ${selectedOrchestratorId}`;
+        : `athene session attach ${selectedOrchestratorId}`;
 
     console.log(chalk.cyan("Orchestrator:"), `${target}${restoreNote}`);
   }
@@ -1332,7 +1332,7 @@ async function maybeSweepAoOrphansOnStart(reapOrphans: boolean | undefined): Pro
   if (!reapOrphans) {
     console.log(
       chalk.yellow(
-        `  Found ${orphans.length} orphaned AO child process(es). Run \`ao start --reap-orphans\` to clean them up.`,
+        `  Found ${orphans.length} orphaned AO child process(es). Run \`athene start --reap-orphans\` to clean them up.`,
       ),
     );
     return;
@@ -1404,7 +1404,7 @@ async function attachAndSpawnOrchestrator(opts: {
     console.log(
       chalk.yellow(
         `\nℹ Lifecycle polling for "${projectId}" will attach within ~60s\n` +
-          `  because the running ao start process now supervises active global projects.\n`,
+          `  because the running athene start process now supervises active global projects.\n`,
       ),
     );
   }
@@ -1433,8 +1433,8 @@ export function registerStart(program: Command): void {
     .option("--dev", "Use Next.js dev server with hot reload (for dashboard UI development)")
     .option("--interactive", "Prompt to configure config settings")
     .option("--reap-orphans", "Kill orphaned AO child processes before starting")
-    .option("--restore", "Restore sessions from last ao stop without prompting")
-    .option("--no-restore", "Skip restoring sessions from last ao stop")
+    .option("--restore", "Restore sessions from last athene stop without prompting")
+    .option("--no-restore", "Skip restoring sessions from last athene stop")
     .action(
       async (
         projectArg?: string,
@@ -1452,7 +1452,7 @@ export function registerStart(program: Command): void {
           source: "cli",
           kind: "cli.start_invoked",
           level: "info",
-          summary: "ao start invoked",
+          summary: "athene start invoked",
           data: {
             projectArg: projectArg ?? null,
             dashboard: opts?.dashboard !== false,
@@ -1496,12 +1496,12 @@ export function registerStart(program: Command): void {
             if (!isHumanCaller() && !isProjectId) {
               // Non-human caller, no arg or URL/path arg: print info and
               // exit. Project-id args fall through to attach+spawn so
-              // automation can `ao start <id>` against a live daemon.
+              // automation can `athene start <id>` against a live daemon.
               console.log(`AO is already running.`);
               console.log(`Dashboard: ${dashboardUrl(running.port)}`);
               console.log(`PID: ${running.pid}`);
               console.log(`Projects: ${running.projects.join(", ")}`);
-              console.log(`To restart: ao stop && ao start`);
+              console.log(`To restart: athene stop && athene start`);
               unlockStartup();
               process.exit(0);
             }
@@ -1570,7 +1570,7 @@ export function registerStart(program: Command): void {
                 // .yaml, the project is appended there. This matches the
                 // pre-B.2 behavior — the menu's "add" path deliberately does
                 // not spawn an orchestrator session, so the user can review
-                // the registration and start one explicitly via `ao start
+                // the registration and start one explicitly via `athene start
                 // <id>` or the "new" menu choice.
                 const loadedCfg = loadConfig();
                 const addedId = await addProjectToConfig(loadedCfg, cwdResolved);
@@ -1845,7 +1845,7 @@ export function registerStart(program: Command): void {
             },
           });
 
-          // Ctrl+C and `ao stop` (which sends SIGTERM) perform a full
+          // Ctrl+C and `athene stop` (which sends SIGTERM) perform a full
           // graceful shutdown via the handler installed inside runStartup().
         } catch (err) {
           if (!isCliFailureEventRecordedError(err)) {
@@ -1853,7 +1853,7 @@ export function registerStart(program: Command): void {
               source: "cli",
               kind: "cli.start_failed",
               level: "error",
-              summary: `ao start action failed`,
+              summary: `athene start action failed`,
               data: {
                 reason: "outer",
                 errorMessage: err instanceof Error ? err.message : String(err),
@@ -1890,16 +1890,16 @@ function isLocalPath(arg: string): boolean {
 
 /**
  * Lazy import + invoke the runtime-process plugin's Windows pty-host sweep.
- * Kept lazy so non-Windows users don't pay the import cost on every `ao stop`,
+ * Kept lazy so non-Windows users don't pay the import cost on every `athene stop`,
  * and so the cli isn't tightly coupled to the plugin's surface.
  *
- * Errors are swallowed: a sweep failure must not prevent `ao stop` from killing
+ * Errors are swallowed: a sweep failure must not prevent `athene stop` from killing
  * the parent process — the user explicitly asked us to stop AO.
  */
 async function sweepWindowsPtyHostsBeforeParentKill(): Promise<void> {
   if (!isWindows()) return;
   try {
-    const mod = (await import("@aoagents/ao-plugin-runtime-process")) as {
+    const mod = (await import("@slievr/plugin-runtime-process")) as {
       sweepWindowsPtyHosts?: () => Promise<{
         attempted: number;
         gracefullyExited: number;
@@ -1920,7 +1920,7 @@ async function sweepWindowsPtyHostsBeforeParentKill(): Promise<void> {
       );
     }
   } catch {
-    /* sweep is best-effort; don't block ao stop on it */
+    /* sweep is best-effort; don't block athene stop on it */
   }
 }
 
@@ -1936,7 +1936,7 @@ export function registerStop(program: Command): void {
         source: "cli",
         kind: "cli.stop_invoked",
         level: "info",
-        summary: "ao stop invoked",
+        summary: "athene stop invoked",
         data: {
           projectArg: projectArg ?? null,
           all: opts.all === true,
@@ -1970,7 +1970,7 @@ export function registerStop(program: Command): void {
         }
 
         let config = loadConfig();
-        // ao stop affects all projects (it kills the parent ao start process),
+        // athene stop affects all projects (it kills the parent athene start process),
         // so load the global config which has all registered projects.
         // When a specific project is targeted, only fall back to global if
         // the project isn't in the local config.
@@ -2007,7 +2007,7 @@ export function registerStop(program: Command): void {
 
         const sm = await getSessionManager(config);
         try {
-          // When no explicit project is given, list ALL sessions — ao stop
+          // When no explicit project is given, list ALL sessions — athene stop
           // kills the parent process which affects all projects. When a
           // specific project is targeted, scope to that project only.
           const stopAll = !projectArg;
@@ -2055,7 +2055,7 @@ export function registerStop(program: Command): void {
                   source: "cli",
                   kind: "cli.stop_session_failed",
                   level: "warn",
-                  summary: `failed to kill session during ao stop`,
+                  summary: `failed to kill session during athene stop`,
                   data: { errorMessage: err instanceof Error ? err.message : String(err) },
                 });
                 warnings.push(
@@ -2095,7 +2095,7 @@ export function registerStop(program: Command): void {
             console.log(chalk.yellow(`No active sessions found`));
           }
 
-          // Record stopped sessions for restore on next `ao start`
+          // Record stopped sessions for restore on next `athene start`
           if (killedSessionIds.length > 0) {
             const otherProjects: Array<{ projectId: string; sessionIds: string[] }> = [];
             for (const [pid, ids] of otherByProject) {
@@ -2130,7 +2130,7 @@ export function registerStop(program: Command): void {
                 source: "cli",
                 kind: "cli.last_stop_write_failed",
                 level: "error",
-                summary: `failed to write last-stop state during ao stop`,
+                summary: `failed to write last-stop state during athene stop`,
                 data: {
                   targetSessionCount: targetSessionIds.length,
                   otherProjectCount: otherProjects.length,
@@ -2153,11 +2153,11 @@ export function registerStop(program: Command): void {
           );
         }
 
-        // Only kill the parent `ao start` process and dashboard when stopping
+        // Only kill the parent `athene start` process and dashboard when stopping
         // everything (no project arg). When targeting a specific project, the
         // parent process and dashboard serve all projects and must stay alive.
         if (!projectArg) {
-          // Lifecycle polling runs in-process inside the `ao start` process
+          // Lifecycle polling runs in-process inside the `athene start` process
           // (registered via `running.json`). Sending SIGTERM to that PID below
           // triggers the shared shutdown handler in `lifecycle-service`, which
           // stops every per-project loop. No explicit stop call needed here —
@@ -2177,7 +2177,7 @@ export function registerStop(program: Command): void {
                 source: "cli",
                 kind: "cli.daemon_killed",
                 level: "info",
-                summary: `SIGTERM sent to parent ao start`,
+                summary: `SIGTERM sent to parent athene start`,
                 data: { pid: running.pid, port: running.port },
               });
             } catch (err) {
@@ -2186,7 +2186,7 @@ export function registerStop(program: Command): void {
                 source: "cli",
                 kind: "cli.daemon_killed",
                 level: "warn",
-                summary: `parent ao start was already dead`,
+                summary: `parent athene start was already dead`,
                 data: {
                   pid: running.pid,
                   errorMessage: err instanceof Error ? err.message : String(err),
@@ -2216,7 +2216,7 @@ export function registerStop(program: Command): void {
           source: "cli",
           kind: "cli.stop_failed",
           level: "error",
-          summary: `ao stop action failed`,
+          summary: `athene stop action failed`,
           data: {
             projectArg: projectArg ?? null,
             errorMessage: err instanceof Error ? err.message : String(err),

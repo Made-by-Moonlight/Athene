@@ -4,7 +4,7 @@ This document defines intended behavior for Agent Orchestrator when `agent: open
 
 ## Scope
 
-- CLI workflows: `ao start`, `ao spawn`, `ao status`, `ao send`, `ao session cleanup`, `ao session restore`, `ao session remap`.
+- CLI workflows: `athene start`, `athene spawn`, `athene status`, `athene send`, `athene session cleanup`, `athene session restore`, `athene session remap`.
 - Core lifecycle paths in `SessionManager` and plugin resolution.
 - OpenCode session mapping and deletion semantics.
 
@@ -17,7 +17,7 @@ This document defines intended behavior for Agent Orchestrator when `agent: open
   - `ignore`: destroy alive runtime and start fresh without deleting prior OpenCode sessions.
   - `delete-new` and `kill-previous` normalize to `delete`.
   - `ignore-new` normalizes to `ignore`.
-- `projects.<id>.opencodeIssueSessionStrategy` controls issue-session reuse for `ao spawn` with OpenCode:
+- `projects.<id>.opencodeIssueSessionStrategy` controls issue-session reuse for `athene spawn` with OpenCode:
   - `reuse` (default): reuse mapped OpenCode session for same issue when available.
   - `delete`: delete mapped OpenCode sessions for same issue, then spawn fresh.
   - `ignore`: spawn fresh without deleting prior issue sessions.
@@ -27,10 +27,10 @@ This document defines intended behavior for Agent Orchestrator when `agent: open
 ## 1) Plugin Resolution
 
 - CLI must resolve `opencode` via `getAgentByName` and `getAgent` without error.
-- Core plugin registry built-ins must include `@aoagents/ao-plugin-agent-opencode` under slot `agent`.
+- Core plugin registry built-ins must include `@slievr/plugin-agent-opencode` under slot `agent`.
 - Expected failure mode: unknown agent names fail fast with `Unknown agent plugin: <name>`.
 
-## 2) `ao start` (orchestrator session)
+## 2) `athene start` (orchestrator session)
 
 - Always delegates orchestrator session lifecycle to `SessionManager.spawnOrchestrator`.
 - For `orchestratorSessionStrategy: reuse`:
@@ -41,7 +41,7 @@ This document defines intended behavior for Agent Orchestrator when `agent: open
 - For `ignore` strategy:
   - do not delete old OpenCode sessions; launch fresh runtime.
 
-## 3) `ao spawn`
+## 3) `athene spawn`
 
 - Uses selected agent (default/project/override) and launches OpenCode command from plugin launch config.
 - Worker sessions write persistent system instructions to `worker-prompt-<session>.md`.
@@ -53,19 +53,19 @@ This document defines intended behavior for Agent Orchestrator when `agent: open
 - OpenCode orchestrators still use workspace `AGENTS.md` for persisted system prompt context.
 - Model/subagent/task prompt inputs are forwarded into OpenCode launch command.
 
-## 4) `ao send`
+## 4) `athene send`
 
 - Resolves agent by project config; when session metadata indicates OpenCode and mapping missing, core `send()` attempts title-based discovery and persists mapping.
 - Sends message through runtime plugin handle; fails if session/runtime cannot be resolved.
 - Busy detection is plugin-driven (`detectActivity`).
 
-## 5) `ao status`
+## 5) `athene status`
 
 - Uses project/default configured agent for session enrichment and activity checks.
 - Must not fail solely because project default agent is `opencode`.
 - Fallback mode (no config) uses `claude-code` for best-effort tmux introspection only.
 
-## 6) `ao session cleanup`
+## 6) `athene session cleanup`
 
 - Never cleans up orchestrator sessions (by explicit `role=orchestrator` or `-orchestrator` suffix).
 - For OpenCode sessions with mapped `opencodeSessionId`:
@@ -73,7 +73,7 @@ This document defines intended behavior for Agent Orchestrator when `agent: open
   - archived sessions with mapping are cleaned once; `opencodeCleanedAt` prevents repeated deletion attempts.
 - If OpenCode delete returns "session not found", treat as already cleaned.
 
-## 7) `ao session restore`
+## 7) `athene session restore`
 
 - For OpenCode session restore, mapping is required.
 - If mapping missing:
@@ -83,7 +83,7 @@ This document defines intended behavior for Agent Orchestrator when `agent: open
 - For restored OpenCode workers, core recreates `OPENCODE_CONFIG` from the saved worker prompt file when it exists.
 - For restored OpenCode orchestrators, core rewrites workspace `AGENTS.md` from the saved orchestrator prompt file.
 
-## 8) `ao session remap`
+## 8) `athene session remap`
 
 - Only valid for OpenCode sessions.
 - `remap(session, force=false)`:
@@ -104,7 +104,7 @@ This document defines intended behavior for Agent Orchestrator when `agent: open
 ## Revalidation Baseline (Current)
 
 - Unit/integration validation that should remain green for OpenCode workflows:
-  - `@aoagents/ao-plugin-agent-opencode` tests.
-  - `@aoagents/ao-core` tests: `session-manager.test.ts`, `plugin-registry.test.ts`.
-  - `@aoagents/ao-cli` tests: `plugins.test.ts`, `start.test.ts`, `session.test.ts`, `send.test.ts`, `status.test.ts`.
-  - `@aoagents/ao-integration-tests` with `test:integration` (includes `agent-opencode.integration.test.ts`, conditionally skipped tests where prerequisites are unavailable).
+  - `@slievr/plugin-agent-opencode` tests.
+  - `@slievr/core` tests: `session-manager.test.ts`, `plugin-registry.test.ts`.
+  - `@slievr/cli` tests: `plugins.test.ts`, `start.test.ts`, `session.test.ts`, `send.test.ts`, `status.test.ts`.
+  - `@slievr/integration-tests` with `test:integration` (includes `agent-opencode.integration.test.ts`, conditionally skipped tests where prerequisites are unavailable).

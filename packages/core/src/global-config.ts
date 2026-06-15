@@ -123,7 +123,7 @@ const GLOBAL_PROJECT_ENTRY_FIELDS = new Set([
   "registeredAt",
   "displayName",
   "sessionPrefix",
-  "storageKey", // Preserved until `ao migrate-storage` strips it
+  "storageKey", // Preserved until `athene migrate-storage` strips it
 ]);
 
 const LOCAL_CONFIG_FILENAMES = ["agent-orchestrator.yaml", "agent-orchestrator.yml"] as const;
@@ -159,7 +159,7 @@ export type GlobalProjectEntry = z.infer<typeof GlobalProjectEntrySchema>;
  *
  *   stable  — @latest (weekly Thursday releases). Auto-installs when run.
  *   nightly — @nightly (daily Fri–Tue cron). Auto-installs when run.
- *   manual  — no checks, no notice, no install. User runs `ao update` manually.
+ *   manual  — no checks, no notice, no install. User runs `athene update` manually.
  */
 export const UpdateChannelSchema = z.enum(["stable", "nightly", "manual"]);
 export type UpdateChannel = z.infer<typeof UpdateChannelSchema>;
@@ -195,13 +195,13 @@ export const GlobalConfigSchema = z
      *
      * Default `manual` (resolved at read time) so users who upgrade across
      * this change keep their existing behavior — no surprise auto-installs.
-     * The onboarding flow prompts new users on first `ao start` and persists
+     * The onboarding flow prompts new users on first `athene start` and persists
      * the answer here.
      *
      * `.catch(undefined)` makes the schema tolerant of legacy / typo'd values
      * in the on-disk config: a stray `updateChannel: foo` parses as
      * "unset" rather than failing the whole config load. The user can fix it
-     * later via `ao config set updateChannel <stable|nightly|manual>`.
+     * later via `athene config set updateChannel <stable|nightly|manual>`.
      */
     updateChannel: UpdateChannelSchema.optional().catch(undefined),
     /** Override path-based install detection. Optional. */
@@ -1165,7 +1165,7 @@ export function migrateToGlobalConfig(oldConfigPath: string, globalConfigPath?: 
  * Single source of truth for "what does a brand-new global config look like?"
  * — used by:
  *   - The internal initial-load path here in core (`makeEmptyGlobalConfig`).
- *   - `ao config set` (CLI) when no config file exists yet.
+ *   - `athene config set` (CLI) when no config file exists yet.
  *   - `maybePromptForUpdateChannel` (CLI) when persisting the user's channel
  *     pick on first run.
  *

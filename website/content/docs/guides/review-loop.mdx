@@ -45,13 +45,13 @@ reactions:
 
 ```bash
 # Check all tracked PRs now
-ao review-check
+athene review-check
 
 # One project
-ao review-check myproject
+athene review-check myproject
 
 # Dry run: show who would get nudged
-ao review-check --dry-run
+athene review-check --dry-run
 ```
 
 ## Best practices
@@ -120,9 +120,9 @@ Practical consequence: after a review comment lands on the PR, there can be **up
 If you need an immediate check outside the polling cadence, run:
 
 ```bash
-ao review-check           # check all tracked PRs right now
-ao review-check myproject # one project only
-ao review-check --dry-run # show what would be sent, don't send
+athene review-check           # check all tracked PRs right now
+athene review-check myproject # one project only
+athene review-check --dry-run # show what would be sent, don't send
 ```
 
-`ao review-check` is a standalone CLI command that calls the GitHub API directly and is not subject to the in-process throttle.
+`athene review-check` is a standalone CLI command that calls the GitHub API directly and is not subject to the in-process throttle.

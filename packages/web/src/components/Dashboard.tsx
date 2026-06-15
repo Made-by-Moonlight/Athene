@@ -27,7 +27,7 @@ import { CopyDebugBundleButton } from "./CopyDebugBundleButton";
 import { DashboardNotificationButton } from "./DashboardNotificationButton";
 import { SidebarContext, useSidebarContext } from "./workspace/SidebarContext";
 import { ProjectSidebar } from "./ProjectSidebar";
-import { isOrchestratorSession } from "@aoagents/ao-core/types";
+import { isOrchestratorSession } from "@slievr/core/types";
 import { projectDashboardPath, projectReviewPath, projectSessionPath } from "@/lib/routes";
 import { BottomSheet } from "./BottomSheet";
 
@@ -491,7 +491,7 @@ function DashboardInner({
       <span className="break-words text-[var(--color-text-secondary)]">{visibleLoadError}</span>
       <span className="text-[var(--color-text-secondary)]">
         Confirm <span className="font-mono text-[10px]">agent-orchestrator.yaml</span> exists and is
-        valid, then run <span className="font-mono text-[10px]">ao doctor</span> for diagnostics.
+        valid, then run <span className="font-mono text-[10px]">athene doctor</span> for diagnostics.
       </span>
     </div>
   ) : null;

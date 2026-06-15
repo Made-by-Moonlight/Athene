@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import type * as AoCore from "@aoagents/ao-core";
+import type * as AoCore from "@slievr/core";
 
 const { mockUnregister, mockWaitForExit, mockKillProcessTree, mockSweepDaemonChildren } =
   vi.hoisted(() => ({
@@ -14,8 +14,8 @@ vi.mock("../../src/lib/running-state.js", () => ({
   waitForExit: mockWaitForExit,
 }));
 
-vi.mock("@aoagents/ao-core", async () => {
-  const actual = await vi.importActual<typeof AoCore>("@aoagents/ao-core");
+vi.mock("@slievr/core", async () => {
+  const actual = await vi.importActual<typeof AoCore>("@slievr/core");
   return {
     ...actual,
     killProcessTree: mockKillProcessTree,

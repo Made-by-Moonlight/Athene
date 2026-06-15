@@ -6,14 +6,14 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OrchestratorEvent } from "@aoagents/ao-core";
+import type { OrchestratorEvent } from "@slievr/core";
 
 const { recordActivityEventMock } = vi.hoisted(() => ({
   recordActivityEventMock: vi.fn(),
 }));
 
-vi.mock("@aoagents/ao-core", async () => {
-  const actual = (await vi.importActual("@aoagents/ao-core")) as Record<string, unknown>;
+vi.mock("@slievr/core", async () => {
+  const actual = (await vi.importActual("@slievr/core")) as Record<string, unknown>;
   return {
     ...actual,
     recordActivityEvent: recordActivityEventMock,

@@ -16,7 +16,7 @@ while [ $# -gt 0 ]; do
       ;;
     -h|--help)
       cat <<'EOF'
-Usage: ao update [--skip-smoke] [--smoke-only]
+Usage: athene update [--skip-smoke] [--smoke-only]
 
 Fast-forwards the local Agent Orchestrator install repo to main, installs deps,
 clean-rebuilds all workspace packages, refreshes the ao launcher, and runs smoke tests.
@@ -69,7 +69,7 @@ resolve_repo_root() {
 }
 
 if ! REPO_ROOT="$(resolve_repo_root)"; then
-  printf 'Unable to find Agent Orchestrator repo root. Fix: run via ao update or set AO_REPO_ROOT.\n' >&2
+  printf 'Unable to find Agent Orchestrator repo root. Fix: run via athene update or set AO_REPO_ROOT.\n' >&2
   exit 1
 fi
 
@@ -178,7 +178,7 @@ ensure_on_target_branch() {
   local current_branch
   current_branch="$(git branch --show-current)"
   if [ "$current_branch" != "$TARGET_BRANCH" ]; then
-    printf 'Current branch is %s, expected %s. Fix: git switch %s && rerun ao update.\n' \
+    printf 'Current branch is %s, expected %s. Fix: git switch %s && rerun athene update.\n' \
       "$current_branch" "$TARGET_BRANCH" "$TARGET_BRANCH" >&2
     exit 1
   fi
@@ -202,7 +202,7 @@ if [ "$SMOKE_ONLY" = false ]; then
     exit 1
   fi
 
-  ensure_repo_clean "Working tree is dirty. Fix: commit or stash local changes before running ao update."
+  ensure_repo_clean "Working tree is dirty. Fix: commit or stash local changes before running athene update."
   ensure_on_target_branch
 
   maybe_sync_origin_with_upstream

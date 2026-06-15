@@ -22,7 +22,7 @@ import {
   createCodeReviewStore,
   type CodeReviewRunStatus,
   type CodeReviewRunSummary,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 import { git, getTmuxSessions, getTmuxActivity } from "../lib/shell.js";
 import {
   banner,
@@ -380,7 +380,7 @@ function printReviewStatus(summary: ProjectReviewStatus): void {
   if (hiddenCount > 0) {
     console.log(
       chalk.dim(
-        `    ${hiddenCount} more review run${hiddenCount !== 1 ? "s" : ""}. Use \`ao review list ${summary.projectId}\`.`,
+        `    ${hiddenCount} more review run${hiddenCount !== 1 ? "s" : ""}. Use \`athene review list ${summary.projectId}\`.`,
       ),
     );
   }
@@ -435,7 +435,7 @@ export function registerStatus(program: Command): void {
         try {
           config = loadConfig();
         } catch {
-          console.log(chalk.yellow("No config found. Run `ao start` first."));
+          console.log(chalk.yellow("No config found. Run `athene start` first."));
           console.log(chalk.dim("Falling back to session discovery...\n"));
           await showFallbackStatus();
           return;
@@ -630,7 +630,7 @@ export function registerStatus(program: Command): void {
             if (unverifiedTotal > 0) {
               console.log(
                 chalk.yellow(
-                  `  ⚠ ${unverifiedTotal} issue${unverifiedTotal !== 1 ? "s" : ""} awaiting verification (use \`ao verify --list\` to see them)`,
+                  `  ⚠ ${unverifiedTotal} issue${unverifiedTotal !== 1 ? "s" : ""} awaiting verification (use \`athene verify --list\` to see them)`,
                 ),
               );
             }
@@ -677,7 +677,7 @@ export function registerStatus(program: Command): void {
 
 async function showFallbackStatus(): Promise<void> {
   if (isWindows()) {
-    console.log(chalk.dim("No agent-orchestrator config found. Run `ao start` first."));
+    console.log(chalk.dim("No agent-orchestrator config found. Run `athene start` first."));
     return;
   }
   const allTmux = await getTmuxSessions();

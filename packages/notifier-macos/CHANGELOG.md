@@ -1,4 +1,4 @@
-# @aoagents/ao-notifier-macos
+# @slievr/notifier-macos
 
 ## 0.9.1
 

@@ -1,4 +1,4 @@
-import { isOrchestratorSession, isTerminalSession } from "@aoagents/ao-core";
+import { isOrchestratorSession, isTerminalSession } from "@slievr/core";
 import { getServices } from "@/lib/services";
 import {
   sessionToDashboard,

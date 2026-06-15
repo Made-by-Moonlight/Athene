@@ -19,7 +19,7 @@ import {
   type RuntimeHandle,
   type Session,
   type WorkspaceHooksConfig,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 import { execFile, execFileSync } from "node:child_process";
 import { promisify } from "node:util";
 import { stat, access, readFile, lstat } from "node:fs/promises";

@@ -9,7 +9,7 @@ import {
   type NotificationDataV3,
   type OrchestratorEvent,
   type PluginModule,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 
 // Module-level guard so we only emit notifier.dep_missing once per process.
 let depMissingEmitted = false;
@@ -1442,11 +1442,11 @@ function formatComposioError(err: unknown, app: ComposioApp, discordMode?: Disco
 function setupCommandForApp(app: ComposioApp, discordMode?: DiscordMode): string {
   if (app === "discord") {
     return discordMode === "webhook"
-      ? "ao setup composio-discord"
-      : "ao setup composio-discord-bot";
+      ? "athene setup composio-discord"
+      : "athene setup composio-discord-bot";
   }
-  if (app === "gmail") return "ao setup composio-mail";
-  return "ao setup composio";
+  if (app === "gmail") return "athene setup composio-mail";
+  return "athene setup composio";
 }
 
 function buildToolArgs(
@@ -1670,7 +1670,7 @@ export function create(config?: Record<string, unknown>): Notifier {
   function assertGmailConnectedAccount(): void {
     if (defaultApp === "gmail" && !connectedAccountId) {
       throw new Error(
-        '[notifier-composio] connectedAccountId is required when defaultApp is "gmail". Connect Gmail in Composio, then run `ao setup composio-mail`, or set notifiers.<name>.connectedAccountId.',
+        '[notifier-composio] connectedAccountId is required when defaultApp is "gmail". Connect Gmail in Composio, then run `athene setup composio-mail`, or set notifiers.<name>.connectedAccountId.',
       );
     }
   }

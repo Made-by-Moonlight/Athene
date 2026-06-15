@@ -3,7 +3,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import chalk from "chalk";
 import { parseDocument } from "yaml";
-import { CONFIG_SCHEMA_URL, findConfigFile, isCanonicalGlobalConfigPath } from "@aoagents/ao-core";
+import { CONFIG_SCHEMA_URL, findConfigFile, isCanonicalGlobalConfigPath } from "@slievr/core";
 import {
   applyNotifierRoutingPreset,
   ensureNotifierDefault,
@@ -110,7 +110,7 @@ function readConfigContext(): ConfigContext {
   const configPath = findConfigFile() ?? undefined;
   if (!configPath) {
     throw new OpenClawSetupError(
-      "No agent-orchestrator.yaml found. Run 'ao start' first to create one.",
+      "No agent-orchestrator.yaml found. Run 'athene start' first to create one.",
     );
   }
 
@@ -600,7 +600,7 @@ async function resolveInteractiveSetup(
   const existingUrl = stringValue(existingOpenClaw["url"]);
   const initialOpenClawConfigPath = getConfiguredOpenClawConfigPath(opts, existingOpenClaw);
 
-  clack.intro(chalk.bgCyan(chalk.black(" ao setup openclaw ")));
+  clack.intro(chalk.bgCyan(chalk.black(" athene setup openclaw ")));
 
   let url: string | undefined;
   let tokenInfo: TokenInfo | undefined;
@@ -678,7 +678,7 @@ async function resolveNonInteractiveSetup(
       throw new OpenClawSetupError(
         "Error: OpenClaw gateway not reachable and no --url provided.\n" +
           "  Start OpenClaw first, or pass --url explicitly:\n" +
-          "  Example: ao setup openclaw --url http://127.0.0.1:18789/hooks/agent --openclaw-config-path ~/.openclaw/openclaw.json --non-interactive",
+          "  Example: athene setup openclaw --url http://127.0.0.1:18789/hooks/agent --openclaw-config-path ~/.openclaw/openclaw.json --non-interactive",
       );
     }
   }
@@ -706,7 +706,7 @@ async function resolveNonInteractiveSetup(
     );
   }
 
-  console.log(chalk.dim("Skipping setup probe in non-interactive mode. Run `ao setup openclaw --status` to verify."));
+  console.log(chalk.dim("Skipping setup probe in non-interactive mode. Run `athene setup openclaw --status` to verify."));
 
   const routingPreset = resolveOpenClawRoutingPreset(opts.routingPreset) ?? (opts.refresh ? undefined : "urgent-action");
 
@@ -809,7 +809,7 @@ async function runInteractiveSetupProbe(resolved: ResolvedOpenClawSetup): Promis
       `OpenClaw setup probe did not pass yet: ${result.error ?? "unknown validation error"}`,
     ),
   );
-  console.log(chalk.dim("Restart OpenClaw, then run `ao setup openclaw --status` to verify."));
+  console.log(chalk.dim("Restart OpenClaw, then run `athene setup openclaw --status` to verify."));
 }
 
 async function printStatus(): Promise<void> {
@@ -879,11 +879,11 @@ export async function runOpenClawSetupAction(opts: OpenClawSetupOptions): Promis
     const clack = await import("@clack/prompts");
     clack.outro(
       `${chalk.green("OpenClaw setup complete!")} AO will send notifications to OpenClaw.\n` +
-        chalk.dim("  Test it with: ao notify test --to openclaw --template basic\n") +
-        chalk.dim("  Restart AO with 'ao stop && ao start' to activate."),
+        chalk.dim("  Test it with: athene notify test --to openclaw --template basic\n") +
+        chalk.dim("  Restart AO with 'athene stop && athene start' to activate."),
     );
   } else {
     console.log(chalk.green("\n✓ OpenClaw setup complete."));
-    console.log(chalk.dim("Restart AO to activate: ao stop && ao start"));
+    console.log(chalk.dim("Restart AO to activate: athene stop && athene start"));
   }
 }

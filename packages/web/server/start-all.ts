@@ -1,6 +1,6 @@
 /**
  * Production entry point — starts Next.js + terminal servers.
- * Used by `ao start` when running from an npm install (no monorepo).
+ * Used by `athene start` when running from an npm install (no monorepo).
  * Replaces the dev-only `concurrently` setup.
  */
 
@@ -14,7 +14,7 @@ import {
   killProcessTree,
   markDaemonShutdownHandlerInstalled,
   spawnManagedDaemonChild,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

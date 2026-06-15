@@ -9,7 +9,7 @@ const { mockQueryActivityEvents, mockSearchActivityEvents, mockGetActivityEventS
   }),
 );
 
-vi.mock("@aoagents/ao-core", () => ({
+vi.mock("@slievr/core", () => ({
   queryActivityEvents: (...args: unknown[]) => mockQueryActivityEvents(...args),
   searchActivityEvents: (...args: unknown[]) => mockSearchActivityEvents(...args),
   getActivityEventStats: (...args: unknown[]) => mockGetActivityEventStats(...args),

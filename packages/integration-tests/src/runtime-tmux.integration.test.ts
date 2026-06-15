@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import tmuxPlugin from "@aoagents/ao-plugin-runtime-tmux";
-import type { RuntimeHandle } from "@aoagents/ao-core";
+import tmuxPlugin from "@slievr/plugin-runtime-tmux";
+import type { RuntimeHandle } from "@slievr/core";
 import { isTmuxAvailable, killSessionsByPrefix } from "./helpers/tmux.js";
 import { sleep } from "./helpers/polling.js";
 

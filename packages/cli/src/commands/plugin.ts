@@ -10,7 +10,7 @@ import {
   type PluginSlot,
   type InstalledPluginConfig,
   type OrchestratorConfig,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 import { parseDocument } from "yaml";
 import {
   buildPluginDescriptor,
@@ -405,7 +405,7 @@ export function registerPlugin(program: Command): void {
 
         if (isInteractive) {
           const clack = await import("@clack/prompts");
-          clack.intro(chalk.bgCyan(chalk.black(" ao plugin create ")));
+          clack.intro(chalk.bgCyan(chalk.black(" athene plugin create ")));
 
           if (!name) {
             const value = await clack.text({
@@ -522,7 +522,7 @@ export function registerPlugin(program: Command): void {
       ) => {
         const configPath = findConfigFile();
         if (!configPath) {
-          throw new Error("No agent-orchestrator.yaml found. Run 'ao start' first.");
+          throw new Error("No agent-orchestrator.yaml found. Run 'athene start' first.");
         }
 
         const config = loadConfig(configPath);
@@ -563,7 +563,7 @@ export function registerPlugin(program: Command): void {
     .action(async (reference: string | undefined, opts: { all?: boolean }) => {
       const configPath = findConfigFile();
       if (!configPath) {
-        throw new Error("No agent-orchestrator.yaml found. Run 'ao start' first.");
+        throw new Error("No agent-orchestrator.yaml found. Run 'athene start' first.");
       }
 
       if (!reference && opts.all !== true) {
@@ -623,7 +623,7 @@ export function registerPlugin(program: Command): void {
     .action((reference: string) => {
       const configPath = findConfigFile();
       if (!configPath) {
-        throw new Error("No agent-orchestrator.yaml found. Run 'ao start' first.");
+        throw new Error("No agent-orchestrator.yaml found. Run 'athene start' first.");
       }
 
       const config = loadConfig(configPath);

@@ -10,7 +10,7 @@ import {
   type OrchestratorConfig,
   type OrchestratorEvent,
   type PluginRegistry,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 import {
   addSinkNotifierConfig,
   createNotifyTestEvent,
@@ -294,7 +294,7 @@ describe("notify test helper", () => {
       expect(request?.json).toMatchObject({
         type: "notification",
         event: {
-          message: "Test notification from ao notify test",
+          message: "Test notification from athene notify test",
         },
       });
     } finally {

@@ -1,5 +1,5 @@
 /**
- * Tests for `ao start` and `ao stop` commands.
+ * Tests for `athene start` and `athene stop` commands.
  *
  * Uses --no-dashboard --no-orchestrator flags to isolate project resolution
  * and URL handling logic from dashboard/session infrastructure.
@@ -24,7 +24,7 @@ import {
   getDefaultRuntime,
   recordActivityEvent,
   type SessionManager,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 
 // ---------------------------------------------------------------------------
 // Hoisted mocks
@@ -135,9 +135,9 @@ vi.mock("ora", () => ({
   }),
 }));
 
-vi.mock("@aoagents/ao-core", async (importOriginal) => {
+vi.mock("@slievr/core", async (importOriginal) => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  const actual = await importOriginal<typeof import("@aoagents/ao-core")>();
+  const actual = await importOriginal<typeof import("@slievr/core")>();
   const normalizeOrchestratorSessionStrategy =
     actual.normalizeOrchestratorSessionStrategy ??
     ((strategy: string | undefined) => {
@@ -534,7 +534,7 @@ function createFakeRepo(dir: string, remoteUrl: string, files?: Record<string, s
 }
 
 // ---------------------------------------------------------------------------
-// resolveProject (tested through `ao start` with --no-dashboard --no-orchestrator)
+// resolveProject (tested through `athene start` with --no-dashboard --no-orchestrator)
 // ---------------------------------------------------------------------------
 
 describe("start command — project resolution", () => {
@@ -669,12 +669,12 @@ describe("start command — OpenClaw preflight", () => {
       .mocked(console.log)
       .mock.calls.map((c) => c.join(" "))
       .join("\n");
-    expect(output).toContain("ao setup openclaw");
+    expect(output).toContain("athene setup openclaw");
   });
 });
 
 // ---------------------------------------------------------------------------
-// URL detection — `ao start <url>` triggers handleUrlStart
+// URL detection — `athene start <url>` triggers handleUrlStart
 // ---------------------------------------------------------------------------
 
 describe("start command — URL argument", () => {
@@ -1084,7 +1084,7 @@ describe("start command — orchestrator session strategy display", () => {
     await program.parseAsync(["node", "test", "start", "--no-dashboard"]);
 
     const output = getLoggedOutput();
-    expect(output).toContain("ao session attach app-orchestrator");
+    expect(output).toContain("athene session attach app-orchestrator");
     expect(output).not.toContain("tmux attach -t tmux-session-1");
   });
 
@@ -1105,12 +1105,12 @@ describe("start command — orchestrator session strategy display", () => {
     await program.parseAsync(["node", "test", "start", "--no-dashboard"]);
 
     const output = getLoggedOutput();
-    expect(output).toContain("ao session attach app-orchestrator");
+    expect(output).toContain("athene session attach app-orchestrator");
     expect(output).not.toContain("reused existing session");
   });
 
   it.each(["delete", "ignore", "delete-new", "ignore-new", "kill-previous"] as const)(
-    "uses ao session attach when strategy is %s and --no-dashboard",
+    "uses athene session attach when strategy is %s and --no-dashboard",
     async (orchestratorSessionStrategy) => {
       mockConfigRef.current = makeConfig({
         "my-app": makeProject({ orchestratorSessionStrategy }),
@@ -1129,7 +1129,7 @@ describe("start command — orchestrator session strategy display", () => {
       await program.parseAsync(["node", "test", "start", "--no-dashboard"]);
 
       const output = getLoggedOutput();
-      expect(output).toContain("ao session attach app-orchestrator");
+      expect(output).toContain("athene session attach app-orchestrator");
       expect(output).not.toContain("reused existing session");
     },
   );
@@ -1159,7 +1159,7 @@ describe("start command — orchestrator session strategy display", () => {
     const output = getLoggedOutput();
     expect(mockSessionManager.kill).not.toHaveBeenCalled();
     expect(mockSessionManager.spawnOrchestrator).not.toHaveBeenCalled();
-    expect(output).toContain("ao session attach app-orchestrator");
+    expect(output).toContain("athene session attach app-orchestrator");
   });
 
   it("restores the latest restorable orchestrator when tmux is gone", async () => {
@@ -1246,7 +1246,7 @@ describe("start command — orchestrator session strategy display", () => {
     await program.parseAsync(["node", "test", "start", "--no-dashboard"]);
 
     const output = getLoggedOutput();
-    expect(output).toContain("ao session attach app-orchestrator");
+    expect(output).toContain("athene session attach app-orchestrator");
     expect(mockSessionManager.restore).toHaveBeenCalledWith("app-orchestrator");
     expect(mockSessionManager.spawnOrchestrator).not.toHaveBeenCalled();
   });
@@ -1404,7 +1404,7 @@ describe("start command — orchestrator session strategy display", () => {
     expect(mockSessionManager.spawnOrchestrator).toHaveBeenCalledTimes(1);
 
     const output = getLoggedOutput();
-    expect(output).toContain("ao session attach app-orchestrator");
+    expect(output).toContain("athene session attach app-orchestrator");
     expect(output).not.toContain("(restored)");
   });
 
@@ -1439,7 +1439,7 @@ describe("start command — orchestrator session strategy display", () => {
     expect(mockSessionManager.restore).not.toHaveBeenCalled();
 
     const output = getLoggedOutput();
-    expect(output).toContain("ao session attach app-orchestrator");
+    expect(output).toContain("athene session attach app-orchestrator");
     expect(output).not.toContain("/sessions/my-app-orchestrator");
   });
 
@@ -1522,7 +1522,7 @@ describe("start command — orchestrator session strategy display", () => {
     expect(mockSessionManager.restore).not.toHaveBeenCalled();
 
     const output = getLoggedOutput();
-    expect(output).toContain("ao session attach app-orchestrator");
+    expect(output).toContain("athene session attach app-orchestrator");
   });
 
   it("fails and cleans up dashboard when orchestrator setup throws", async () => {
@@ -1767,7 +1767,7 @@ describe("start command — orchestrator session strategy display", () => {
 });
 
 // ---------------------------------------------------------------------------
-// ao stop
+// athene stop
 // ---------------------------------------------------------------------------
 
 describe("stop command", () => {
@@ -1786,7 +1786,7 @@ describe("stop command", () => {
 
   it("stops the actual numbered orchestrator session and dashboard", async () => {
     mockConfigRef.current = makeConfig({ "my-app": makeProject() });
-    // Issue #1048: ao stop must look up the real numbered orchestrator id
+    // Issue #1048: athene stop must look up the real numbered orchestrator id
     // (e.g. app-orchestrator-3) via sm.list — never the phantom `${prefix}-orchestrator`.
     mockSessionManager.list.mockResolvedValue([
       {
@@ -1815,7 +1815,7 @@ describe("stop command", () => {
     expect(output).toContain("app-orchestrator-3");
   });
 
-  it("does not show the project picker for no-args ao stop across multiple projects", async () => {
+  it("does not show the project picker for no-args athene stop across multiple projects", async () => {
     mockConfigRef.current = makeConfig({
       "project-1": makeProject({ name: "Project 1", sessionPrefix: "p1" }),
       "project-2": makeProject({ name: "Project 2", sessionPrefix: "p2" }),
@@ -1954,7 +1954,7 @@ describe("stop command", () => {
   });
 
   // Recovers from issue #645: when the configured port was busy at start, the
-  // dashboard auto-reassigned to port+N and `ao stop` couldn't find it. The
+  // dashboard auto-reassigned to port+N and `athene stop` couldn't find it. The
   // port-scan fallback in stopDashboard walks port+1..port+MAX_PORT_SCAN.
   // Skip on Windows: killDashboardOnPort skips the `ps` cmdline verification
   // there (uses netstat trust), so the assertions on `ps` output don't apply.
@@ -2299,13 +2299,13 @@ describe("start command — platform-aware runtime fallback", () => {
     );
   });
 
-  // Regression: `ao stop <project>` then `ao start <project>` used to fall
+  // Regression: `athene stop <project>` then `athene start <project>` used to fall
   // through the projectNeedsRestart path into runStartup(), which spawned a
   // SECOND dashboard on a new port and clobbered running.json — leaving the
   // original parent process orphaned. Now it must attach to the running
   // daemon: ensureOrchestrator runs against the existing session manager,
   // running.json gets the project re-added, and runStartup is never called.
-  it("ao start <project> while daemon alive but project removed: attaches to existing daemon (no second dashboard)", async () => {
+  it("athene start <project> while daemon alive but project removed: attaches to existing daemon (no second dashboard)", async () => {
     // Force the global-config fallback to use mockConfigRef.current rather
     // than reading the test machine's real ~/.agent-orchestrator/config.yaml.
     const origGlobalEnv = process.env["AO_GLOBAL_CONFIG"];
@@ -2317,7 +2317,7 @@ describe("start command — platform-aware runtime fallback", () => {
         "project-2": makeProject({ name: "Project 2", sessionPrefix: "p2" }),
       });
 
-      // Daemon alive; project-2 was just removed by `ao stop project-2`.
+      // Daemon alive; project-2 was just removed by `athene stop project-2`.
       mockIsAlreadyRunning.mockResolvedValue({
         pid: 99999,
         configPath: "/fake/config.yaml",

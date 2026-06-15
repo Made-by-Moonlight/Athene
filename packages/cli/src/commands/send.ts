@@ -8,7 +8,7 @@ import {
   type OpenCodeSessionManager,
   type Session,
   loadConfig,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 import { exec, tmux } from "../lib/shell.js";
 import { getAgentByName, getAgentByNameFromRegistry } from "../lib/plugins.js";
 import { getPluginRegistry, getSessionManager } from "../lib/create-session-manager.js";
@@ -136,11 +136,11 @@ export function registerSend(program: Command): void {
         } = await resolveSessionContext(session);
 
         const rawMessage = await readMessageInput(opts, messageParts);
-        // Auto-prefix with the sender's session ID when ao send is invoked
+        // Auto-prefix with the sender's session ID when athene send is invoked
         // from inside an AO session (worker → orchestrator, orchestrator →
         // worker, worker → worker). The receiver gets the message as raw
         // terminal input with no `from:` metadata, so the prefix is the only
-        // way to identify who's writing. Humans running ao send from their
+        // way to identify who's writing. Humans running athene send from their
         // own terminal have no AO_SESSION_ID and stay unprefixed.
         const senderSessionId = process.env["AO_SESSION_ID"];
         const message = senderSessionId

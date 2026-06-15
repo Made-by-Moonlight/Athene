@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from "vitest";
-import type { OrchestratorEvent, NotifyAction } from "@aoagents/ao-core";
+import type { OrchestratorEvent, NotifyAction } from "@slievr/core";
 
 // Mock node:child_process
 vi.mock("node:child_process", () => ({
@@ -593,7 +593,7 @@ describe("notifier-desktop", () => {
       mockExistsSync.mockReturnValue(false);
       const notifier = create({ backend: "ao-app" });
 
-      await expect(notifier.notify(makeEvent())).rejects.toThrow("ao setup desktop");
+      await expect(notifier.notify(makeEvent())).rejects.toThrow("athene setup desktop");
       expect(mockExecFile).not.toHaveBeenCalled();
     });
 

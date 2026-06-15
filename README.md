@@ -11,7 +11,7 @@
 Spawn parallel AI coding agents, each in its own git worktree. Agents autonomously fix CI failures, address review comments, and open PRs — you supervise from one dashboard.
 
 [![GitHub stars](https://img.shields.io/github/stars/ComposioHQ/agent-orchestrator?style=flat-square)](https://github.com/ComposioHQ/agent-orchestrator/stargazers)
-[![npm version](https://img.shields.io/npm/v/%40aoagents%2Fao?style=flat-square)](https://www.npmjs.com/package/@aoagents/ao)
+[![npm version](https://img.shields.io/npm/v/%40aoagents%2Fao?style=flat-square)](https://www.npmjs.com/package/@slievr/athene)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 [![PRs merged](https://img.shields.io/badge/PRs_merged-61-brightgreen?style=flat-square)](https://github.com/ComposioHQ/agent-orchestrator/pulls?q=is%3Amerged)
 [![Tests](https://img.shields.io/badge/test_cases-3%2C288-blue?style=flat-square)](https://github.com/ComposioHQ/agent-orchestrator/releases/tag/metrics-v1)
@@ -52,11 +52,11 @@ Agent Orchestrator manages fleets of AI coding agents working in parallel on you
 ### Install
 
 ```bash
-npm install -g @aoagents/ao
+npm install -g @slievr/athene
 ```
 
-> **Nightly builds** (latest `main`, daily Fri–Tue): `npm install -g @aoagents/ao@nightly`
-> Back to stable: `npm install -g @aoagents/ao@latest`
+> **Nightly builds** (latest `main`, daily Fri–Tue): `npm install -g @slievr/athene@nightly`
+> Back to stable: `npm install -g @slievr/athene@latest`
 
 <details>
 <summary>Permission denied? Install from source?</summary>
@@ -77,7 +77,7 @@ Generate the completion file from the installed CLI:
 
 ```bash
 mkdir -p ~/.zsh/completions
-ao completion zsh > ~/.zsh/completions/_ao
+athene completion zsh > ~/.zsh/completions/_ao
 ```
 
 Then make sure the directory is on your `fpath` before `compinit` runs:
@@ -92,7 +92,7 @@ For Oh My Zsh, install the same generated file into a custom plugin directory an
 
 ```bash
 mkdir -p "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/ao"
-ao completion zsh > "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/ao/_ao"
+athene completion zsh > "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/ao/_ao"
 ```
 
 If you are contributing from a source checkout, you can also symlink the repo copy at [`completions/_ao`](completions/_ao).
@@ -102,13 +102,13 @@ If you are contributing from a source checkout, you can also symlink the repo co
 Point it at any repo — it clones, configures, and launches the dashboard in one command:
 
 ```bash
-ao start https://github.com/your-org/your-repo
+athene start https://github.com/your-org/your-repo
 ```
 
 Or from inside an existing local repo:
 
 ```bash
-cd ~/your-project && ao start
+cd ~/your-project && athene start
 ```
 
 That's it. The dashboard opens at `http://localhost:3000` and the orchestrator agent starts managing your project.
@@ -116,12 +116,12 @@ That's it. The dashboard opens at `http://localhost:3000` and the orchestrator a
 ### Add more projects
 
 ```bash
-ao start ~/path/to/another-repo
+athene start ~/path/to/another-repo
 ```
 
 ## How It Works
 
-1. **You start** — `ao start` launches the dashboard and an orchestrator agent
+1. **You start** — `athene start` launches the dashboard and an orchestrator agent
 2. **Orchestrator spawns workers** — each issue gets its own agent in an isolated git worktree
 3. **Agents work autonomously** — they read code, write tests, create PRs
 4. **Reactions handle feedback** — CI failures and review comments are automatically routed back to the agent
@@ -131,7 +131,7 @@ The orchestrator agent uses the [AO CLI](docs/CLI.md) internally to manage sessi
 
 ## Configuration
 
-`ao start` auto-generates `agent-orchestrator.yaml` with sensible defaults. You can edit it afterwards to customize behavior:
+`athene start` auto-generates `agent-orchestrator.yaml` with sensible defaults. You can edit it afterwards to customize behavior:
 
 ```yaml
 # agent-orchestrator.yaml
@@ -170,7 +170,7 @@ CI fails → agent gets the logs and fixes it. Reviewer requests changes → age
 
 Keep the `$schema` line so editors can autocomplete and validate against [`schema/config.schema.json`](schema/config.schema.json).
 
-See [`agent-orchestrator.yaml.example`](agent-orchestrator.yaml.example) for the full reference, or run `ao config-help` for the complete schema.
+See [`agent-orchestrator.yaml.example`](agent-orchestrator.yaml.example) for the full reference, or run `athene config-help` for the complete schema.
 
 ## Remote Access
 
@@ -213,7 +213,7 @@ Running one AI agent in a terminal is easy. Running 30 across different issues, 
 
 **Without orchestration**, you manually: create branches, start agents, check if they're stuck, read CI failures, forward review comments, track which PRs are ready to merge, clean up when done.
 
-**With Agent Orchestrator**, you: `ao start` and walk away. The system handles isolation, feedback routing, and status tracking. You review PRs and make decisions — the rest is automated.
+**With Agent Orchestrator**, you: `athene start` and walk away. The system handles isolation, feedback routing, and status tracking. You review PRs and make decisions — the rest is automated.
 
 ## Documentation
 

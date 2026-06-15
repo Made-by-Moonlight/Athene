@@ -8,7 +8,7 @@ import {
   SessionNotFoundError,
   recordActivityEvent,
   type OrchestratorConfig,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 import {
   getCorrelationId,
   jsonWithCorrelation,

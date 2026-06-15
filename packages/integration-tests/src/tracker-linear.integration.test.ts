@@ -19,9 +19,9 @@
  */
 
 import { request } from "node:https";
-import type { ProjectConfig } from "@aoagents/ao-core";
+import type { ProjectConfig } from "@slievr/core";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import trackerLinear from "@aoagents/ao-plugin-tracker-linear";
+import trackerLinear from "@slievr/plugin-tracker-linear";
 import { pollUntil, pollUntilEqual } from "./helpers/polling.js";
 
 // ---------------------------------------------------------------------------

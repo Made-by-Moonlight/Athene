@@ -2,7 +2,7 @@ import { spawn } from "node:child_process";
 import { resolve } from "node:path";
 import chalk from "chalk";
 import type { Command } from "commander";
-import { isWindows, loadConfig } from "@aoagents/ao-core";
+import { isWindows, loadConfig } from "@slievr/core";
 import { findWebDir, buildDashboardEnv, waitForPortAndOpen } from "../lib/web-dir.js";
 import { forwardSignalsToChild } from "../lib/shell.js";
 import {
@@ -101,8 +101,8 @@ export function registerDashboard(program: Command): void {
           const stderr = stderrChunks.join("");
           if (looksLikeStaleBuild(stderr)) {
             const recoveryCommand = isInstalledUnderNodeModules(webDir)
-              ? "npm install -g @aoagents/ao@latest"
-              : "ao dashboard --rebuild";
+              ? "npm install -g @slievr/athene@latest"
+              : "athene dashboard --rebuild";
             console.error(
               chalk.yellow(
                 "\nThis looks like a stale build cache issue. Try:\n\n" +

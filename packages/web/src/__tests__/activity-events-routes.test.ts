@@ -12,11 +12,11 @@ import {
   type OrchestratorConfig,
   type PluginRegistry,
   type SCM,
-} from "@aoagents/ao-core";
+} from "@slievr/core";
 
 // Partial mock so we replace recordActivityEvent but keep types/helpers
-vi.mock("@aoagents/ao-core", async () => {
-  const actual = await vi.importActual("@aoagents/ao-core");
+vi.mock("@slievr/core", async () => {
+  const actual = await vi.importActual("@slievr/core");
   return {
     ...(actual as Record<string, unknown>),
     recordActivityEvent: vi.fn(),

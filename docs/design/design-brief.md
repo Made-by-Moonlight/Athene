@@ -1,5 +1,5 @@
 # Agent Orchestrator Dashboard — Design Brief
-*Research-backed design specification for the ao dashboard*
+*Research-backed design specification for the athene dashboard*
 *Version 2 — Updated with Playwright CSS extraction from live sites*
 
 ---
@@ -125,7 +125,7 @@ Primary interaction model: **scan → identify → act**. Not explore, not brows
 
 ### Philosophy
 
-**Mission control, not social feed.** The ao dashboard should feel like a fighter pilot's HUD — dense, high-contrast, every element load-bearing. Visual analogues: Vercel deployment list discipline + Grafana panel density + LangSmith trace density + Linear state dot pattern.
+**Mission control, not social feed.** The athene dashboard should feel like a fighter pilot's HUD — dense, high-contrast, every element load-bearing. Visual analogues: Vercel deployment list discipline + Grafana panel density + LangSmith trace density + Linear state dot pattern.
 
 **Dark mode native.** Not dark mode as a feature — dark mode as the only mode designed with conviction.
 
@@ -261,7 +261,7 @@ Directly derived from Linear's verified CSS token system:
 - Zone header: 32px
 - Page margin: 20px
 
-This density is closer to Grafana than to Linear. The ao dashboard with 30 agents is a monitoring tool, not a project management tool.
+This density is closer to Grafana than to Linear. The athene dashboard with 30 agents is a monitoring tool, not a project management tool.
 
 ---
 
@@ -524,7 +524,7 @@ scrollbar-color: rgba(255,255,255,0.1) transparent;
 
 ### Linear issue list — *the* density benchmark
 **URL**: https://linear.app (see `screenshots/linear-homepage.png`)
-**Why**: The product UI visible in Linear's homepage hero screenshot shows exactly the information density and row compactness that ao session cards should match. Issue ID in muted monospace, title truncated, labels as small pill badges, state dot left-aligned. Zero wasted pixels.
+**Why**: The product UI visible in Linear's homepage hero screenshot shows exactly the information density and row compactness that athene session cards should match. Issue ID in muted monospace, title truncated, labels as small pill badges, state dot left-aligned. Zero wasted pixels.
 
 ### Vercel deployment list
 **URL**: https://vercel.com/dashboard

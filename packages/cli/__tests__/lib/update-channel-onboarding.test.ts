@@ -19,10 +19,10 @@ const { mockGlobalConfig, mockSaveGlobalConfig } = vi.hoisted(() => ({
   mockSaveGlobalConfig: vi.fn(),
 }));
 
-import type * as AoCoreType from "@aoagents/ao-core";
+import type * as AoCoreType from "@slievr/core";
 
-vi.mock("@aoagents/ao-core", async () => {
-  const actual = (await vi.importActual("@aoagents/ao-core")) as typeof AoCoreType;
+vi.mock("@slievr/core", async () => {
+  const actual = (await vi.importActual("@slievr/core")) as typeof AoCoreType;
   return {
     ...actual,
     loadGlobalConfig: () => mockGlobalConfig.value,

@@ -3,7 +3,7 @@
  *
  * Plugins can be:
  * 1. Built-in (packages/plugins/*)
- * 2. npm packages (@aoagents/ao-plugin-*)
+ * 2. npm packages (@slievr/plugin-*)
  * 3. Local file paths specified in config
  */
 
@@ -38,37 +38,37 @@ function makeKey(slot: PluginSlot, name: string): string {
 /** Built-in plugin package names, mapped to their npm package */
 const BUILTIN_PLUGINS: Array<{ slot: PluginSlot; name: string; pkg: string }> = [
   // Runtimes
-  { slot: "runtime", name: "tmux", pkg: "@aoagents/ao-plugin-runtime-tmux" },
-  { slot: "runtime", name: "process", pkg: "@aoagents/ao-plugin-runtime-process" },
+  { slot: "runtime", name: "tmux", pkg: "@slievr/plugin-runtime-tmux" },
+  { slot: "runtime", name: "process", pkg: "@slievr/plugin-runtime-process" },
   // Agents
-  { slot: "agent", name: "claude-code", pkg: "@aoagents/ao-plugin-agent-claude-code" },
-  { slot: "agent", name: "codex", pkg: "@aoagents/ao-plugin-agent-codex" },
-  { slot: "agent", name: "aider", pkg: "@aoagents/ao-plugin-agent-aider" },
-  { slot: "agent", name: "cursor", pkg: "@aoagents/ao-plugin-agent-cursor" },
-  { slot: "agent", name: "kimicode", pkg: "@aoagents/ao-plugin-agent-kimicode" },
-  { slot: "agent", name: "grok", pkg: "@aoagents/ao-plugin-agent-grok" },
-  { slot: "agent", name: "opencode", pkg: "@aoagents/ao-plugin-agent-opencode" },
+  { slot: "agent", name: "claude-code", pkg: "@slievr/plugin-agent-claude-code" },
+  { slot: "agent", name: "codex", pkg: "@slievr/plugin-agent-codex" },
+  { slot: "agent", name: "aider", pkg: "@slievr/plugin-agent-aider" },
+  { slot: "agent", name: "cursor", pkg: "@slievr/plugin-agent-cursor" },
+  { slot: "agent", name: "kimicode", pkg: "@slievr/plugin-agent-kimicode" },
+  { slot: "agent", name: "grok", pkg: "@slievr/plugin-agent-grok" },
+  { slot: "agent", name: "opencode", pkg: "@slievr/plugin-agent-opencode" },
   // Workspaces
-  { slot: "workspace", name: "worktree", pkg: "@aoagents/ao-plugin-workspace-worktree" },
-  { slot: "workspace", name: "clone", pkg: "@aoagents/ao-plugin-workspace-clone" },
+  { slot: "workspace", name: "worktree", pkg: "@slievr/plugin-workspace-worktree" },
+  { slot: "workspace", name: "clone", pkg: "@slievr/plugin-workspace-clone" },
   // Trackers
-  { slot: "tracker", name: "github", pkg: "@aoagents/ao-plugin-tracker-github" },
-  { slot: "tracker", name: "linear", pkg: "@aoagents/ao-plugin-tracker-linear" },
-  { slot: "tracker", name: "gitlab", pkg: "@aoagents/ao-plugin-tracker-gitlab" },
+  { slot: "tracker", name: "github", pkg: "@slievr/plugin-tracker-github" },
+  { slot: "tracker", name: "linear", pkg: "@slievr/plugin-tracker-linear" },
+  { slot: "tracker", name: "gitlab", pkg: "@slievr/plugin-tracker-gitlab" },
   // SCM
-  { slot: "scm", name: "github", pkg: "@aoagents/ao-plugin-scm-github" },
-  { slot: "scm", name: "gitlab", pkg: "@aoagents/ao-plugin-scm-gitlab" },
+  { slot: "scm", name: "github", pkg: "@slievr/plugin-scm-github" },
+  { slot: "scm", name: "gitlab", pkg: "@slievr/plugin-scm-gitlab" },
   // Notifiers
-  { slot: "notifier", name: "composio", pkg: "@aoagents/ao-plugin-notifier-composio" },
-  { slot: "notifier", name: "dashboard", pkg: "@aoagents/ao-plugin-notifier-dashboard" },
-  { slot: "notifier", name: "desktop", pkg: "@aoagents/ao-plugin-notifier-desktop" },
-  { slot: "notifier", name: "discord", pkg: "@aoagents/ao-plugin-notifier-discord" },
-  { slot: "notifier", name: "openclaw", pkg: "@aoagents/ao-plugin-notifier-openclaw" },
-  { slot: "notifier", name: "slack", pkg: "@aoagents/ao-plugin-notifier-slack" },
-  { slot: "notifier", name: "webhook", pkg: "@aoagents/ao-plugin-notifier-webhook" },
+  { slot: "notifier", name: "composio", pkg: "@slievr/plugin-notifier-composio" },
+  { slot: "notifier", name: "dashboard", pkg: "@slievr/plugin-notifier-dashboard" },
+  { slot: "notifier", name: "desktop", pkg: "@slievr/plugin-notifier-desktop" },
+  { slot: "notifier", name: "discord", pkg: "@slievr/plugin-notifier-discord" },
+  { slot: "notifier", name: "openclaw", pkg: "@slievr/plugin-notifier-openclaw" },
+  { slot: "notifier", name: "slack", pkg: "@slievr/plugin-notifier-slack" },
+  { slot: "notifier", name: "webhook", pkg: "@slievr/plugin-notifier-webhook" },
   // Terminals
-  { slot: "terminal", name: "iterm2", pkg: "@aoagents/ao-plugin-terminal-iterm2" },
-  { slot: "terminal", name: "web", pkg: "@aoagents/ao-plugin-terminal-web" },
+  { slot: "terminal", name: "iterm2", pkg: "@slievr/plugin-terminal-iterm2" },
+  { slot: "terminal", name: "web", pkg: "@slievr/plugin-terminal-web" },
 ];
 
 function matchesNotifierPlugin(

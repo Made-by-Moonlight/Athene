@@ -3,7 +3,7 @@ import "server-only";
 import { cache } from "react";
 import { existsSync, realpathSync } from "node:fs";
 import { dirname, resolve } from "node:path";
-import { ConfigNotFoundError, getGlobalConfigPath, loadConfig } from "@aoagents/ao-core";
+import { ConfigNotFoundError, getGlobalConfigPath, loadConfig } from "@slievr/core";
 
 export interface ProjectInfo {
   id: string;

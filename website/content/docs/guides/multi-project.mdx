@@ -37,18 +37,18 @@ Project IDs (`web`, `api`, `marketing`) are what you pass to `--project` / `-p`.
 
 Two ways:
 
-- **By path**: `ao start ~/code/new-repo` — AO infers a project ID from the directory name and appends it.
-- **By URL**: `ao start https://github.com/owner/repo` — AO clones it under `~/.agent-orchestrator/` and registers it.
+- **By path**: `athene start ~/code/new-repo` — AO infers a project ID from the directory name and appends it.
+- **By URL**: `athene start https://github.com/owner/repo` — AO clones it under `~/.agent-orchestrator/` and registers it.
 
 Both update `agent-orchestrator.yaml` in place. Diff it if you're curious.
 
 ## Spawning in the right project
 
-`ao spawn` auto-detects the project when you're in a worktree belonging to it. Otherwise name it:
+`athene spawn` auto-detects the project when you're in a worktree belonging to it. Otherwise name it:
 
 ```bash
-ao spawn 42 -p api
-ao batch-spawn 10 11 12 -p web
+athene spawn 42 -p api
+athene batch-spawn 10 11 12 -p web
 ```
 
 Or pass no project and AO will prompt.
@@ -77,10 +77,10 @@ The `internal` project uses Linear + Discord. Every other project uses GitHub + 
 ## Status across projects
 
 ```bash
-ao status                   # all projects
-ao status -p api            # one project
-ao status --json | jq       # scripted
-ao status --watch           # live-updating table
+athene status                   # all projects
+athene status -p api            # one project
+athene status --json | jq       # scripted
+athene status --watch           # live-updating table
 ```
 
 The dashboard shows all projects as swim lanes.
@@ -88,8 +88,8 @@ The dashboard shows all projects as swim lanes.
 ## Stopping selectively
 
 ```bash
-ao stop api          # stop one project's orchestrator + dashboard
-ao stop --all        # stop everything
+athene stop api          # stop one project's orchestrator + dashboard
+athene stop --all        # stop everything
 ```
 
 <Callout type="info">
