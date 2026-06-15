@@ -89,7 +89,12 @@ export function useXtermTerminal(
         if (!mounted || !terminalRef.current) return;
 
         const isDark = appearance === "dark" || resolvedTheme !== "light";
-        const activeTheme = isDark ? terminalThemes.dark : terminalThemes.light;
+        const activeTheme =
+          resolvedTheme === "aurora"
+            ? terminalThemes.aurora
+            : isDark
+              ? terminalThemes.dark
+              : terminalThemes.light;
 
         // NOTE: xterm's internal char-size measurement uses canvas ctx.font which
         // cannot resolve `var(...)`. resolveMonoFontFamily() reads the CSS custom
@@ -448,7 +453,12 @@ export function useXtermTerminal(
     const terminal = terminalInstance.current;
     if (!terminal) return;
     const isDark = appearance === "dark" || resolvedTheme !== "light";
-    terminal.options.theme = isDark ? terminalThemes.dark : terminalThemes.light;
+    terminal.options.theme =
+      resolvedTheme === "aurora"
+        ? terminalThemes.aurora
+        : isDark
+          ? terminalThemes.dark
+          : terminalThemes.light;
     terminal.options.minimumContrastRatio = isDark ? 1 : 7;
   }, [appearance, resolvedTheme, terminalThemes]);
 

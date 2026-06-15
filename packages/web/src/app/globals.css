@@ -351,6 +351,192 @@
   --color-alert-comment-bg: rgba(232, 193, 74, 0.08);
 }
 
+/* ── Aurora theme — alternative dark with teal/coral palette ─────────────
+   Same "color = meaning" discipline as the dark theme. The semantic split is
+   preserved: teal = orchestrator/you; coral = a working agent; amber =
+   needs-input; red = failing; green = mergeable. All else grayscale.
+   Apply via: <html class="aurora"> (set by next-themes as theme="aurora"). */
+.aurora {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* ════════════════════════════════════════════════════════════════════
+     AURORA PALETTE — deep violet-tinted dark surfaces with teal/coral
+     accents. Same structural intent as Mission Control; different color
+     temperature. Color is still rationed: teal = you/orchestrator; coral =
+     working agent; amber = needs-input; red = failing; green = mergeable. */
+
+  --bg: #0b0a0f; /* app base — slightly violet-tinted black */
+  --bg-side: #09080d; /* sidebar */
+  --bg-top: #0b0a0f; /* topbar */
+  --col: #100f15; /* kanban column trough */
+  --card: #18151f; /* the only bordered surface */
+  --card-hover: #1d1a25;
+  --term: #0e0c13; /* terminal / xterm background */
+
+  --t1: #f0f1f5; /* text: primary */
+  --t2: #9596a4; /* text: secondary */
+  --t3: #5e607a; /* text: tertiary */
+  --t4: #3c3e54; /* text: faint */
+
+  --line: rgba(200, 190, 255, 0.07);
+  --line-2: rgba(200, 190, 255, 0.12);
+  --hover: rgba(200, 190, 255, 0.04);
+  --hover-2: rgba(200, 190, 255, 0.07);
+
+  --teal: #38c4d8; /* orchestrator / you — teal */
+  --teal-soft: #72d9e7;
+  --coral: #f2736b; /* a working agent — coral */
+  --amber: #e8c14a; /* needs-your-input / attention */
+  --red: #ef6b6b; /* failing / stuck */
+  --green: #6abf8a; /* mergeable / passed / resolved */
+
+  /* Base surfaces */
+  --color-bg-base: var(--bg);
+  --color-bg-surface: var(--card);
+  --color-bg-elevated: var(--card-hover);
+  --color-bg-elevated-hover: var(--card-hover);
+  --color-bg-subtle: var(--hover);
+  --color-bg-hover: var(--hover-2);
+  --color-bg-inset: var(--col);
+  --color-bg-sidebar: var(--bg-side);
+  --color-bg-card: var(--card);
+
+  /* Backward-compat aliases */
+  --color-bg-primary: var(--color-bg-base);
+  --color-bg-secondary: var(--color-bg-surface);
+  --color-bg-tertiary: var(--color-bg-elevated);
+
+  /* Borders / hairlines */
+  --color-border-subtle: var(--line);
+  --color-border-default: var(--line);
+  --color-border-strong: var(--line-2);
+
+  /* Backward-compat aliases */
+  --color-border-muted: var(--color-border-subtle);
+  --color-border-emphasis: var(--color-border-strong);
+
+  /* Text ramp — primary → faint */
+  --color-text-primary: var(--t1);
+  --color-text-secondary: var(--t2);
+  --color-text-tertiary: var(--t3);
+  --color-text-muted: var(--t4);
+  --color-text-inverse: #ffffff;
+
+  /* Interactive accent — teal = orchestrator / you */
+  --color-accent: var(--teal);
+  --color-accent-hover: #46cedc;
+  --color-accent-subtle: rgba(56, 196, 216, 0.12);
+
+  /* Amber accent — needs-input / attention */
+  --color-accent-amber: var(--amber);
+  --color-accent-amber-dim: rgba(232, 193, 74, 0.12);
+  --color-accent-amber-border: rgba(232, 193, 74, 0.32);
+
+  /* Status — one semantic spectrum */
+  --color-status-working: var(--coral); /* agent alive — coral */
+  --color-status-ready: var(--green);
+  --color-status-respond: var(--amber);
+  --color-status-review: var(--t2);
+  --color-status-pending: var(--t3);
+  --color-status-attention: var(--amber);
+  --color-status-idle: var(--t4);
+  --color-status-done: var(--t4);
+  --color-status-error: var(--red);
+  --color-status-merge: var(--green);
+  --color-ci-pass: var(--green);
+  --color-ci-fail: var(--red);
+
+  /* Semantic aliases */
+  --color-accent-blue: var(--teal);
+  --color-accent-green: var(--green);
+  --color-accent-yellow: var(--amber);
+  --color-accent-orange: var(--coral);
+  --color-accent-red: var(--red);
+  --color-accent-violet: var(--teal-soft);
+  --color-accent-purple: var(--teal-soft);
+
+  /* Theme-adaptive tints (bg behind status pills/badges) */
+  --color-tint-blue: rgba(56, 196, 216, 0.12);
+  --color-tint-green: rgba(106, 191, 138, 0.13);
+  --color-tint-yellow: rgba(232, 193, 74, 0.13);
+  --color-tint-red: rgba(239, 107, 107, 0.12);
+  --color-tint-violet: rgba(56, 196, 216, 0.1);
+  --color-tint-orange: rgba(242, 115, 107, 0.13);
+  --color-tint-neutral: rgba(200, 190, 255, 0.05);
+
+  /* Chip/badge background */
+  --color-chip-bg: var(--hover-2);
+
+  /* Hover overlay */
+  --color-hover-overlay: var(--hover);
+
+  /* Scrollbar */
+  --color-scrollbar: rgba(200, 190, 255, 0.08);
+  --color-scrollbar-hover: rgba(200, 190, 255, 0.15);
+  --color-scrollbar-active: rgba(200, 190, 255, 0.25);
+
+  /* Body */
+  --color-body-gradient-blue: transparent;
+  --color-body-gradient-violet: transparent;
+
+  /* Nav glass */
+  --color-nav-bg: rgba(11, 10, 15, 0.82);
+
+  /* Card surfaces */
+  --card-bg: var(--card);
+  --card-merge-bg: var(--card);
+  --card-expanded-bg: var(--card-hover);
+  --card-shadow: none;
+  --card-shadow-hover: none;
+  --card-inset: none;
+  --card-border: var(--line);
+
+  /* Done card surfaces */
+  --card-done-bg: var(--card);
+  --card-done-border: var(--line);
+
+  --done-pill-exited-bg: var(--hover-2);
+  --done-pill-exited-color: var(--t3);
+  --done-pill-merged-bg: rgba(106, 191, 138, 0.14);
+  --done-pill-merged-color: var(--green);
+  --done-pill-killed-bg: rgba(239, 107, 107, 0.12);
+  --done-pill-killed-color: var(--red);
+  --done-meta-chip-bg: var(--hover);
+  --done-meta-chip-border: var(--line);
+  --done-section-border: var(--line);
+  --done-title-color: var(--t2);
+  --done-restore-bg: rgba(56, 196, 216, 0.1);
+  --done-restore-border: rgba(56, 196, 216, 0.24);
+  --done-restore-hover-bg: rgba(56, 196, 216, 0.18);
+
+  /* Detail card */
+  --detail-card-bg: var(--card);
+  --detail-card-shadow: none;
+
+  /* Buttons — flat */
+  --btn-shadow: none;
+  --btn-shadow-hover: none;
+  --btn-inset: none;
+
+  /* Kanban column trough */
+  --color-column-bg: var(--col);
+  --color-column-header: transparent;
+
+  /* Alert colors */
+  --color-alert-ci: var(--red);
+  --color-alert-ci-bg: rgba(239, 107, 107, 0.08);
+  --color-alert-ci-unknown: var(--amber);
+  --color-alert-review: var(--teal);
+  --color-alert-review-bg: rgba(56, 196, 216, 0.08);
+  --color-alert-changes: var(--amber);
+  --color-alert-changes-bg: rgba(232, 193, 74, 0.08);
+  --color-alert-conflict: var(--red);
+  --color-alert-conflict-bg: rgba(239, 107, 107, 0.08);
+  --color-alert-comment: var(--amber);
+  --color-alert-comment-bg: rgba(232, 193, 74, 0.08);
+}
+
 @theme {
   /* ── Typography — mission-control voices ─────────────────────────── */
   /* UI = Schibsted Grotesk (product voice); machine/data = JetBrains Mono. */
@@ -443,13 +629,14 @@ body {
   letter-spacing: -0.011em;
 }
 
-/* Light mode: solid white, NO gradient */
-html:not(.dark) body {
+/* Light mode: solid base color, NO gradient */
+html:not(.dark):not(.aurora) body {
   background: var(--color-bg-base);
 }
 
-/* Radial gradient only for dark mode */
-.dark body {
+/* Radial gradient for dark-family themes (dark + aurora) */
+.dark body,
+.aurora body {
   background:
     radial-gradient(ellipse 70% 40% at 15% 0%, var(--color-body-gradient-blue) 0%, transparent 60%),
     radial-gradient(
@@ -856,6 +1043,14 @@ html.light .xterm .xterm-viewport:hover::-webkit-scrollbar-thumb:active {
 
 .dark .kanban-ghost__head {
   border-bottom-color: rgba(255, 240, 220, 0.07);
+}
+
+.aurora .kanban-ghost__col {
+  border-color: rgba(200, 190, 255, 0.08);
+}
+
+.aurora .kanban-ghost__head {
+  border-bottom-color: rgba(200, 190, 255, 0.07);
 }
 
 .board-center {
@@ -2344,6 +2539,9 @@ body:not(.is-resizing-x) .sidebar-wrapper {
 .dark .sidebar-session-dot--glow {
   box-shadow: 0 0 5px rgba(34, 197, 94, 0.6);
 }
+.aurora .sidebar-session-dot--glow {
+  box-shadow: 0 0 5px rgba(106, 191, 138, 0.6);
+}
 .sidebar-session-dot[data-level="working"] {
   background: var(--color-status-working);
 }
@@ -3120,24 +3318,29 @@ body:not(.is-resizing-x) .sidebar-wrapper {
   overflow: hidden;
 }
 
-.dark .session-card {
+.dark .session-card,
+.aurora .session-card {
   box-shadow: none;
 }
 
-/* ── Dark mode weight reduction ────────────────────────────────────────
+/* ── Dark-family weight reduction ──────────────────────────────────────
    Light text on dark backgrounds appears visually heavier due to
    subpixel antialiasing. Step down one weight level.                    */
 
-.dark .kanban-column [class*="font-semibold"] {
+.dark .kanban-column [class*="font-semibold"],
+.aurora .kanban-column [class*="font-semibold"] {
   font-weight: 500;
 }
-.dark .kanban-column [class*="font-bold"] {
+.dark .kanban-column [class*="font-bold"],
+.aurora .kanban-column [class*="font-bold"] {
   font-weight: 600;
 }
-.dark .session-card-done .done-status-pill {
+.dark .session-card-done .done-status-pill,
+.aurora .session-card-done .done-status-pill {
   font-weight: 500;
 }
-.dark .session-card-done .done-detail-heading {
+.dark .session-card-done .done-detail-heading,
+.aurora .session-card-done .done-detail-heading {
   font-weight: 600;
 }
 
@@ -3717,7 +3920,8 @@ body:not(.is-resizing-x) .sidebar-wrapper {
   border-color: var(--card-border);
 }
 
-.dark .session-card.card-merge-ready {
+.dark .session-card.card-merge-ready,
+.aurora .session-card.card-merge-ready {
   box-shadow: none;
 }
 
@@ -3853,7 +4057,8 @@ body:not(.is-resizing-x) .sidebar-wrapper {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
-.dark .session-card-done:hover {
+.dark .session-card-done:hover,
+.aurora .session-card-done:hover {
   box-shadow: none;
 }
 
@@ -4459,6 +4664,13 @@ body:not(.is-resizing-x) .sidebar-wrapper {
   --sidebar-border: rgba(255, 240, 220, 0.07);
   --sidebar-row-hover: rgba(255, 240, 220, 0.05);
   --sidebar-row-active: rgba(255, 240, 220, 0.07);
+}
+
+.aurora .project-sidebar {
+  --sidebar-bg: var(--bg-side, #09080d);
+  --sidebar-border: rgba(200, 190, 255, 0.07);
+  --sidebar-row-hover: rgba(200, 190, 255, 0.05);
+  --sidebar-row-active: rgba(200, 190, 255, 0.08);
 }
 
 .project-sidebar--collapsed {

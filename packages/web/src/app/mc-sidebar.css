@@ -24,6 +24,14 @@
   background: var(--bg-side, #08090b);
 }
 
+.aurora .project-sidebar {
+  --sidebar-bg: var(--color-bg-sidebar, #09080d);
+  --sidebar-border: var(--line, rgba(200, 190, 255, 0.07));
+  --sidebar-row-hover: var(--hover, rgba(200, 190, 255, 0.04));
+  --sidebar-row-active: var(--hover-2, rgba(200, 190, 255, 0.07));
+  background: var(--bg-side, #09080d);
+}
+
 .project-sidebar--collapsed {
   padding: 10px 0;
 }

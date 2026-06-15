@@ -273,7 +273,8 @@
   opacity: 1;
 }
 
-.dark .kanban-ghost__col {
+.dark .kanban-ghost__col,
+.aurora .kanban-ghost__col {
   border-color: transparent;
 }
 
@@ -284,6 +285,7 @@
   color: var(--t3, #646a73);
 }
 
-.dark .kanban-ghost__head {
+.dark .kanban-ghost__head,
+.aurora .kanban-ghost__head {
   border-bottom-color: transparent;
 }
