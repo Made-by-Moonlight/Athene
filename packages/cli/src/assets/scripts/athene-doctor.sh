@@ -447,8 +447,8 @@ function resolveCoreEntrypoint() {
   const sourceCoreDir = path.resolve(repoRoot, "packages", "core");
   const coreDir =
     (fs.existsSync(path.join(sourceCoreDir, "package.json")) ? sourceCoreDir : null) ??
-    findPackageUp(repoRoot, "@made-by-moonlight", "core") ??
-    resolveNodeModulesPackage(repoRoot, "@made-by-moonlight", "core");
+    findPackageUp(repoRoot, "@made-by-moonlight", "athene-core") ??
+    resolveNodeModulesPackage(repoRoot, "@made-by-moonlight", "athene-core");
   if (!coreDir) return null;
 
   try {
