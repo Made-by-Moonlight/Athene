@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, fireEvent } from "@testing-library/react";
+import type * as ReactType from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const mockSetTheme = vi.fn();
@@ -14,7 +15,7 @@ vi.mock("next-themes", () => ({
 
 // Bypass the mounted guard by mocking useState
 vi.mock("react", async () => {
-  const actual = await vi.importActual<typeof import("react")>("react");
+  const actual = await vi.importActual<typeof ReactType>("react");
   return {
     ...actual,
     useState: (init: unknown) => {
