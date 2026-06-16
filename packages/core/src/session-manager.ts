@@ -1043,20 +1043,27 @@ export function createSessionManager(deps: SessionManagerDeps): OpenCodeSessionM
     }
   }
 
-  async function reserveNextSessionIdentity(
+  /**
+   * Reserve the next free session id. DISK-ONLY and synchronous: the remote
+   * branch lookup (git ls-remote) is performed by the caller BEFORE acquiring
+   * the spawn lock and passed in via `remoteSessionNumbers`, so the per-project
+   * spawn lock never spans a network round-trip.
+   */
+  function reserveNextSessionIdentity(
     project: ProjectConfig,
     sessionsDir: string,
-  ): Promise<{
+    remoteSessionNumbers: number[],
+  ): {
     num: number;
     sessionId: string;
     tmuxName: string | undefined;
-  }> {
+  } {
     const usedNumbers = new Set<number>();
     for (const sessionName of listMetadata(sessionsDir)) {
       const num = getSessionNumber(sessionName, project.sessionPrefix);
       if (num !== undefined) usedNumbers.add(num);
     }
-    for (const num of await listRemoteSessionNumbers(project)) {
+    for (const num of remoteSessionNumbers) {
       usedNumbers.add(num);
     }
 
@@ -1473,13 +1480,19 @@ export function createSessionManager(deps: SessionManagerDeps): OpenCodeSessionM
     let sessionId: string | undefined;
     let tmuxName: string | undefined;
 
+    // Fetch remote session numbers (git ls-remote, up to ~5s) BEFORE acquiring
+    // the spawn lock so the network round-trip is never serialized behind the
+    // per-project mutex — the in-lock window stays disk-only.
+    const remoteSessionNumbers = await listRemoteSessionNumbers(project);
+
     // Anti-collision guard + id reservation run together under a per-project
     // spawn lock so the check-then-reserve window is atomic ACROSS processes
     // (the project orchestrator and a meta orchestrator each spawn from their own
     // process). The guard runs BEFORE any worktree/runtime creation so a refusal
     // orphans nothing, and is the single authority protecting BOTH coordinators
     // symmetrically. Issue-keyed work is a HARD refusal; freeform work is
-    // advisory (surfaced by the CLI, not blocked here).
+    // advisory (surfaced by the CLI, not blocked here). The lock window is
+    // DISK-ONLY (no network/enrichment) — the remote lookup above was hoisted out.
     await withProjectSpawnLock(spawnConfig.projectId, async () => {
       // Minimal disk-only read (no enrichment/probes) so the lock window stays
       // brief and reflects in-flight issue claims. Detecting/runtime-lost peers
@@ -1507,7 +1520,11 @@ export function createSessionManager(deps: SessionManagerDeps): OpenCodeSessionM
       // keeps hard-refusing re-spawns of that issue until it is cleaned up. It is
       // self-healing — lifecycle reconciliation probes the absent runtime and
       // terminates it — and killable in the meantime via `athene session kill`.
-      ({ sessionId, tmuxName } = await reserveNextSessionIdentity(project, sessionsDir));
+      ({ sessionId, tmuxName } = reserveNextSessionIdentity(
+        project,
+        sessionsDir,
+        remoteSessionNumbers,
+      ));
       if (spawnConfig.issueId) {
         try {
           updateMetadata(sessionsDir, sessionId, {
