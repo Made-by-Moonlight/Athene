@@ -164,6 +164,8 @@ export function sessionToDashboard(session: Session): DashboardSession {
   return refreshDashboardSessionDerivedFields({
     id: session.id,
     projectId: session.projectId,
+    ownerKind: session.metadata["ownerKind"] === "meta" ? "meta" : "project",
+    metaOwner: session.metadata["metaOwner"] ?? null,
     status: session.status,
     activity: session.activity,
     activitySignal: {

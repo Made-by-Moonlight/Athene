@@ -42,6 +42,13 @@ interface DashboardProps {
   orchestrators?: DashboardOrchestratorLink[];
   /** Configured meta orchestrators (◆ rows in the sidebar ORCHESTRATORS section). */
   metaOrchestrators?: SidebarMetaOrchestrator[];
+  /**
+   * When set, scope the kanban board to the fleet owned by this meta
+   * orchestrator (sessions with metaOwner === this value). The sidebar still
+   * shows all projects' sessions; only the board self-restricts — including
+   * after live SSE updates, which refetch all projects.
+   */
+  metaOwner?: string;
   /** Dashboard attention zone mode (defaults to "simple" — 4 zones). */
   attentionZones?: DashboardAttentionZoneMode;
   /** SSR/services failure — show an error banner instead of a misleading empty dashboard */
@@ -155,6 +162,7 @@ function DashboardInner({
   projects = [],
   orchestrators,
   metaOrchestrators,
+  metaOwner,
   attentionZones = "simple",
   dashboardLoadError,
 }: DashboardProps) {
@@ -180,9 +188,13 @@ function DashboardInner({
   });
 
   const projectSessions = useMemo(() => {
+    // Meta board: restrict to the meta orchestrator's owned fleet. This runs on
+    // every SSE tick too (useSessionEvents refetches all projects), so the board
+    // never widens to the whole portfolio after the first live update.
+    if (metaOwner) return sessions.filter((s) => s.metaOwner === metaOwner);
     if (!projectId) return sessions;
     return sessions.filter((s) => s.projectId === projectId);
-  }, [sessions, projectId]);
+  }, [sessions, projectId, metaOwner]);
 
   const allSessionPrefixes = useMemo(
     () => projects.map((p) => p.sessionPrefix ?? p.id),
@@ -266,7 +278,9 @@ function DashboardInner({
   const sessionsRef = useRef(sessions);
 
   sessionsRef.current = sessions;
-  const allProjectsView = projects.length > 1 && projectId === undefined;
+  // A meta board (metaOwner set) is a SCOPED status-kanban view of one fleet, not
+  // the project-grouped all-projects portfolio view — so it is not allProjectsView.
+  const allProjectsView = projects.length > 1 && projectId === undefined && !metaOwner;
   const codingHref = projectId ? projectDashboardPath(projectId) : "/?project=all";
   const reviewHref = projectReviewPath(projectId);
   const currentProjectOrchestrator = useMemo(
