@@ -89,6 +89,10 @@ export type AttentionLevel =
 export interface DashboardSession {
   id: string;
   projectId: string;
+  /** Which coordinator dispatched this session: "meta" or "project" (default). */
+  ownerKind?: "meta" | "project";
+  /** Name of the dispatching meta orchestrator (set only when ownerKind === "meta"). */
+  metaOwner?: string | null;
   status: SessionStatus;
   activity: ActivityState | null;
   activitySignal?: DashboardActivitySignal;
