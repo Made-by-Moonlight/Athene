@@ -132,18 +132,17 @@ pnpm dev:packages
 # Leave this running; rebuilt dist/ files are picked up immediately by dependents
 ```
 
-**CLI changes** — rebuild CLI on changes, then auto-restart:
+**CLI changes** — watch-rebuild CLI and auto-restart in two terminals:
 
 ```bash
 # Terminal 1: watch-rebuild core + plugins
 pnpm dev:packages
 
-# Terminal 2: watch-rebuild CLI
-pnpm --filter @made-by-moonlight/athene-cli exec tsc --watch
-
-# Terminal 3: auto-restart athene start when CLI dist changes
-pnpm dev:start
+# Terminal 2: watch-rebuild CLI + auto-restart athene start (combined)
+pnpm dev:cli
 ```
+
+`dev:cli` uses `concurrently` to run `tsc --watch` on the CLI source and `node --watch` on the compiled output in one terminal. Requires `pnpm build` to have run first so `dist/index.js` exists before `node --watch` starts.
 
 Note: `dev:packages` intentionally excludes `@made-by-moonlight/athene-cli` (its `dev` script is a one-shot runner, not a watch-rebuild) and `@made-by-moonlight/athene-web` (handled by `pnpm dev` above).
 
