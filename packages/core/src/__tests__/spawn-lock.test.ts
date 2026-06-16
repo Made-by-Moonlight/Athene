@@ -18,10 +18,16 @@ afterEach(() => {
 });
 
 describe("isSpawnLockReapable", () => {
-  it("does NOT reap a lock held by a live PID (even when old)", () => {
+  it("does NOT reap a FRESH lock held by a live PID", () => {
     const lockPath = lockWith(String(process.pid));
-    // `now` far in the future — age must NOT matter for a live holder.
-    expect(isSpawnLockReapable(lockPath, Date.now() + 10 * 60_000)).toBe(false);
+    expect(isSpawnLockReapable(lockPath, Date.now())).toBe(false);
+  });
+
+  it("reaps a PID-bearing lock past the absolute age ceiling even if the PID is alive (PID reuse)", () => {
+    // process.pid is alive, but the lock is older than the ceiling — a recycled
+    // dead-holder PID must not block spawns forever.
+    const lockPath = lockWith(String(process.pid));
+    expect(isSpawnLockReapable(lockPath, Date.now() + 6 * 60_000)).toBe(true);
   });
 
   it("reaps a lock whose recorded PID is dead", () => {
@@ -34,9 +40,10 @@ describe("isSpawnLockReapable", () => {
     expect(isSpawnLockReapable(lockPath, Date.now())).toBe(false);
   });
 
-  it("reaps a corrupt/no-PID lock only after the backstop", () => {
+  it("reaps a corrupt/no-PID lock only after the absolute age ceiling", () => {
     const lockPath = lockWith("not-a-pid");
-    // 6 minutes past the file mtime → beyond the 5-minute corrupt-lock backstop.
+    // Fresh: not reapable; past the 5-minute ceiling: reapable.
+    expect(isSpawnLockReapable(lockPath, Date.now())).toBe(false);
     expect(isSpawnLockReapable(lockPath, Date.now() + 6 * 60_000)).toBe(true);
   });
 
