@@ -353,12 +353,22 @@ function isPidAlive(pid: number): boolean {
  * readable PID is reaped ONLY when that PID is dead, never by age, so an
  * alive-but-slow holder is never reaped.
  */
-const SPAWN_LOCK_CORRUPT_BACKSTOP_MS = 300_000;
+/**
+ * Absolute age ceiling for a spawn.lock. The in-lock critical section is
+ * disk-only (no network/runtime work — the git ls-remote is hoisted out), so it
+ * never legitimately runs anywhere near this long. Any lock older than this is
+ * reapable regardless of holder PID — this clears both a corrupt/no-PID lock and
+ * a PID-bearing lock whose SIGKILLed holder's PID was recycled to an unrelated
+ * live process (which would otherwise look "alive" forever and block spawns).
+ */
+const SPAWN_LOCK_MAX_AGE_MS = 300_000;
 
 /**
- * Whether a waiter may reap an existing spawn.lock. Liveness-based, not
- * time-based: reap iff the recorded holder PID is provably dead, or the lock has
- * no parseable PID and is older than the corrupt-lock backstop. Exported for tests.
+ * Whether a waiter may reap an existing spawn.lock:
+ *  - over the absolute age ceiling → always reapable (any lock); or
+ *  - PID-bearing with a provably-dead holder → reapable immediately.
+ * A fresh lock held by a live PID (or in its brief no-PID mid-write window) is
+ * NOT reaped. Exported for tests.
  */
 export function isSpawnLockReapable(lockPath: string, now: number = Date.now()): boolean {
   let content: string;
@@ -370,13 +380,18 @@ export function isSpawnLockReapable(lockPath: string, now: number = Date.now()):
     // Vanished/unreadable between the open attempt and here — safe to retry.
     return true;
   }
+  // Absolute ceiling applies to ALL locks (PID-bearing included), so a recycled
+  // dead-holder PID can never block spawns indefinitely.
+  if (now - mtimeMs > SPAWN_LOCK_MAX_AGE_MS) {
+    return true;
+  }
   const pid = Number.parseInt(content, 10);
   if (Number.isInteger(pid) && pid > 0 && String(pid) === content) {
-    // Reap only if that holder process is provably gone.
+    // Within the ceiling — reap only if the holder process is provably gone.
     return !isPidAlive(pid);
   }
-  // No parseable PID (legacy/mid-write/corrupt) — age backstop only.
-  return now - mtimeMs > SPAWN_LOCK_CORRUPT_BACKSTOP_MS;
+  // No parseable PID and still fresh (legacy/mid-write/corrupt) — keep waiting.
+  return false;
 }
 
 async function isAgentProcessNotDefinitelyMissing(
