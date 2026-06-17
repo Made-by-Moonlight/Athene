@@ -63,7 +63,7 @@ npm install -g @made-by-moonlight/athene
 
 **Permission denied (EACCES):** prefix with `sudo` or [fix your npm permissions](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally).
 
-**`npm warn allow-scripts` (npm 10+):** Athene requires native modules (`node-pty`, `better-sqlite3`) that compile during install. If you see this warning and `athene start` fails, approve the install scripts once:
+**`npm warn allow-scripts` (npm 11+, ships with Node 23+):** Athene requires native modules (`node-pty`, `better-sqlite3`) that compile during install. If you see this warning and `athene start` fails, approve the install scripts once:
 
 ```bash
 npm install -g @made-by-moonlight/athene --allow-scripts=@made-by-moonlight/athene,node-pty,better-sqlite3,sharp

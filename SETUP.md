@@ -96,7 +96,7 @@ source ~/.zshrc
 npm install -g @made-by-moonlight/athene
 ```
 
-**`npm warn allow-scripts` (npm 10+)?** Athene includes native modules (`node-pty`, `better-sqlite3`) that need to compile or download prebuilt binaries during install. If the install completes but `athene start` fails with a native-module error, approve the scripts:
+**`npm warn allow-scripts` (npm 11+, ships with Node 23+)?** Athene includes native modules (`node-pty`, `better-sqlite3`) that need to compile or download prebuilt binaries during install. If the install completes but `athene start` fails with a native-module error, approve the scripts:
 
 ```bash
 npm install -g @made-by-moonlight/athene --allow-scripts=@made-by-moonlight/athene,node-pty,better-sqlite3,sharp
