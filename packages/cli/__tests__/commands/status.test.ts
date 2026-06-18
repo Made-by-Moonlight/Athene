@@ -1386,6 +1386,33 @@ describe("status command", () => {
     );
   });
 
+  it("never reaps a meta-orchestrator session that collides with a project prefix", async () => {
+    mockConfigRef.current = {
+      ...(mockConfigRef.current as Record<string, unknown>),
+      metaOrchestrators: { "app-99": { scope: "all", discover: true } },
+    } as Record<string, unknown>;
+
+    const destroySpy = vi.fn().mockResolvedValue(undefined);
+    const fakeRuntime = {
+      name: "tmux",
+      // app-99 is a live meta orchestrator (under _meta, not in sm.list()).
+      listSessions: vi.fn().mockResolvedValue([{ id: "app-99", createdAt: 0, pid: 0 }]),
+      destroy: destroySpy,
+    };
+    mockGetPluginRegistry.mockResolvedValue({
+      get: (slot: string, name: string) =>
+        slot === "runtime" && name === "tmux" ? fakeRuntime : null,
+      list: vi.fn(),
+      register: vi.fn(),
+    });
+    mockSessionManager.list.mockResolvedValue([]);
+    mockGit.mockResolvedValue(null);
+
+    await program.parseAsync(["node", "test", "status", "--json"]);
+
+    expect(destroySpy).not.toHaveBeenCalled();
+  });
+
   it("filters lifecycle-driven terminal sessions (runtime exited, pr merged, session terminated)", async () => {
     // Exercises the lifecycle branch of isTerminalSession — legacy status stays
     // "working" but canonical lifecycle puts the session in a terminal state.

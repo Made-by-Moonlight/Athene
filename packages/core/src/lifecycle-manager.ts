@@ -3139,6 +3139,13 @@ export function createLifecycleManager(deps: LifecycleManagerDeps): LifecycleMan
     const activeTrackedIds = new Set(
       allSessions.filter((s) => !isTerminalSession(s)).map((s) => s.id),
     );
+    // Meta-orchestrator sessions live under the reserved `_meta` scope and are
+    // invisible to sessionManager.list(), yet share the runtime and have an
+    // unconstrained name space. Protect them so a meta name that happens to
+    // match a project's `<prefix>-<number>` pattern is never reaped.
+    for (const metaName of Object.keys(config.metaOrchestrators ?? {})) {
+      activeTrackedIds.add(metaName);
+    }
 
     // Group projects by runtime so each runtime is queried once with the set of
     // prefixes it may own. Scope to this worker's project when project-scoped.

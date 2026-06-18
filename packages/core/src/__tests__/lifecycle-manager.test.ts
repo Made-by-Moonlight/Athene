@@ -4804,6 +4804,38 @@ describe("runtime orphan reconciliation (poll loop)", () => {
     }
   });
 
+  it("never reaps a meta-orchestrator runtime session that collides with a project prefix", async () => {
+    // Meta orchestrators live under the reserved _meta scope, so they never
+    // appear in sessionManager.list() / activeTrackedIds. If a meta name
+    // collides with a project's <prefix>-<number> pattern it must still be
+    // protected from reaping.
+    config = { ...config, metaOrchestrators: { "app-99": { scope: "all", discover: true } } };
+    vi.mocked(mockSessionManager.list).mockResolvedValue([]);
+    plugins.runtime.listSessions = vi
+      .fn()
+      .mockResolvedValue([{ id: "app-99", createdAt: 0 }]);
+    const destroySpy = vi.mocked(plugins.runtime.destroy);
+
+    const lm = createLifecycleManager({
+      config,
+      registry: mockRegistry,
+      sessionManager: mockSessionManager,
+    });
+
+    try {
+      lm.start(60_000);
+      const deadline = Date.now() + 1000;
+      while (Date.now() < deadline) {
+        if (vi.mocked(plugins.runtime.listSessions).mock.calls.length > 0) break;
+        await new Promise((r) => setTimeout(r, 10));
+      }
+      await new Promise((r) => setTimeout(r, 20));
+      expect(destroySpy).not.toHaveBeenCalled();
+    } finally {
+      lm.stop();
+    }
+  });
+
   it("never reaps a human / non-AO-named runtime session", async () => {
     vi.mocked(mockSessionManager.list).mockResolvedValue([]);
     plugins.runtime.listSessions = vi

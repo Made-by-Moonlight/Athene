@@ -592,10 +592,15 @@ export function registerStatus(program: Command): void {
         // Show projects that have no sessions too (if not filtered)
         const projectIds = opts.project ? [opts.project] : Object.keys(config.projects);
         // Runtime sessions backed by a non-terminal tracked session must never
-        // be reaped. Built from the full (pre-terminal-filter) list.
+        // be reaped. Built from the full (pre-terminal-filter) list. Meta
+        // orchestrators live under the reserved `_meta` scope (invisible to
+        // sm.list()) but share the runtime, so protect their names too.
         const activeTrackedIds = new Set(
           allSessions.filter((s) => !isTerminalSession(s)).map((s) => s.id),
         );
+        for (const metaName of Object.keys(config.metaOrchestrators ?? {})) {
+          activeTrackedIds.add(metaName);
+        }
         const jsonOutput: SessionInfo[] = [];
         const runtimeSummaries: RuntimeSummary[] = [];
         const reviewOutput: CodeReviewRunSummary[] = [];
