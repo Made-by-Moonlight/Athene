@@ -1,11 +1,5 @@
 <h1 align="center">Athene — The Orchestration Layer for Parallel AI Agents</h1>
 
-<p align="center">
-<a href="https://github.com/slievr/Athene">
-  <img width="800" alt="Athene banner" src="docs/assets/agent_orchestrator_banner.png">
-</a>
-</p>
-
 <div align="center">
 
 Spawn parallel AI coding agents, each in its own git worktree. Agents autonomously fix CI failures, address review comments, and open PRs — you supervise from one dashboard.
@@ -25,23 +19,10 @@ Athene manages fleets of AI coding agents working in parallel on your codebase. 
 
 **Agent-agnostic** (Claude Code, Codex, Aider) · **Runtime-agnostic** (tmux, ConPTY/process, Docker) · **Tracker-agnostic** (GitHub, Linear)
 
-<div align="center">
-
 ## See it in action
 
-<a href="https://x.com/agent_wrapper/status/2026329204405723180">
-  <img src="docs/assets/demo-video-tweet.png" alt="Athene demo — AI agents building their own orchestrator" width="560">
-</a>
-<br><br>
-<a href="https://x.com/agent_wrapper/status/2026329204405723180"><img src="docs/assets/btn-watch-demo.png" alt="Watch the Demo on X" height="48"></a>
-<br><br><br>
-<a href="https://x.com/agent_wrapper/status/2025986105485733945">
-  <img src="docs/assets/article-tweet.png" alt="The Self-Improving AI System That Built Itself" width="560">
-</a>
-<br><br>
-<a href="https://x.com/agent_wrapper/status/2025986105485733945"><img src="docs/assets/btn-read-article.png" alt="Read the Full Article on X" height="48"></a>
-
-</div>
+- [Watch the demo on X](https://x.com/agent_wrapper/status/2026329204405723180) — AI agents building their own orchestrator
+- [Read the article on X](https://x.com/agent_wrapper/status/2025986105485733945) — The Self-Improving AI System That Built Itself
 
 ## Quick Start
 
