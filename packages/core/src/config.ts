@@ -1128,13 +1128,18 @@ export function loadConfigWithPath(configPath?: string): {
 
 /**
  * Normalize dual-read: if only metaOrchestrators is present, copy it to orchestrators.
- * If both are present, orchestrators (new key) wins.
+ * If both are present, merge them with orchestrators (new key) winning on conflict.
  */
 function normalizeOrchestrators(config: OrchestratorConfig): OrchestratorConfig {
-  if (config.metaOrchestrators && !config.orchestrators) {
+  if (!config.metaOrchestrators) return config;
+  if (!config.orchestrators) {
     return { ...config, orchestrators: config.metaOrchestrators };
   }
-  return config;
+  // Both present: merge, orchestrators wins on conflict
+  return {
+    ...config,
+    orchestrators: { ...config.metaOrchestrators, ...config.orchestrators },
+  };
 }
 
 /** Validate a raw config object */

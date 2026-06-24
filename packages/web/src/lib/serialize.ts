@@ -205,19 +205,10 @@ export function listDashboardOrchestrators(
   sessions: Session[],
   projects: Record<string, ProjectConfig>,
 ): DashboardOrchestratorLink[] {
-  const allSessionPrefixes = Object.entries(projects).map(
-    ([projectId, p]) => p.sessionPrefix ?? projectId,
-  );
   const bestByProject = new Map<string, Session>();
 
   for (const session of sessions) {
-    if (
-      !isOrchestratorSession(
-        session,
-        projects[session.projectId]?.sessionPrefix ?? session.projectId,
-        allSessionPrefixes,
-      )
-    ) {
+    if (!isOrchestratorSession(session)) {
       continue;
     }
 

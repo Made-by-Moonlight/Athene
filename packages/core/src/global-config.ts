@@ -381,9 +381,12 @@ export function loadGlobalConfig(
 
   let config = GlobalConfigSchema.parse(parsed);
 
-  // Normalize dual-read: if only metaOrchestrators is present, copy to orchestrators.
-  if (config.metaOrchestrators && !config.orchestrators) {
-    config = { ...config, orchestrators: config.metaOrchestrators };
+  // Normalize dual-read: merge metaOrchestrators → orchestrators, orchestrators wins on conflict.
+  if (config.metaOrchestrators) {
+    config = {
+      ...config,
+      orchestrators: { ...config.metaOrchestrators, ...config.orchestrators },
+    };
   }
 
   for (const [projectId, entry] of Object.entries(config.projects)) {

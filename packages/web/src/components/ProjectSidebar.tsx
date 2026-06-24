@@ -468,16 +468,6 @@ function ProjectSidebarInner({
   // matches the slot used for its cards in Dashboard.
   const colorProjectIds = useMemo(() => projects.map((p) => p.id), [projects]);
 
-  const prefixByProject = useMemo(
-    () => new Map(visibleProjects.map((p) => [p.id, p.sessionPrefix ?? p.id])),
-    [visibleProjects],
-  );
-
-  const allPrefixes = useMemo(
-    () => visibleProjects.map((p) => p.sessionPrefix ?? p.id),
-    [visibleProjects],
-  );
-
   const orchestratorByProject = useMemo(
     () => new Map((orchestrators ?? []).map((o) => [o.projectId, o])),
     [orchestrators],
@@ -511,7 +501,7 @@ function ProjectSidebarInner({
     for (const s of sessionsRef.current ?? []) {
       // Only include sessions whose projectId matches a configured project
       if (!validProjectIds.has(s.projectId)) continue;
-      if (isOrchestratorSession(s, prefixByProject.get(s.projectId), allPrefixes)) continue;
+      if (isOrchestratorSession(s)) continue;
       // Keep terminal sessions visible when they still need human attention.
       // Otherwise ACTION-column cards disappear from the sidebar just because
       // their runtime has ended.
@@ -524,7 +514,7 @@ function ProjectSidebarInner({
       map.set(s.projectId, list);
     }
     return map;
-  }, [sessionsKey, prefixByProject, allPrefixes, visibleProjects, showKilled, showDone]);
+  }, [sessionsKey, visibleProjects, showKilled, showDone]);
 
 
   // Clear an optimistic rename once the prop session.displayName catches up.

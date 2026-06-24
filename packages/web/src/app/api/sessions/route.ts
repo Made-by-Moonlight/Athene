@@ -29,18 +29,8 @@ function listProjectOrchestratorSessions(
   sessions: Parameters<typeof listDashboardOrchestrators>[0],
   projects: Parameters<typeof listDashboardOrchestrators>[1],
 ): Parameters<typeof listDashboardOrchestrators>[0] {
-  const allSessionPrefixes = Object.entries(projects).map(
-    ([projectId, project]) => project.sessionPrefix ?? projectId,
-  );
-
   const projectOrchestrators = sessions
-    .filter((session) =>
-      isOrchestratorSession(
-        session,
-        projects[session.projectId]?.sessionPrefix ?? session.projectId,
-        allSessionPrefixes,
-      ),
-    )
+    .filter((session) => isOrchestratorSession(session))
     .sort(compareOrchestratorRecency);
 
   const liveOrchestrators = projectOrchestrators.filter((session) => !isTerminalSession(session));
@@ -120,16 +110,8 @@ export async function GET(request: Request) {
       );
     }
 
-    const allSessionPrefixes = Object.entries(config.projects).map(
-      ([projectId, p]) => p.sessionPrefix ?? projectId,
-    );
     let workerSessions = visibleSessions.filter(
-      (session) =>
-        !isOrchestratorSession(
-          session,
-          config.projects[session.projectId]?.sessionPrefix ?? session.projectId,
-          allSessionPrefixes,
-        ),
+      (session) => !isOrchestratorSession(session),
     );
 
     // Convert to dashboard format
