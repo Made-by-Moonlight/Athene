@@ -41,20 +41,20 @@ export default async function OrchestratorPage(props: {
               <path d="m8 10 3 3-3 3" />
               <path d="M13 16h3" />
             </svg>
-            {data.name}
+            {data.id}
           </a>
         </div>
       )}
       {data.projects.length > 0 && (
-        <OrchestratorSpawnForm orchestratorName={id} projects={data.projects} />
+        <OrchestratorSpawnForm orchestratorName={data.slug} projects={data.projects} />
       )}
       <Dashboard
         initialSessions={data.sessions}
-        projectName={data.name}
+        projectName={data.label}
         projects={data.projects}
         orchestrators={[]}
         namedOrchestrators={data.orchestrators}
-        metaOwner={data.name}
+        metaOwner={data.slug}
         attentionZones={data.attentionZones}
         dashboardLoadError={data.dashboardLoadError}
       />

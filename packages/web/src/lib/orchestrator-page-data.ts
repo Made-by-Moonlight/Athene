@@ -23,7 +23,12 @@ import {
 const FAST_METADATA_ENRICH_TIMEOUT_MS = 3_000;
 
 export interface OrchestratorPageData {
-  name: string;
+  /** Orchestrator UUID from config. */
+  id: string;
+  /** YAML key slug (never changes). */
+  slug: string;
+  /** Display label from config `name` field. Falls back to slug if absent. */
+  label: string;
   sessions: DashboardSession[];
   /**
    * Full registered project set (registration order). Passed to Dashboard as
@@ -54,7 +59,9 @@ export const getOrchestratorPageData = cache(async function getOrchestratorPageD
 
   const projects = getAllProjects();
   const pageData: OrchestratorPageData = {
-    name: orchId,
+    id: orchId,
+    slug: "",
+    label: "",
     sessions: [],
     projects,
     orchestrators: [],
@@ -74,6 +81,10 @@ export const getOrchestratorPageData = cache(async function getOrchestratorPageD
       return null;
     }
     [orchSlug] = orchEntry;
+    // Populate display label same pattern as SidebarOrchestrator
+    const orchConfig = orchMap[orchSlug] as { name?: string } | undefined;
+    pageData.slug = orchSlug;
+    pageData.label = orchConfig?.name ?? orchSlug;
     pageData.attentionZones = config.dashboard?.attentionZones ?? DEFAULT_ATTENTION_ZONE_MODE;
     pageData.orchestrators = await listSidebarOrchestrators(config, registry);
     try {
