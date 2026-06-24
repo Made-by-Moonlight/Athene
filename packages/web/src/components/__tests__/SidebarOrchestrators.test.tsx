@@ -191,7 +191,38 @@ describe("SidebarOrchestrators", () => {
     expect(onNavigate).toHaveBeenCalledWith("/orchestrators/fleet", orchSession);
   });
 
-  it("expands to show session list when chevron is clicked", () => {
+  it("expands to show sub-orchestrator sessions in the dropdown", () => {
+    const subOrchSession = {
+      id: "sub-orch-1",
+      projectId: "_meta",
+      status: "working",
+      activity: "active",
+      displayName: "Sub Orchestrator",
+      metadata: { orchestratorOwner: "fleet", role: "orchestrator" },
+    } as unknown as DashboardSession;
+
+    render(
+      <SidebarOrchestrators
+        collapsed={false}
+        orchestrators={[{ name: "fleet", session: orchSession }]}
+        allSessions={[subOrchSession]}
+        projects={noProjects}
+        activeSessionId={undefined}
+        onNavigate={() => {}}
+      />,
+    );
+
+    // Initially not expanded
+    expect(screen.queryByText("Sub Orchestrator")).not.toBeInTheDocument();
+
+    // Click the toggle button (contains ◆ and "fleet")
+    fireEvent.click(screen.getByRole("button", { name: /toggle fleet sessions/i }));
+
+    // Sub-orchestrator session is visible
+    expect(screen.getByText("Sub Orchestrator")).toBeInTheDocument();
+  });
+
+  it("does not show worker sessions in the orchestrator dropdown", () => {
     const workerSession = {
       id: "worker-1",
       projectId: "proj-a",
@@ -212,14 +243,30 @@ describe("SidebarOrchestrators", () => {
       />,
     );
 
-    // Initially not expanded
-    expect(screen.queryByText("My Worker")).not.toBeInTheDocument();
-
-    // Click the toggle button (contains ◆ and "fleet")
     fireEvent.click(screen.getByRole("button", { name: /toggle fleet sessions/i }));
 
-    // Now the session should be visible
-    expect(screen.getByText("My Worker")).toBeInTheDocument();
+    // Worker session must not appear in the orchestrator dropdown
+    expect(screen.queryByText("My Worker")).not.toBeInTheDocument();
+  });
+
+  it("shows the orchestrator's own session in the dropdown", () => {
+    const { container } = render(
+      <SidebarOrchestrators
+        collapsed={false}
+        orchestrators={[{ name: "fleet", session: orchSession }]}
+        allSessions={[orchSession]}
+        projects={noProjects}
+        activeSessionId={undefined}
+        onNavigate={() => {}}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /toggle fleet sessions/i }));
+
+    // The orchestrator's own session link should appear in the expanded list
+    expect(
+      container.querySelector('a[href="/orchestrators/fleet/sessions/orch-1"]'),
+    ).toBeTruthy();
   });
 
   it("shows '+ New session' button when expanded and projects exist", () => {
@@ -326,6 +373,41 @@ describe("SidebarOrchestrators", () => {
         />,
       );
       expect(screen.queryByRole("button")).toBeNull();
+    });
+  });
+
+  describe("kill button on dropdown sessions", () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+      vi.stubGlobal(
+        "fetch",
+        vi.fn(async () => ({ ok: true, json: async () => ({}) })),
+      );
+    });
+
+    it("calls kill API when kill button is clicked on orchestrator's own session", async () => {
+      render(
+        <SidebarOrchestrators
+          collapsed={false}
+          orchestrators={[{ name: "fleet", session: orchSession }]}
+          allSessions={[orchSession]}
+          projects={noProjects}
+          activeSessionId={undefined}
+          onNavigate={() => {}}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: /toggle fleet sessions/i }));
+
+      const killBtn = screen.getByRole("button", { name: /kill orch-1/i });
+      fireEvent.click(killBtn);
+
+      await waitFor(() => {
+        expect(vi.mocked(fetch)).toHaveBeenCalledWith(
+          "/api/sessions/orch-1/kill",
+          { method: "POST" },
+        );
+      });
     });
   });
 });
