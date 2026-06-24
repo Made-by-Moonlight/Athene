@@ -222,23 +222,7 @@ describe("SidebarOrchestrators", () => {
     expect(screen.getByText("My Worker")).toBeInTheDocument();
   });
 
-  it("shows '+ New session' button when expanded and projects exist", () => {
-    render(
-      <SidebarOrchestrators
-        collapsed={false}
-        orchestrators={[{ name: "fleet", session: orchSession }]}
-        allSessions={[]}
-        projects={someProjects}
-        activeSessionId={undefined}
-        onNavigate={() => {}}
-      />,
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: /toggle fleet sessions/i }));
-    expect(screen.getByText("+ New session")).toBeInTheDocument();
-  });
-
-  it("does not show '+ New session' when no projects configured", () => {
+  it("shows '+ New session' button when expanded", () => {
     render(
       <SidebarOrchestrators
         collapsed={false}
@@ -251,7 +235,7 @@ describe("SidebarOrchestrators", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: /toggle fleet sessions/i }));
-    expect(screen.queryByText("+ New session")).not.toBeInTheDocument();
+    expect(screen.getByText("+ New session")).toBeInTheDocument();
   });
 
   describe("start button on orchestrator rows", () => {

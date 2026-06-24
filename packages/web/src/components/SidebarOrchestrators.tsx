@@ -47,10 +47,12 @@ function getOrchestratorWorkerSessions(
 ): DashboardSession[] {
   return sessions.filter(
     (s) =>
-      (s.metadata["orchestratorOwner"] === orchestratorName ||
-        s.metadata["metaOwner"] === orchestratorName) &&
+      // Exclude coordinator sessions — they live under the "_meta" pseudo-project
+      // and carry role="orchestrator". Both checks are defensive guards.
+      s.projectId !== "_meta" &&
       s.metadata["role"] !== "orchestrator" &&
-      s.metadata["role"] !== "meta-orchestrator",
+      (s.metadata["orchestratorOwner"] === orchestratorName ||
+        s.metadata["metaOwner"] === orchestratorName),
   );
 }
 
@@ -89,7 +91,7 @@ export function SidebarOrchestrators({
   collapsed,
   orchestrators,
   allSessions,
-  projects,
+  projects: _projects,
   activeSessionId,
   onNavigate,
 }: SidebarOrchestratorsProps) {
@@ -103,11 +105,7 @@ export function SidebarOrchestrators({
   const createInputRef = useRef<HTMLInputElement>(null);
 
   // Spawn form state — one orchestrator at a time
-  const [spawnOrch, setSpawnOrch] = useState<string | null>(null);
-  const [spawnProjectId, setSpawnProjectId] = useState("");
-  const [spawnPrompt, setSpawnPrompt] = useState("");
-  const [spawning, setSpawning] = useState(false);
-  const [spawnError, setSpawnError] = useState<string | null>(null);
+  const [spawnError, setSpawnError] = useState<{ orch: string; msg: string } | null>(null);
 
   useEffect(() => {
     if (showCreate) createInputRef.current?.focus();
@@ -156,37 +154,26 @@ export function SidebarOrchestrators({
     }
   };
 
-  const handleSpawn = async (orchName: string) => {
-    if (!spawnProjectId || spawning) return;
-    setSpawning(true);
+  const handleStartNew = async (orchName: string) => {
     setSpawnError(null);
     try {
-      const res = await fetch("/api/spawn", {
+      const res = await fetch(`/api/orchestrators/${encodeURIComponent(orchName)}/start`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          projectId: spawnProjectId,
-          prompt: spawnPrompt.trim() || undefined,
-          orchestratorOwner: orchName,
-        }),
       });
       const data = (await res.json().catch(() => ({}))) as {
-        session?: { id: string };
+        sessionId?: string;
         error?: string;
       };
       if (!res.ok) {
-        setSpawnError(data.error ?? "Failed to spawn");
+        setSpawnError({ orch: orchName, msg: data.error ?? "Failed to start" });
         return;
       }
-      if (data.session) {
-        setSpawnOrch(null);
-        setSpawnPrompt("");
-        onNavigate(orchestratorSessionPath(orchName, data.session.id));
+      if (data.sessionId) {
+        onNavigate(orchestratorSessionPath(orchName, data.sessionId));
       }
+      router.refresh();
     } catch {
-      setSpawnError("Network error");
-    } finally {
-      setSpawning(false);
+      setSpawnError({ orch: orchName, msg: "Network error" });
     }
   };
 
@@ -522,77 +509,18 @@ export function SidebarOrchestrators({
                   );
                 })}
 
-                {/* Spawn form / button */}
-                {projects.length > 0 && (
-                  spawnOrch === o.name ? (
-                    <div className="project-sidebar__orch-create-form">
-                      <select
-                        value={spawnProjectId}
-                        onChange={(e) => {
-                          setSpawnProjectId(e.target.value);
-                          setSpawnError(null);
-                        }}
-                        className="project-sidebar__orch-create-input"
-                        disabled={spawning}
-                        aria-label="Project"
-                      >
-                        {projects.map((p) => (
-                          <option key={p.id} value={p.id}>
-                            {p.name}
-                          </option>
-                        ))}
-                      </select>
-                      <input
-                        type="text"
-                        value={spawnPrompt}
-                        onChange={(e) => setSpawnPrompt(e.target.value)}
-                        placeholder="Prompt (optional)"
-                        className="project-sidebar__orch-create-input"
-                        disabled={spawning}
-                      />
-                      {spawnError && (
-                        <span className="project-sidebar__orch-create-error">{spawnError}</span>
-                      )}
-                      <div className="project-sidebar__orch-create-actions">
-                        <button
-                          type="button"
-                          onClick={() => void handleSpawn(o.name)}
-                          disabled={spawning || !spawnProjectId}
-                          className="project-sidebar__orch-create-submit"
-                        >
-                          {spawning ? (
-                            <span className="project-sidebar__orch-start-spinner" aria-hidden="true" />
-                          ) : (
-                            "Spawn"
-                          )}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSpawnOrch(null);
-                            setSpawnError(null);
-                            setSpawnPrompt("");
-                          }}
-                          className="project-sidebar__orch-create-cancel"
-                          disabled={spawning}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSpawnOrch(o.name);
-                        setSpawnProjectId(projects[0]?.id ?? "");
-                        setSpawnError(null);
-                      }}
-                      className="project-sidebar__orch-spawn-row"
-                    >
-                      + New session
-                    </button>
-                  )
+                {/* New session button — starts a fresh orchestrator session */}
+                <button
+                  type="button"
+                  onClick={() => void handleStartNew(o.name)}
+                  className="project-sidebar__orch-spawn-row"
+                >
+                  + New session
+                </button>
+                {spawnError?.orch === o.name && (
+                  <span className="project-sidebar__orch-create-error px-3">
+                    {spawnError.msg}
+                  </span>
                 )}
               </div>
             )}
