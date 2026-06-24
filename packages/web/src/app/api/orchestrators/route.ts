@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
   const scope = body.scope;
   if (scope !== "all" && !Array.isArray(scope)) {
     return jsonWithCorrelation(
-      { error: 'scope must be "all" or an array of project IDs' },
+      { error: 'scope must be "all" or an array of project paths' },
       { status: 400 },
       correlationId,
     );
@@ -46,12 +46,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate explicit project IDs exist
+    // Validate that array entries are non-empty strings (they are directory paths)
     if (Array.isArray(scope)) {
-      for (const id of scope) {
-        if (!Object.hasOwn(config.projects, id)) {
+      for (const entry of scope) {
+        if (typeof entry !== "string" || !entry) {
           return jsonWithCorrelation(
-            { error: `Unknown project ID: '${id}'` },
+            { error: "scope array entries must be non-empty strings" },
             { status: 400 },
             correlationId,
           );

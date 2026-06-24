@@ -1773,6 +1773,15 @@ export function createSessionManager(deps: SessionManagerDeps): OpenCodeSessionM
       lifecycle.runtime.handle = handle;
       lifecycle.runtime.tmuxName = tmuxName ?? null;
 
+      const _orchOwnerSlug =
+        spawnConfig.orchestratorOwner ||
+        spawnConfig.metaOwner ||
+        getEnvString(ENV.ORCHESTRATOR_NAME) ||
+        getEnvString(ENV.META_NAME);
+      const _orchId = _orchOwnerSlug
+        ? (config.orchestrators ?? config.metaOrchestrators)?.[_orchOwnerSlug]?.id
+        : undefined;
+
       const session: Session = {
         id: sessionId,
         projectId: spawnConfig.projectId,
@@ -1809,16 +1818,7 @@ export function createSessionManager(deps: SessionManagerDeps): OpenCodeSessionM
           ),
           // Stamp the stable UUID for the owning orchestrator (when available).
           // Lookup by slug from the resolved orchestratorOwner value.
-          ...(() => {
-            const ownerSlug =
-              spawnConfig.orchestratorOwner ||
-              spawnConfig.metaOwner ||
-              getEnvString(ENV.ORCHESTRATOR_NAME) ||
-              getEnvString(ENV.META_NAME);
-            if (!ownerSlug) return {};
-            const orchEntry = (config.orchestrators ?? config.metaOrchestrators)?.[ownerSlug];
-            return orchEntry?.id ? { orchestratorId: orchEntry.id } : {};
-          })(),
+          ...(_orchId ? { orchestratorId: _orchId } : {}),
           // Parent session stamping: when a worker is spawned from within an
           // orchestrator session, ATHENE_SESSION_ID holds the orchestrator's
           // session ID. This links workers back to their parent for fleet views.
