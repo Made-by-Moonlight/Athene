@@ -105,14 +105,18 @@ describe("dual-read: orchestrators / metaOrchestrators", () => {
     expect(cfg.orchestrators?.platform.scope).toBe("all");
   });
 
-  it("new orchestrators key takes precedence when both present", () => {
+  it("new orchestrators key takes precedence when both present (merge, orchestrators wins on conflict)", () => {
     const cfg = validateConfig({
       ...base,
-      orchestrators: { orch: { scope: "all" } },
-      metaOrchestrators: { old: { scope: "all" } },
+      orchestrators: { orch: { scope: "all" }, shared: { scope: "all", discover: false } },
+      metaOrchestrators: { old: { scope: "all" }, shared: { scope: "all", discover: true } },
     });
+    // orchestrators-only entry preserved
     expect(cfg.orchestrators?.orch).toBeDefined();
-    expect(cfg.orchestrators?.old).toBeUndefined();
+    // metaOrchestrators-only entry is merged in
+    expect(cfg.orchestrators?.old).toBeDefined();
+    // conflicting key: orchestrators wins (discover: false beats discover: true)
+    expect(cfg.orchestrators?.shared).toMatchObject({ scope: "all", discover: false });
   });
 });
 

@@ -14,8 +14,7 @@ import {
 } from "@/lib/serialize";
 import { getAllProjects, type ProjectInfo } from "@/lib/project-name";
 import { settlesWithin } from "@/lib/async-utils";
-import { listSidebarOrchestrators } from "@/lib/orchestrators";
-import type { SidebarOrchestrator } from "@/lib/orchestrators";
+import { listSidebarOrchestrators, type SidebarOrchestrator } from "@/lib/orchestrators";
 import {
   DEFAULT_ATTENTION_ZONE_MODE,
   formatDashboardLoadError,

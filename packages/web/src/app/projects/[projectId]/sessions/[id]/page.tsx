@@ -24,18 +24,12 @@ function truncate(s: string, max: number): string {
 
 function buildSessionTitle(
   session: DashboardSession,
-  prefixByProject: Map<string, string>,
   activityOverride?: ActivityState | null,
 ): string {
   const id = session.id;
   const activity = activityOverride !== undefined ? activityOverride : session.activity;
   const emoji = activity ? (activityIcon[activity] ?? "") : "";
-  const allPrefixes = [...prefixByProject.values()];
-  const isOrchestrator = isOrchestratorSession(
-    session,
-    prefixByProject.get(session.projectId),
-    allPrefixes,
-  );
+  const isOrchestrator = isOrchestratorSession(session);
   const detail = isOrchestrator ? "Orchestrator Terminal" : truncate(getSessionTitle(session), 40);
   return emoji ? `${emoji} ${id} | ${detail}` : `${id} | ${detail}`;
 }
@@ -138,18 +132,12 @@ export default function ProjectSessionPage() {
   const [loading, setLoading] = useState(cachedSession === null);
   const [routeError, setRouteError] = useState<Error | null>(null);
   const [sessionMissing, setSessionMissing] = useState(false);
-  const [prefixByProject, setPrefixByProject] = useState<Map<string, string>>(new Map());
-
   const sessionProjectId = session?.projectId ?? null;
-  const allPrefixes = [...prefixByProject.values()];
-  const sessionIsOrchestrator = session
-    ? isOrchestratorSession(session, prefixByProject.get(session.projectId), allPrefixes)
-    : false;
+  const sessionIsOrchestrator = session ? isOrchestratorSession(session) : false;
 
   const sessionProjectIdRef = useRef<string | null>(null);
   const sessionIsOrchestratorRef = useRef(false);
   const resolvedProjectSessionsKeyRef = useRef<string | null>(null);
-  const prefixByProjectRef = useRef<Map<string, string>>(new Map());
   const hasLoadedSessionRef = useRef(cachedSession !== null);
   const fetchingSessionRef = useRef(false);
   const fetchingProjectSessionsRef = useRef(false);
@@ -161,16 +149,12 @@ export default function ProjectSessionPage() {
   const sseActivity = useMuxSessionActivity(id);
 
   useEffect(() => {
-    prefixByProjectRef.current = prefixByProject;
-  }, [prefixByProject]);
-
-  useEffect(() => {
     if (session) {
-      document.title = buildSessionTitle(session, prefixByProject, sseActivity?.activity);
+      document.title = buildSessionTitle(session, sseActivity?.activity);
     } else {
       document.title = `${id} | Session Detail`;
     }
-  }, [session, id, prefixByProject, sseActivity]);
+  }, [session, id, sseActivity]);
 
   useEffect(() => {
     sessionProjectIdRef.current = sessionProjectId;
@@ -198,7 +182,6 @@ export default function ProjectSessionPage() {
   const fetchProjects = useCallback(async () => {
     if (cachedProjects) {
       setProjects(cachedProjects);
-      setPrefixByProject(new Map(cachedProjects.map((p) => [p.id, p.sessionPrefix ?? p.id])));
     }
     try {
       const data = await fetchJsonWithTimeout<{ projects?: ProjectInfo[] } | null>(
@@ -212,7 +195,6 @@ export default function ProjectSessionPage() {
       if (!areProjectsEqual(cachedProjects, data.projects)) {
         cachedProjects = data.projects;
         setProjects(data.projects);
-        setPrefixByProject(new Map(data.projects.map((p) => [p.id, p.sessionPrefix ?? p.id])));
       }
     } catch (err) {
       console.error("Failed to fetch projects:", err);
@@ -310,9 +292,8 @@ export default function ProjectSessionPage() {
         working: 0,
         done: 0,
       };
-      const allPfxs = [...prefixByProjectRef.current.values()];
       for (const s of sessions) {
-        if (!isOrchestratorSession(s, prefixByProjectRef.current.get(s.projectId), allPfxs)) {
+        if (!isOrchestratorSession(s)) {
           const level = getAttentionLevel(s);
           if (level === "action") continue;
           counts[level]++;

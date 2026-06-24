@@ -16,8 +16,7 @@ import {
 import { getPrimaryProjectId, getProjectName, getAllProjects, type ProjectInfo } from "@/lib/project-name";
 import { filterProjectSessions, filterWorkerSessions } from "@/lib/project-utils";
 import { settlesWithin } from "@/lib/async-utils";
-import { listSidebarOrchestrators } from "@/lib/orchestrators";
-import type { SidebarOrchestrator } from "@/lib/orchestrators";
+import { listSidebarOrchestrators, type SidebarOrchestrator } from "@/lib/orchestrators";
 
 const FAST_METADATA_ENRICH_TIMEOUT_MS = 3_000;
 

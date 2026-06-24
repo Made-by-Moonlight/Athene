@@ -147,7 +147,7 @@ export function registerOrchestratorCommands(program: Command): void {
         console.log(chalk.green(`✓ Orchestrator ready: ${session.id}`));
         console.log(
           chalk.dim(
-            `  Dashboard: http://localhost:${port}/orchestrator/${name}`,
+            `  Dashboard: http://localhost:${port}/orchestrators/${encodeURIComponent(name)}`,
           ),
         );
       } catch (err) {

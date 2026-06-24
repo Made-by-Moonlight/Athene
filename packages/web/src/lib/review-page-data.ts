@@ -77,19 +77,9 @@ export async function getReviewPageData(project?: string): Promise<ReviewPageDat
           : [];
     const allSessions = await sessionManager.listCached();
     const visibleSessions = allSessions.filter((session) => projectIds.includes(session.projectId));
-    const allSessionPrefixes = Object.entries(config.projects).map(
-      ([projectId, project]) => project.sessionPrefix ?? projectId,
-    );
     const workerSessionsById = new Map(
       visibleSessions
-        .filter(
-          (session) =>
-            !isOrchestratorSession(
-              session,
-              config.projects[session.projectId]?.sessionPrefix ?? session.projectId,
-              allSessionPrefixes,
-            ),
-        )
+        .filter((session) => !isOrchestratorSession(session))
         .map((session) => [session.id, session]),
     );
     const workerSessions = [...workerSessionsById.values()];
