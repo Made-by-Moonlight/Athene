@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { getAttentionLevel, type DashboardSession } from "@/lib/types";
 import { getSessionTitle } from "@/lib/format";
 import { cn } from "@/lib/cn";
-import { orchestratorDashboardPath, orchestratorSessionPath } from "@/lib/routes";
+import { orchestratorDashboardPath, orchestratorSessionPath, projectSessionPath } from "@/lib/routes";
 import type { ProjectInfo } from "@/lib/project-name";
 
 /** A named orchestrator and its (optional) session, for the sidebar. */
@@ -41,7 +41,8 @@ interface SidebarOrchestratorsProps {
   onNavigate: (href: string, session?: DashboardSession) => void;
 }
 
-function getOrchestratorWorkerSessions(
+/** Returns orchestrator-role sessions spawned by this orchestrator (sub-orchestrators only). */
+function getOrchestratorSubSessions(
   sessions: DashboardSession[],
   orchestratorName: string,
 ): DashboardSession[] {
@@ -49,8 +50,7 @@ function getOrchestratorWorkerSessions(
     (s) =>
       (s.metadata["orchestratorOwner"] === orchestratorName ||
         s.metadata["metaOwner"] === orchestratorName) &&
-      s.metadata["role"] !== "orchestrator" &&
-      s.metadata["role"] !== "meta-orchestrator",
+      (s.metadata["role"] === "orchestrator" || s.metadata["role"] === "meta-orchestrator"),
   );
 }
 
@@ -83,7 +83,8 @@ function SessionDot({ level }: { level: string }) {
 
 /**
  * The Orchestrators sidebar section: expandable list of named orchestrators
- * with their worker sessions. Renders a compact glyph cluster when collapsed.
+ * with their own session and any sub-orchestrators. Worker sessions spawned for
+ * a project appear under that project, not here.
  */
 export function SidebarOrchestrators({
   collapsed,
@@ -102,6 +103,9 @@ export function SidebarOrchestrators({
   const [createError, setCreateError] = useState<string | null>(null);
   const createInputRef = useRef<HTMLInputElement>(null);
 
+  // Kill state — tracks in-flight kill requests
+  const [killingSessionIds, setKillingSessionIds] = useState<Set<string>>(new Set());
+
   // Spawn form state — one orchestrator at a time
   const [spawnOrch, setSpawnOrch] = useState<string | null>(null);
   const [spawnProjectId, setSpawnProjectId] = useState("");
@@ -113,11 +117,13 @@ export function SidebarOrchestrators({
     if (showCreate) createInputRef.current?.focus();
   }, [showCreate]);
 
-  // Auto-expand orchestrators that own the active session
+  // Auto-expand orchestrators whose own session or sub-sessions contain the active session
   useEffect(() => {
     if (!activeSessionId) return;
-    const owning = orchestrators.find((o) =>
-      getOrchestratorWorkerSessions(allSessions, o.name).some((s) => s.id === activeSessionId),
+    const owning = orchestrators.find(
+      (o) =>
+        o.session?.id === activeSessionId ||
+        getOrchestratorSubSessions(allSessions, o.name).some((s) => s.id === activeSessionId),
     );
     if (owning) {
       setExpandedOrchestrators((prev) => {
@@ -128,6 +134,21 @@ export function SidebarOrchestrators({
       });
     }
   }, [activeSessionId, orchestrators, allSessions]);
+
+  const handleKillSession = async (sessionId: string) => {
+    if (killingSessionIds.has(sessionId)) return;
+    setKillingSessionIds((prev) => new Set(prev).add(sessionId));
+    try {
+      await fetch(`/api/sessions/${encodeURIComponent(sessionId)}/kill`, { method: "POST" });
+      router.refresh();
+    } finally {
+      setKillingSessionIds((prev) => {
+        const next = new Set(prev);
+        next.delete(sessionId);
+        return next;
+      });
+    }
+  };
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -181,7 +202,7 @@ export function SidebarOrchestrators({
       if (data.session) {
         setSpawnOrch(null);
         setSpawnPrompt("");
-        onNavigate(orchestratorSessionPath(orchName, data.session.id));
+        onNavigate(projectSessionPath(spawnProjectId, data.session.id));
       }
     } catch {
       setSpawnError("Network error");
@@ -243,7 +264,6 @@ export function SidebarOrchestrators({
           const dest = o.session
             ? orchestratorSessionPath(o.name, o.session.id)
             : orchestratorDashboardPath(o.name);
-          const workerSessions = getOrchestratorWorkerSessions(allSessions, o.name);
           return (
             <div key={o.name} className="flex flex-col items-center gap-0.5 w-full px-1">
               <a
@@ -260,39 +280,6 @@ export function SidebarOrchestrators({
               >
                 ◆
               </a>
-              {workerSessions.slice(0, 3).map((session) => {
-                const level = getAttentionLevel(session);
-                const title = session.displayName ?? getSessionTitle(session) ?? session.id;
-                const abbr = title.replace(/\s+/g, "").slice(0, 3).toUpperCase();
-                const isActive = activeSessionId === session.id;
-                const sessionHref = orchestratorSessionPath(o.name, session.id);
-                return (
-                  <a
-                    key={session.id}
-                    href={sessionHref}
-                    onClick={(e) => {
-                      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
-                      e.preventDefault();
-                      onNavigate(sessionHref, session);
-                    }}
-                    className={cn(
-                      "project-sidebar__collapsed-session-btn",
-                      isActive && "project-sidebar__collapsed-session-btn--active",
-                    )}
-                    data-level={level}
-                    title={title}
-                    aria-label={title}
-                  >
-                    <span className="project-sidebar__session-abbr-first">{abbr[0]}</span>
-                    <span className="project-sidebar__session-abbr-rest">{abbr.slice(1)}</span>
-                  </a>
-                );
-              })}
-              {workerSessions.length > 3 && (
-                <span className="project-sidebar__collapsed-overflow">
-                  +{workerSessions.length - 3}
-                </span>
-              )}
             </div>
           );
         })}
@@ -367,12 +354,20 @@ export function SidebarOrchestrators({
       )}
       {orchestrators.map((o) => {
         const fleetHref = orchestratorDashboardPath(o.name);
-        const terminalHref = o.session
-          ? orchestratorSessionPath(o.name, o.session.id)
-          : fleetHref;
         const isStarting = startingOrch.has(o.name);
         const isExpanded = expandedOrchestrators.has(o.name);
-        const workerSessions = getOrchestratorWorkerSessions(allSessions, o.name);
+        const subSessions = getOrchestratorSubSessions(allSessions, o.name);
+        // Dropdown: the orchestrator's own session first, then sub-orchestrators.
+        const dropdownSessions: Array<{ session: DashboardSession; href: string }> = [];
+        if (o.session) {
+          dropdownSessions.push({
+            session: o.session,
+            href: orchestratorSessionPath(o.name, o.session.id),
+          });
+        }
+        for (const s of subSessions) {
+          dropdownSessions.push({ session: s, href: orchestratorSessionPath(o.name, s.id) });
+        }
 
         return (
           <div key={o.name} className="project-sidebar__project">
@@ -438,35 +433,6 @@ export function SidebarOrchestrators({
                   </svg>
                 </a>
 
-                {/* Terminal link (only when session is running) */}
-                {o.session && (
-                  <a
-                    href={terminalHref}
-                    onClick={(e) => {
-                      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
-                      e.preventDefault();
-                      e.stopPropagation();
-                      onNavigate(terminalHref, o.session ?? undefined);
-                    }}
-                    title="View orchestrator terminal"
-                    aria-label={`Open ${o.name} terminal`}
-                    className="project-sidebar__orch-terminal-btn"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      className="h-3.5 w-3.5"
-                      aria-hidden="true"
-                    >
-                      <rect x="2" y="3" width="20" height="14" rx="2" />
-                      <path d="m8 10 3 3-3 3" />
-                      <path d="M13 16h3" />
-                    </svg>
-                  </a>
-                )}
-
                 {/* Start / activity */}
                 {o.session === null ? (
                   <button
@@ -491,34 +457,70 @@ export function SidebarOrchestrators({
             {/* Expanded session list */}
             {isExpanded && (
               <div className="project-sidebar__sessions">
-                {workerSessions.map((session) => {
-                  const sessionHref = orchestratorSessionPath(o.name, session.id);
+                {dropdownSessions.map(({ session, href }) => {
                   const isActive = activeSessionId === session.id;
                   const level = getAttentionLevel(session);
                   const title =
                     session.displayName ?? getSessionTitle(session) ?? session.id;
+                  const isKilling = killingSessionIds.has(session.id);
                   return (
-                    <a
+                    <div
                       key={session.id}
-                      href={sessionHref}
-                      onClick={handleClick(sessionHref, session)}
                       className={cn(
                         "project-sidebar__sess-row group",
                         isActive && "project-sidebar__sess-row--active",
                       )}
                     >
-                      <SessionDot level={level} />
-                      <div className="flex-1 min-w-0">
-                        <span
-                          className={cn(
-                            "project-sidebar__sess-label",
-                            isActive && "project-sidebar__sess-label--active",
-                          )}
-                        >
-                          {title}
-                        </span>
-                      </div>
-                    </a>
+                      <a
+                        href={href}
+                        onClick={handleClick(href, session)}
+                        className="project-sidebar__sess-link flex flex-1 min-w-0 items-center gap-[7px]"
+                        aria-current={isActive ? "page" : undefined}
+                        aria-label={`Open ${title}`}
+                      >
+                        <SessionDot level={level} />
+                        <div className="flex-1 min-w-0">
+                          <span
+                            className={cn(
+                              "project-sidebar__sess-label",
+                              isActive && "project-sidebar__sess-label--active",
+                            )}
+                          >
+                            {title}
+                          </span>
+                        </div>
+                      </a>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          void handleKillSession(session.id);
+                        }}
+                        disabled={isKilling}
+                        className="project-sidebar__sess-rename-btn opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus:opacity-100"
+                        title="Kill session"
+                        aria-label={`Kill ${session.id}`}
+                      >
+                        {isKilling ? (
+                          <span className="project-sidebar__orch-start-spinner" aria-hidden="true" />
+                        ) : (
+                          <svg
+                            width="11"
+                            height="11"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            aria-hidden="true"
+                          >
+                            <path d="M18 6 6 18" />
+                            <path d="m6 6 12 12" />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
                   );
                 })}
 
