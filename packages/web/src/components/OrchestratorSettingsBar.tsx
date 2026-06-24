@@ -43,12 +43,13 @@ export function OrchestratorSettingsBar({
   const saveName = async () => {
     if (nameValue.trim() === currentLabel) { setEditingName(false); return; }
     setNameSaving(true);
-    await fetch(`/api/orchestrators/${encodeURIComponent(orchId)}`, {
+    const res = await fetch(`/api/orchestrators/${encodeURIComponent(orchId)}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: nameValue.trim() }),
     });
     setNameSaving(false);
+    if (!res.ok) { setNameValue(currentLabel); setEditingName(false); return; }
     setEditingName(false);
     router.refresh();
   };
@@ -67,12 +68,14 @@ export function OrchestratorSettingsBar({
   }, []);
 
   const saveScope = async (newScope: "all" | string[]) => {
+    if (newScope === "all") setScopeOpen(false);
     setScopeValue(newScope);
-    await fetch(`/api/orchestrators/${encodeURIComponent(orchId)}`, {
+    const res = await fetch(`/api/orchestrators/${encodeURIComponent(orchId)}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ scope: newScope }),
     });
+    if (!res.ok) { setScopeValue(scopeValue); return; }
     router.refresh();
   };
 
@@ -95,12 +98,13 @@ export function OrchestratorSettingsBar({
     const next = !discover;
     setDiscover(next);
     setDiscoverSaving(true);
-    await fetch(`/api/orchestrators/${encodeURIComponent(orchId)}`, {
+    const res = await fetch(`/api/orchestrators/${encodeURIComponent(orchId)}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ discover: next }),
     });
     setDiscoverSaving(false);
+    if (!res.ok) { setDiscover(discover); return; }
     router.refresh();
   };
 
@@ -110,7 +114,12 @@ export function OrchestratorSettingsBar({
 
   const handleDelete = async () => {
     setDeleting(true);
-    await fetch(`/api/orchestrators/${encodeURIComponent(orchId)}`, { method: "DELETE" });
+    const res = await fetch(`/api/orchestrators/${encodeURIComponent(orchId)}`, { method: "DELETE" });
+    if (!res.ok) {
+      setDeleting(false);
+      setDeleteConfirm(false);
+      return;
+    }
     router.push("/");
   };
 
@@ -228,7 +237,7 @@ export function OrchestratorSettingsBar({
             type="button"
             onClick={() => void handleDelete()}
             disabled={deleting}
-            className="rounded px-2 py-0.5 text-[var(--color-status-error)] hover:bg-[color-mix(in_srgb,var(--color-status-error)_15%,transparent)] disabled:opacity-50"
+            className="rounded px-2 py-0.5 text-[var(--color-status-error)] hover:bg-[var(--color-bg-hover)] disabled:opacity-50"
           >
             {deleting ? "Removing…" : "Delete"}
           </button>
