@@ -1,6 +1,6 @@
 {
   "name": "@made-by-moonlight/athene-plugin-notifier-webhook",
-  "version": "0.11.3",
+  "version": "0.12.0-nightly-b1981d5482ecae5066ec58a94d1ffb00afab1347",
   "description": "Notifier plugin: generic webhook",
   "license": "MIT",
   "type": "module",
