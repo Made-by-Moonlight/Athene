@@ -1,5 +1,65 @@
 # @made-by-moonlight/athene-plugin-notifier-discord
 
+## 0.13.0
+
+### Minor Changes
+
+- - Merge pull request #73 from slievr/feat/direct-main-release
+  - Merge pull request #72 from slievr/feat/ci-paths-filter
+  - ci: return green without heavy work on docs-only changes
+  - Merge pull request #71 from slievr/chore/remove-deploy-vps
+  - ci: push version bump directly to main, drop version-bump PR mechanism
+  - ci: skip jobs on docs-only changes via dorny/paths-filter
+  - chore: remove deploy-vps workflow
+  - Merge pull request #68 from slievr/release/0.12.0
+  - Merge pull request #70 from slievr/feat/automate-canary-publish
+  - Merge pull request #64 from slievr/fix/rename-ao-to-athene-in-cli-output
+  - ci: route canary npm publishing through release.yml (already OIDC-registered)
+  - chore: resolve merge conflict with main in spawn.ts
+  - test: update CLI test assertions to expect 'Athene' instead of 'AO'
+  - ci: publish canary packages to npm via OIDC trusted publishing
+  - Merge pull request #63 from slievr/docs/go-engine-migration-plan
+  - Merge pull request #69 from slievr/feat/version-in-sidebar
+  - fix: stamp version from package.json into NEXT_PUBLIC_APP_VERSION at build time
+  - Merge pull request #67 from slievr/chore/release-changeset
+  - chore: add changeset for orchestrator management, spawn fix, version display
+  - Merge pull request #66 from slievr/feat/version-in-sidebar
+  - fix: defer version fetch until settings popover opens to avoid test interference
+  - feat: show installed version in sidebar settings popover
+  - Merge pull request #65 from slievr/fix/spawn-without-lifecycle-worker
+  - test: update spawn daemon enforcement tests for collapsed orchestrator model
+  - fix: allow spawning into projects not yet tracked by lifecycle supervisor
+  - fix: replace "AO" with "Athene" in user-facing CLI output
+  - docs: add phased Go engine migration plan
+  - Merge pull request #62 from slievr/feat/orchestrator-management
+  - fix: replace dynamic delete with immutable spread in deleteOrchestrator
+  - fix: typecheck in session-manager, startup guard, create modal scope paths
+  - fix: OrchestratorSettingsBar error handling, tests, scope popover close
+  - feat: inline session label editor on kanban card
+  - feat: OrchestratorSettingsBar — inline rename, scope picker, discovery toggle, delete
+  - test: mock ensureOrchestratorUUIDs in services.test.ts
+  - feat: PATCH/DELETE /api/orchestrators/[id] for update and remove
+  - fix: pass orchestrator display label as projectName to Dashboard, not UUID
+  - feat: UUID-based orchestrator routing, sidebar links use o.id
+  - fix: update api/orchestrators route scope type to string[]
+  - feat: startup UUID migration, add id/label to SidebarOrchestrator, path to ProjectInfo
+  - feat: stamp orchestratorId UUID at session spawn, add to DashboardSession
+  - feat: add ensureOrchestratorUUIDs, updateOrchestrator, deleteOrchestrator to config writer
+  - feat: update orchestrator scope to directory paths, add id/name fields
+  - docs: implementation plan for orchestrator management (9 tasks)
+  - docs: spec for orchestrator management (UUID identity, labels, scope, discovery, delete)
+  - Merge pull request #60 from slievr/fix/printf-changeset
+  - fix(release): check for open PRs only when deciding whether to create version bump PR
+  - feat(ci): add version-bump-ci to satisfy checks on release/\* branches
+  - feat(ci): add version-bump-ci workflow to auto-satisfy checks on release/\* branches
+  - Merge pull request #57 from slievr/fix/printf-changeset
+  - test: verify release/\* PR direct merge in workflow (no --auto, no --admin)
+
+### Patch Changes
+
+- Updated dependencies
+  - @made-by-moonlight/athene-core@0.13.0
+
 ## 0.12.0
 
 ### Patch Changes
