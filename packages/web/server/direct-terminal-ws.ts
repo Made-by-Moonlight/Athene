@@ -29,6 +29,9 @@ export function attachDirectTerminalWS(server: Server): void {
         muxWss.emit("connection", ws, request);
       });
     } else {
+      // IMPORTANT: This handler must be the sole upgrade listener on the server.
+      // If attached to a server with other WS upgrade listeners, the else branch
+      // will silently destroy non-mux upgrade requests, breaking those handlers.
       socket.destroy();
     }
   });
