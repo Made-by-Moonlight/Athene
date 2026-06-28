@@ -36,7 +36,20 @@ function makeKey(slot: PluginSlot, name: string): string {
   return `${slot}:${name}`;
 }
 
-/** Built-in plugin package names, mapped to their npm package */
+/**
+ * Built-in plugin package names, mapped to their npm package.
+ *
+ * This array serves two purposes:
+ * 1. Validation allowlist in prepareConfig() — checks if a plugin is built-in
+ *    to enforce config rules (e.g., rejecting "path" field for built-in plugins)
+ * 2. Test-injection fallback in loadBuiltinsFromList() — used when an importFn
+ *    override is provided (e.g., in tests) to enable mock plugin injection
+ *
+ * In production, plugin loading uses discoverPlugins() and getBuiltinPluginPaths()
+ * to dynamically discover installed plugins instead of relying on this static list.
+ *
+ * Keep both uses in sync when adding new built-in plugins.
+ */
 const BUILTIN_PLUGINS: Array<{ slot: PluginSlot; name: string; pkg: string }> = [
   // Runtimes
   { slot: "runtime", name: "tmux", pkg: "@made-by-moonlight/athene-plugin-runtime-tmux" },

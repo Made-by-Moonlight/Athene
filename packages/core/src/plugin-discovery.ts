@@ -109,6 +109,13 @@ export async function discoverPlugins(searchPaths: string[]): Promise<PluginModu
     }
   }
 
+  // Warn if no plugins were discovered and search paths were provided
+  if (plugins.length === 0 && searchPaths.length > 0) {
+    console.warn(
+      `[plugin-discovery] No plugins discovered. Searched paths:\n${searchPaths.map((p) => `  - ${p}`).join("\n")}`,
+    );
+  }
+
   return plugins;
 }
 
