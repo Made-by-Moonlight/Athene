@@ -76,7 +76,7 @@ const testSessions: Session[] = [
   }),
 ];
 
-const multiProjectSessions: Session[] = [
+const _multiProjectSessions: Session[] = [
   makeSession({
     id: "app-orchestrator",
     projectId: "my-app",
