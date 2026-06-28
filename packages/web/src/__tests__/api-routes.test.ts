@@ -280,13 +280,13 @@ describe("API Routes", () => {
       const res = await sessionsGET(makeRequest("http://localhost:3000/api/sessions"));
       expect(res.status).toBe(200);
       const data = await res.json();
-      expect(Array.isArray(data)).toBe(true);
-      expect(data.length).toBe(testSessions.length);
+      expect(Array.isArray(data.sessions)).toBe(true);
+      expect(data.sessions.length).toBe(testSessions.length);
     });
 
     it("passes projectId query param to engine client", async () => {
       const listSessionsSpy = vi.spyOn(engineClient, "listSessions");
-      await sessionsGET(makeRequest("http://localhost:3000/api/sessions?projectId=my-app"));
+      await sessionsGET(makeRequest("http://localhost:3000/api/sessions?project=my-app"));
       expect(listSessionsSpy).toHaveBeenCalledWith("my-app");
     });
 
