@@ -18,23 +18,20 @@ func New() plugin.Runtime {
 }
 
 func (t *tmuxRuntime) Send(ctx context.Context, sessionID string, _ any, message string) error {
-	tmuxSession := "ao-" + sessionID
-	return exec.CommandContext(ctx, "tmux", "send-keys", "-t", tmuxSession, message, "Enter").Run()
+	return exec.CommandContext(ctx, "tmux", "send-keys", "-t", sessionName(sessionID), message, "Enter").Run()
 }
 
 func (t *tmuxRuntime) Kill(ctx context.Context, sessionID string, _ any) error {
-	tmuxSession := "ao-" + sessionID
-	return exec.CommandContext(ctx, "tmux", "kill-session", "-t", tmuxSession).Run()
+	return exec.CommandContext(ctx, "tmux", "kill-session", "-t", sessionName(sessionID)).Run()
 }
 
 func (t *tmuxRuntime) IsAlive(ctx context.Context, sessionID string, _ any) (bool, error) {
-	tmuxSession := "ao-" + sessionID
 	out, err := exec.CommandContext(ctx, "tmux", "list-sessions", "-F", "#{session_name}").Output()
 	if err != nil {
 		return false, nil // tmux not running = session not alive
 	}
 	for _, line := range strings.Split(strings.TrimSpace(string(out)), "\n") {
-		if line == tmuxSession {
+		if line == sessionName(sessionID) {
 			return true, nil
 		}
 	}
