@@ -199,10 +199,10 @@ Detects your platform, downloads the right pre-built binary from GitHub Releases
 **Homebrew (macOS + Linux):**
 
 ```bash
-brew install slievr/tap/athene-app
+brew install made-by-moonlight/tap/athene-app
 ```
 
-Requires a one-time tap: `brew tap slievr/tap` (or use the single command above).
+Requires a one-time tap: `brew tap made-by-moonlight/tap` (or use the single command above).
 
 **Build from source** (requires Rust toolchain):
 

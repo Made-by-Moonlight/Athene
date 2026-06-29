@@ -2,7 +2,7 @@ name: Release Native App
 
 # Runs after the npm Release workflow completes on main.
 # Builds athene-app binaries for 4 targets, uploads them to the GitHub release,
-# then updates the Homebrew formula in slievr/homebrew-tap.
+# then updates the Homebrew formula in Made-by-Moonlight/homebrew-tap.
 
 on:
   workflow_run:
@@ -174,26 +174,26 @@ jobs:
           cat > Formula/athene-app.rb << EOF
           class AtheneApp < Formula
             desc "Native desktop app for Athene — GPU-accelerated agent supervision"
-            homepage "https://github.com/slievr/Athene"
+            homepage "https://github.com/Made-by-Moonlight/Athene"
             version "${VERSION}"
             license "MIT"
 
             on_macos do
               if Hardware::CPU.arm?
-                url "https://github.com/slievr/Athene/releases/download/${TAG}/athene-app-aarch64-apple-darwin.tar.gz"
+                url "https://github.com/Made-by-Moonlight/Athene/releases/download/${TAG}/athene-app-aarch64-apple-darwin.tar.gz"
                 sha256 "${SHA_MACOS_ARM}"
               else
-                url "https://github.com/slievr/Athene/releases/download/${TAG}/athene-app-x86_64-apple-darwin.tar.gz"
+                url "https://github.com/Made-by-Moonlight/Athene/releases/download/${TAG}/athene-app-x86_64-apple-darwin.tar.gz"
                 sha256 "${SHA_MACOS_X86}"
               end
             end
 
             on_linux do
               if Hardware::CPU.arm?
-                url "https://github.com/slievr/Athene/releases/download/${TAG}/athene-app-aarch64-unknown-linux-gnu.tar.gz"
+                url "https://github.com/Made-by-Moonlight/Athene/releases/download/${TAG}/athene-app-aarch64-unknown-linux-gnu.tar.gz"
                 sha256 "${SHA_LINUX_ARM}"
               else
-                url "https://github.com/slievr/Athene/releases/download/${TAG}/athene-app-x86_64-unknown-linux-gnu.tar.gz"
+                url "https://github.com/Made-by-Moonlight/Athene/releases/download/${TAG}/athene-app-x86_64-unknown-linux-gnu.tar.gz"
                 sha256 "${SHA_LINUX_X86}"
               end
             end
@@ -213,7 +213,7 @@ jobs:
           GH_TOKEN: ${{ secrets.RELEASE_TOKEN || secrets.GITHUB_TOKEN }}
           TAG:      ${{ steps.tag.outputs.value }}
         run: |
-          TAP_REPO="slievr/homebrew-tap"
+          TAP_REPO="Made-by-Moonlight/homebrew-tap"
           FORMULA_PATH="Formula/athene-app.rb"
           CONTENT=$(base64 -w0 < Formula/athene-app.rb)
 
