@@ -4,6 +4,16 @@
 
 Spawn parallel AI coding agents, each in its own git worktree. Agents autonomously fix CI failures, address review comments, and open PRs — you supervise from one dashboard.
 
+```
+    /\_____/\
+   /  o   o  \
+  ( ==  ^  == )
+   )         (
+  (           )
+ ( (  )   (  ) )
+(__(__)___(__)__)
+```
+
 [![GitHub stars](https://img.shields.io/github/stars/slievr/Athene?style=flat-square)](https://github.com/slievr/Athene/stargazers)
 [![npm version](https://img.shields.io/npm/v/%40made-by-moonlight%2Fathene?style=flat-square)](https://www.npmjs.com/package/@made-by-moonlight/athene)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
