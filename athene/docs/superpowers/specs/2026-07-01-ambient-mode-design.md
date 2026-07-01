@@ -52,21 +52,11 @@ caffeinate -i   prevent idle sleep
 
 Combined: `caffeinate -si`. Ships with every macOS installation. No new dependencies.
 
-## Subscription
+## Unexpected-exit detection
 
-A subscription watches the caffeinate child for unexpected exit and fires `AmbientStopped`:
+When `ToggleAmbientMode` spawns the child, the handler returns a `Task::future` that waits for the child to exit and then yields `AmbientStopped`. Iced drives the future concurrently; if the child exits unexpectedly (e.g. killed externally) the message fires and the UI clears the active state.
 
-```rust
-// Pseudocode — uses async_stream like the existing engine/poll subscriptions
-Subscription::run_with_id("caffeinate-watch", async_stream::stream! {
-    if let Some(child) = /* &mut state.caffeinate */ {
-        let _ = child.wait().await;
-        yield Message::AmbientStopped;
-    }
-})
-```
-
-The subscription is only active when `caffeinate.is_some()`. When the handle is `None` the subscription produces nothing (empty stream or absent from the batch).
+The existing `App::subscription` batch does not need a new branch — the watch is a one-shot `Task`, not a repeating subscription.
 
 ## UI
 
