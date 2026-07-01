@@ -118,6 +118,7 @@ pub enum Message {
     NavigateNotification(SessionId),
     FleetFilterQuery(String),
     ClearFleetFilter,
+    ScrollTerminal { session_id: SessionId, delta: i32 },
     Noop,
 }
 
@@ -753,6 +754,13 @@ impl App {
             }
             Message::ClearFleetFilter => {
                 state.fleet_filter = FleetFilter::default();
+                Task::none()
+            }
+
+            Message::ScrollTerminal { session_id, delta } => {
+                if let Some(term) = state.terminals.get_mut(&session_id) {
+                    term.scroll(delta);
+                }
                 Task::none()
             }
 
