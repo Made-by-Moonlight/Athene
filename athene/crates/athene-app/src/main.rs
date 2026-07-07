@@ -18,6 +18,7 @@ use std::{path::PathBuf, sync::Arc, time::{SystemTime, UNIX_EPOCH}};
 use tokio_util::sync::CancellationToken;
 
 #[derive(Parser)]
+#[command(version)]
 struct Args {
     #[command(subcommand)]
     command: Option<Command>,
